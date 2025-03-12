@@ -3,11 +3,33 @@ footer {
     padding: 5pt;
 }
 
-#side_bar{
-    border: solid;
-    border-color: rgb(201, 201, 201);
-}
-
 .no-transition {
     transition: none !important;
 }
+
+.course-container{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 55px;
+}
+
+.img-size{
+    margin-top: 8px;
+    height: 50%;
+}
+
+#search-bar-container{
+    border: solid;
+    border-color: rgb(230, 230, 230);
+    border-radius: 10px;
+    width: 350px;
+    padding: 1px 1px 1px 5px;
+}
+
+#search-bar{
+    border: transparent;
+    width: Auto;
+}
+
