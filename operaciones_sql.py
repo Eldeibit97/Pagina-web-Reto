@@ -10,7 +10,7 @@ def connect():
         user='avnadmin',
         password='AVNS_Pw5Y7FYmuibFg8VaXaQ',
         database='SoluTec',
-        ssl_ca='certificado.pem',  # Path to the CA certificate
+        ssl_ca='certificado.pem',
     )
 
     return connection
@@ -24,19 +24,20 @@ def validate_credentials(username, password):
     cursor.execute(query)
     is_valid = cursor.fetchall()
 
-    query = "SELECT u.ID_Usuario, u.Nom_Usuario FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "'"
-    cursor.execute(query)
-    answer = cursor.fetchall()[0]
-
-    user_id = answer[0]
-    name = answer[1]
-
-    cursor.close()
-    connection.close()
-
     if is_valid[0][0] == 1:
+        query = "SELECT u.ID_Usuario, u.Nom_Usuario FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "'"
+        cursor.execute(query)
+        answer = cursor.fetchall()[0]
+
+        user_id = answer[0]
+        name = answer[1]
+
+        cursor.close()
+        connection.close()
         return True, user_id, name
     else:
+        cursor.close()
+        connection.close()
         return False, 0, "_"
     
 def get_pfp(username):
