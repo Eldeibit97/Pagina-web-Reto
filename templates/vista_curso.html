@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ curso_nombre }}
+{% endblock %}
+
+{% block header %}
+  {{ curso_nombre }}
+{% endblock %}
+
+{% block content %}
+<p class="text-secondary">Descripción del curso.</p>
+
+<ol class="list-group list-group-numbered">
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="ms-2 me-auto">
+      <div class="fw-bold">Lección 1</div>
+    </div>
+    <span class="badge text-bg-primary rounded-pill">Lectura</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="ms-2 me-auto">
+      <div class="fw-bold">Lección 2</div>
+    </div>
+    <span class="badge text-bg-primary rounded-pill">Video</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="ms-2 me-auto">
+      <div class="fw-bold">Lección 3</div>
+    </div>
+    <span class="badge text-bg-primary rounded-pill">Cuestionario</span>
+  </li>
+</ol>
+
+{% endblock %}
+

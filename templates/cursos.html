@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cursos
+{% endblock %}
+
+{% block header %}
+  Cursos
+{% endblock %}
+
+{% block content %}
+<p class="text-secondary">Aquí encontrarás todos los cursos que te han sido asignados.</p>
+
+<div class="row">
+  {% for curso in cursos %}
+    <div class="col-md-4">
+      <form action="http://localhost:5000/cursos" method="post">
+        <input type="hidden" name="curso_id" value="{{ curso[1] }}">
+        <button type="submit" class="card m-3" style="width: 18rem;">
+          <img class="card-img-top" src="https://github.com/Eldeibit97/Pagina-web-Reto/blob/main/images/cursoImagen.png?raw=true" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">{{ curso[1] }}</h5>
+            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+          </div>
+        </button>
+      </form>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+

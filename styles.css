@@ -3,10 +3,6 @@ footer {
     padding: 5pt;
 }
 
-#side_bar{
-    border: solid;
-    border-color: rgb(201, 201, 201);
-}
 
 .no-transition {
     transition: none !important;
