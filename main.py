@@ -1,8 +1,14 @@
 from flask import Flask, redirect, url_for, request, render_template, session
 import operaciones_sql
+from openai import OpenAI
+import os
+import re
+import ast
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
+
+
 
 ## Funciones ##
 
@@ -16,16 +22,70 @@ app.secret_key = 'super secret key'
 def cursos():
     if request.method == 'GET':
         if 'username' in session:
-            
-            cursos = operaciones_sql.find_cursos(session['username'])
+            session['section'] = 'cursos'
+            cursos = operaciones_sql.find_cursos(session['id'])
             return render_template('cursos.html', cursos=cursos)
         
         else:
             return redirect(url_for('login', fail='False'))
     else:
-        curso_nombre = request.form['curso_id']
-        print(curso_nombre)
-        return render_template('vista_curso.html', curso_nombre=curso_nombre)
+        curso_str = request.form['curso']
+        curso_str = curso_str.strip('()')
+        curso = ast.literal_eval('(' + curso_str + ')')
+        print(curso)
+
+        modulos = operaciones_sql.get_lecciones(curso[0])
+        print(modulos)
+
+        return render_template('vista_curso.html', curso=curso, modulos=modulos)
+    
+@app.route('/whirlChat', methods=['GET', 'POST'])
+def whirlChat():
+    # Initialize history only if it doesn't exist yet
+    if 'history' not in session:
+        session['history'] = [
+            {"role": "system", "content": "¡Hola! Soy WhirlChat, tu asistente personal de aprendizaje en Whirlpool. ¿En qué puedo ayudarte hoy?"}
+        ]
+        session.modified = True  # Mark session as modified
+    
+    if request.method == 'GET':
+        if 'username' in session:
+            session['section'] = 'whirlChat'
+            return render_template('whirlChat.html', history=session['history'])
+        else:
+            return redirect(url_for('login', fail='False'))
+    else:
+        # Make a copy of the current history
+        history = session.get('history', []).copy()
+        user_msg = request.form["message"]
+        
+        # Add the user message
+        history.append({"role": "user", "content": user_msg})
+
+        try:
+            response = OpenAI(
+                base_url="http://127.0.0.1:1234/v1",
+                api_key="lm-studio"
+            )
+            MODEL = "qwen2.5-7b-instruct-1m"
+
+            completion = response.chat.completions.create(
+                model=MODEL,
+                messages=history,
+            )
+
+            ai_response = completion.choices[0].message.content
+            ai_response = re.sub(r'<think>.*?</think>', '', ai_response, flags=re.DOTALL)
+            history.append({"role": "assistant", "content": ai_response})
+        except Exception as e:
+            ai_response = f"Ocurrió un error: {str(e)}"
+            history.append({"role": "assistant", "content": ai_response})
+        
+        # Update the session with the new history
+        session['history'] = history
+        session.modified = True  # Mark session as modified
+        
+        return render_template("whirlChat.html", history=history)
 
 
 @app.route('/check', methods=['POST'])

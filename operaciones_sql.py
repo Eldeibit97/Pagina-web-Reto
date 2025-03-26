@@ -63,7 +63,7 @@ def find_cursos(id):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT uc.ID_Curso, c.Nom_Curso FROM Usuario_Curso uc LEFT JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = 2"
+    query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc LEFT JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
     cursor.execute(query)
     cursos = cursor.fetchall()
 
@@ -71,3 +71,31 @@ def find_cursos(id):
     connection.close()
 
     return cursos
+
+# Obtener las lecciones de un curso
+def get_lecciones(id_curso):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Obtener modulos
+    query = "SELECT * FROM Modulos m WHERE m.ID_Curso = " + str(id_curso)
+    cursor.execute(query)
+    modulos = cursor.fetchall()
+
+    list = []
+
+    for modulo in modulos:
+        # obtener lecciones
+        id_str = str(modulo[1])
+        query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
+        cursor.execute(query)
+        lecciones = cursor.fetchall()
+        list.append([modulo, lecciones])
+
+    cursor.close()
+    connection.close()
+
+    return list
+
+    
+    
