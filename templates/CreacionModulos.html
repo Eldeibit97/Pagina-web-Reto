@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Módulos y Edición</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #fff, #63efff6c);
+      margin: 0; 
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .monitor {
+      background-color: #fff;
+      width: 900px; 
+      min-height: 600px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      padding: 30px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    h1, h2 {
+      margin: 0;
+      text-align: center;
+      color: #333;
+    }
+    .oculto {
+      display: none !important;
+    }
+    #listaModulosView {
+      flex: 1;
+    }
+    #lista-modulos {
+      list-style-type: none;
+      margin: 0; 
+      padding: 0;
+    }
+    #lista-modulos li {
+      background: #f9f9f9;
+      margin: 10px 0; 
+      padding: 15px;
+      border-radius: 8px;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-size: 18px; 
+      color: #555;
+    }
+    .contenedor-acciones {
+      display: flex; 
+      gap: 10px;
+    }
+    .editar, .borrar {
+      background: none; 
+      border: none; 
+      cursor: pointer; 
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .editar:hover, .borrar:hover {
+      transform: scale(1.2);
+    }
+    #btnAgregar {
+      position: absolute; 
+      bottom: 20px; 
+      left: 20px;
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%;
+      border: none; 
+      background-color: #2980b9; 
+      color: #fff;
+      font-size: 32px; 
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    #btnAgregar:hover {
+      background-color: #1c5980;
+    }
+    #btnListo {
+      position: absolute; 
+      bottom: 20px; 
+      right: 20px;
+      background-color: #ffd700; 
+      border: none; 
+      padding: 10px 20px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border-radius: 5px; 
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    #btnListo:hover {
+      background-color: #e6c200;
+    }
+    #edicionModuloView {
+      flex: 1;
+    }
+    #tituloEdicion {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .contenedor-tarjetas {
+      display: flex; 
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .tarjeta {
+      background-color: #f9f9f9;
+      width: 200px; 
+      min-height: 130px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 10px;
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between;
+    }
+    .tarjeta p {
+      margin: 0;
+      color: #333;
+    }
+    .media-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+    .upload-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      transition: transform 0.2s;
+    }
+    .upload-icon:hover {
+      transform: scale(1.2);
+    }
+    #btnAgregarTarjeta {
+      background-color: #2980b9; 
+      color: #fff;
+      border: none; 
+      border-radius: 50%;
+      width: 50px; 
+      height: 50px;
+      font-size: 28px; 
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+      margin-bottom: 20px;
+    }
+    #btnAgregarTarjeta:hover {
+      background-color: #1c5980;
+    }
+    #btnGuardar {
+      background-color: #ffd700;
+      border: none; 
+      padding: 10px 20px;
+      font-weight: bold; 
+      cursor: pointer;
+      border-radius: 5px; 
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    #btnGuardar:hover {
+      background-color: #e6c200;
+    }
+  </style>
+</head>
+<body>
+  <div class="monitor">
+    <div id="listaModulosView">
+      <h1>Módulos</h1>
+      <ul id="lista-modulos"></ul>
+      <button id="btnAgregar">+</button>
+      <button id="btnListo">Listo</button>
+    </div>
+    <div id="edicionModuloView" class="oculto">
+      <h2 id="tituloEdicion">Editar: (Módulo)</h2>
+      <div class="contenedor-tarjetas" id="contenedorTarjetas"></div>
+      <button id="btnAgregarTarjeta">+</button>
+      <button id="btnGuardar" >Guardar</button>
+    </div>
+  </div>
+  <script>
+    let modulos = [];
+    let moduloEnEdicion = null;
+
+    const listaModulosView = document.getElementById('listaModulosView');
+    const edicionModuloView = document.getElementById('edicionModuloView');
+    const listaModulosUl = document.getElementById('lista-modulos');
+    const btnAgregarModulo = document.getElementById('btnAgregar');
+    const btnListo = document.getElementById('btnListo');
+    const tituloEdicion = document.getElementById('tituloEdicion');
+    const contenedorTarjetas = document.getElementById('contenedorTarjetas');
+    const btnAgregarTarjeta = document.getElementById('btnAgregarTarjeta');
+    const btnGuardar = document.getElementById('btnGuardar');
+
+    btnAgregarModulo.addEventListener('click', () => {
+      const nombreModulo = prompt('¿Qué módulo deseas agregar?');
+      if (nombreModulo && nombreModulo.trim() !== '') {
+        modulos.push({ nombre: nombreModulo.trim()});
+        // console.log(modulos);
+        renderizarListaModulos();
+      }
+    });
+
+    function crearNuevaCurso() {
+      // console.log("clicked");
+      const courseNombre = sessionStorage.getItem("courseName");
+      const courseDescripcion = sessionStorage.getItem("courseDesc");
+      const courseImagen_url = sessionStorage.getItem("courseImage");
+      console.log(modulos);
+      fetch('/crear_curso', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ courseNombre, courseDescripcion, courseImagen_url, modulos })
+      })
+      .then(response => response.json())
+      .then(data => {
+      alert(data.message);
+      })
+      .catch(error => {
+      console.error('Error:', error);
+      });
+    }
+
+    function renderizarListaModulos() {
+      listaModulosUl.innerHTML = '';
+      modulos.forEach((mod, index) => {
+        const li = document.createElement('li');
+        li.textContent = mod.nombre;
+        const contenedorAcciones = document.createElement('div');
+        contenedorAcciones.classList.add('contenedor-acciones');
+        const btnEditar = document.createElement('button');
+        btnEditar.classList.add('editar');
+        btnEditar.innerHTML = '✎';
+        btnEditar.addEventListener('click', () => editarModulo(index));
+        const btnBorrar = document.createElement('button');
+        btnBorrar.classList.add('borrar');
+        btnBorrar.innerHTML = '🗑️';
+        btnBorrar.addEventListener('click', () => {
+          modulos.splice(index, 1);
+          renderizarListaModulos();
+        });
+        contenedorAcciones.appendChild(btnEditar);
+        contenedorAcciones.appendChild(btnBorrar);
+        li.appendChild(contenedorAcciones);
+        listaModulosUl.appendChild(li);
+      });
+    }
+
+    function editarModulo(indiceModulo) {
+      moduloEnEdicion = indiceModulo;
+      const modulo = modulos[indiceModulo];
+      tituloEdicion.textContent = `Editar: ${modulo.nombre}`;
+      renderizarTarjetas();
+      listaModulosView.classList.add('oculto');
+      edicionModuloView.classList.remove('oculto');
+    }
+
+    function renderizarTarjetas() {
+      contenedorTarjetas.innerHTML = '';
+      const modulo = modulos[moduloEnEdicion];
+      modulo.tarjetas.forEach((tar) => {
+        const divTarjeta = document.createElement('div');
+        divTarjeta.classList.add('tarjeta');
+        const pTexto = document.createElement('p');
+        pTexto.textContent = tar.texto;
+        divTarjeta.appendChild(pTexto);
+        const mediaContainer = document.createElement('div');
+        mediaContainer.classList.add('media-container');
+        const uploadIcon = document.createElement('button');
+        uploadIcon.classList.add('upload-icon');
+        if(tar.tipoArchivo){
+          uploadIcon.innerHTML = `<img src="${tar.tipoArchivo}" alt="imagen" style="width:24px;height:24px;border-radius:4px;">`;
+        } else {
+          uploadIcon.innerHTML = '🖼️';
+        }
+        uploadIcon.addEventListener('click', () => {
+          const url = prompt('Introduce la URL de la imagen:');
+          if(url && url.trim() !== ''){
+            tar.tipoArchivo = url.trim();
+            renderizarTarjetas();
+          }
+        });
+        mediaContainer.appendChild(uploadIcon);
+        const videoIcon = document.createElement('button');
+        videoIcon.classList.add('upload-icon');
+        if(tar.videoUrl){
+          videoIcon.innerHTML = '📹';
+        } else {
+          videoIcon.innerHTML = '▶️';
+        }
+        videoIcon.addEventListener('click', () => {
+          const url = prompt('Introduce la URL del video:');
+          if(url && url.trim() !== ''){
+            tar.videoUrl = url.trim();
+            renderizarTarjetas();
+          }
+        });
+        mediaContainer.appendChild(videoIcon);
+        divTarjeta.appendChild(mediaContainer);
+        contenedorTarjetas.appendChild(divTarjeta);
+      });
+    }
+
+    btnAgregarTarjeta.addEventListener('click', () => {
+      if(moduloEnEdicion === null) return;
+      const texto = prompt('Ingresa el contenido de la nueva tarjeta:');
+      if(texto && texto.trim() !== ''){
+        const modulo = modulos[moduloEnEdicion];
+        modulo.tarjetas.push({ texto: texto.trim(), tipoArchivo: '', videoUrl: '' });
+        renderizarTarjetas();
+      }
+    });
+
+    btnGuardar.addEventListener('click', () => {
+      alert('Cambios guardados (demo).');
+      edicionModuloView.classList.add('oculto');
+      listaModulosView.classList.remove('oculto');
+      renderizarListaModulos();
+    });
+
+    btnListo.addEventListener('click', () => {
+      crearNuevaCurso();
+      alert('Botón Listo presionado (pendiente de implementar).');
+    });
+
+    renderizarListaModulos();
+  </script>
+</body>
+</html>
+  

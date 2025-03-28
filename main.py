@@ -1,6 +1,6 @@
-from flask import Flask, redirect, url_for, request, render_template, session
+from flask import Flask, redirect, jsonify, url_for, request, render_template, session
 import operaciones_sql
-from openai import OpenAI
+# from openai import OpenAI
 import os
 import re
 import ast
@@ -122,6 +122,40 @@ def login(fail):
 def home():
     return redirect(url_for('login', fail='False'))
 
+@app.route('/crear_curso_form', methods=['GET'])
+def crear_curso_form():
+    return render_template('CreacionCursos.html')
+
+@app.route('/crear_modulo_form', methods=['GET'])
+def crear_modulo_form():
+    return render_template('CreacionModulos.html')
+
+
+@app.route('/crear_curso', methods=['POST'])
+def crear_curso():
+    # if 'username' not in session:
+    #     return jsonify({'message': 'No autorizado'}), 401
+
+    data = request.get_json()
+    print("JSON recibido:", data)
+
+    courseNombre = data.get('courseNombre')
+    courseDescripcion = data.get('courseDescripcion')
+    courseImagen_url = data.get('courseImagen_url')
+    modulos =data.get('modulos')
+
+    print("Datos recibidos:")
+    print(f"courseNombre: {courseNombre}")
+    print(f"courseDescripcion: {courseDescripcion}")
+    print(f"courseImagen_url: {courseImagen_url}")
+    print(f"modulos: {modulos}")
+
+    try:
+        operaciones_sql.crear_curso(courseNombre, courseDescripcion, courseImagen_url, modulos)
+        return jsonify({'message': 'Curso creado exitosamente'})
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Error al crear el curso'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

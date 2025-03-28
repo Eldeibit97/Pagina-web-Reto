@@ -97,5 +97,25 @@ def get_lecciones(id_curso):
 
     return list
 
-    
-    
+
+# Crear y agregar cursos 
+def crear_curso(cursoNombre, descripcion, imagen_url, Modulos): 
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "INSERT INTO Cursos (Nom_Curso, Descripcion, Link_Img_Curso) VALUES (%s, %s, %s);"
+    values = (cursoNombre, descripcion, imagen_url)
+    cursor.execute(query, values)
+
+    curso_id = cursor.lastrowid
+
+    query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+    for modulo in Modulos:
+        moduloNombre = modulo['nombre']
+        values_modulo = (moduloNombre, curso_id)
+        cursor.execute(query_modulo, values_modulo)
+
+    connection.commit() #commit the change
+
+    cursor.close()
+    connection.close()    
