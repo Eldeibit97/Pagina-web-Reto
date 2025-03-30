@@ -24,21 +24,45 @@ def cursos():
         if 'username' in session:
             session['section'] = 'cursos'
             cursos = operaciones_sql.find_cursos(session['id'])
+            print(cursos)
             return render_template('cursos.html', cursos=cursos)
         
         else:
             return redirect(url_for('login', fail='False'))
     else:
-        curso_str = request.form['curso']
-        curso_str = curso_str.strip('()')
-        curso = ast.literal_eval('(' + curso_str + ')')
-        print(curso)
+        session['section'] = 'vista_curso'
+        id_curso = request.form['id_curso']
+        curso = operaciones_sql.get_curso(id_curso)
+        nombre_curso = curso[0]
+        descripcion_curso = curso[1]
 
-        modulos = operaciones_sql.get_lecciones(curso[0])
+        modulos = operaciones_sql.get_lecciones(id_curso)
         print(modulos)
 
-        return render_template('vista_curso.html', curso=curso, modulos=modulos)
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos)
     
+@app.route('/leccion/<id_curso>/<tipo>/<id>')
+def leccion(id_curso, tipo, id):
+    if 'username' in session:
+        session['section'] = 'leccion'
+        
+        # Video
+        if tipo == 'Video':
+            video = operaciones_sql.get_video(id)
+            print(video[1])
+            return render_template('video.html', video=video, id_curso=id_curso)
+        elif tipo == 'Cuestionario':
+            cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
+            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas)
+        elif tipo == 'Lectura':
+            lectura, paginas = operaciones_sql.get_lectura(id)
+            print(paginas)
+            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas))
+        else:
+            return redirect(url_for('cursos'))
+    else:
+        return redirect(url_for('login', fail='False'))
+
 @app.route('/whirlChat', methods=['GET', 'POST'])
 def whirlChat():
     # Initialize history only if it doesn't exist yet

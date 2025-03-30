@@ -15,7 +15,7 @@
   {% for curso in cursos %}
     <div class="col">
       <form action="http://localhost:5000/cursos" method="post">
-        <input type="hidden" name="curso" value="{{ curso }}">
+        <input type="hidden" name="id_curso" value="{{ curso[0] }}">
         <button type="submit" class="card h-100 w-100">
           <div class="square-img-container">
             <img class="card-img-top square-img" src="{{ curso[3] }}" alt="Card image cap">
