@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cursos - {{ curso[1] }}
+{% endblock %}
+
+{% block header %}
+  Cursos - {{ curso[1] }}
+{% endblock %}
+
+{% block content %}
+<p class="text-secondary">{{ curso[2] }}</p>
+
+{% for modulo in modulos %}
+  <h5>{{ modulo[0][0] }}</h5>
+
+  <ol class="list-group list-group-numbered">
+    {% for leccion in modulo[1] %}
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ leccion[3] }}</div>
+      </div>
+        <span class="badge text-bg-primary rounded-pill">{{ leccion[1] }}</span>
+    </li>
+
+    {% endfor %}
+  </ol>
+  <br>
+
+{% endfor %}
+
+{% endblock %}
+
