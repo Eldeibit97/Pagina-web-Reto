@@ -24,6 +24,7 @@ def cursos():
             if session['id_rol'] == 1:
                 return render_template('cursos_alumnos.html', cursos = cursos)
             elif session['id_rol'] == 2:
+                cursos = operaciones_sql.get_cursos()
                 return render_template('cursos_admin.html', cursos = cursos)
             else:
                 return render_template('cursos_profesor.html', cursos = cursos)
@@ -128,15 +129,30 @@ def home():
 @app.route('/Dar_de_alta', methods=["GET","POST"])
 def alta():
     session['section'] = 'Dar de Alta'
-    """
-    alumno = request.form['new_user']
-    correo = request.form['new_mail']
-    cel = request.form['phone_num']
-    pswd = request.form['new_pswd']
-    
-    operaciones_sql.agregar_estudiantes(alumno, correo, cel, pswd)
-    """
-    return render_template('alta_alumnos.html')
+    if request.method == "POST":
+        print(request.form)
+        alumno = request.form['new_user']
+        correo = request.form['new_mail']
+        cel = request.form['phone_num']
+        pswd = request.form['new_pswd']
+        
+        operaciones_sql.agregar_estudiantes(alumno, correo, cel, pswd)
+
+        created = operaciones_sql.verificar_estudiante(correo)
+
+        if created:
+            return redirect(url_for('verificar_alumno', saved = 'True'))
+        else:
+            return redirect(url_for('verificar_alumno', saved = 'False'))
+    else:
+        return render_template('dar_de_alta.html')
+
+@app.route('/verificar_alumno/<saved>')
+def verificar_alumno(saved):
+    if (saved == 'True'):
+        return render_template('dar_de_alta.html', saved = 'True')
+    else:
+        return render_template('dar_de_alta.html', saved = 'False')
 
 if __name__ == '__main__':
     app.run(debug=True)

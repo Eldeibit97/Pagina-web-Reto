@@ -64,25 +64,29 @@ def agregar_estudiantes(nombre, correo, telefono, pswd):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "INSERT INTO Usuarios(Nom_Usuario, Correo_Cliente, Tel_Cliente, Password, ID_Rol) VALUES ('"+ nombre +"', '"+ correo +"', "+ telefono +", '"+ pswd +"', '"+ 1 +"')"
+    query = "INSERT INTO Usuarios(Nom_Usuario, Correo_Cliente, Tel_Cliente, Password, ID_Rol) VALUES('" + nombre + "', '" + correo + "', " + str(telefono) + ", '" + pswd + "', " + str(1) + ")"
     cursor.execute(query)
     
     cursor.close()
     connection.close()
 
-"""def verificar_estudiante(correo):
+#Verificar que se haya creado el usuario
+def verificar_estudiante(correo):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END AS created FROM Usuarios u WHERE u.Correo_Cliente = 'A00232453@Tec.mx'"
+    query = "SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END AS created FROM Usuarios u WHERE u.Correo_Cliente = '"+ correo +"'"
     cursor.execute(query)
     created = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    return created[0][0]
-"""
+    if created[0][0] == 1:
+        return True
+    else:
+        return False
+
 
 # Encontrar cursos del usuario (tecnico)
 def find_cursos(id):
@@ -90,6 +94,20 @@ def find_cursos(id):
     cursor = connection.cursor()
 
     query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc LEFT JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
+    cursor.execute(query)
+    cursos = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return cursos
+
+# Obtener todos los cursos creados (Para el admin y el profesor)
+def get_cursos():
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = 'SELECT ID_Curso, Nom_Curso, Descripcion, Link_Img_Curso  FROM Cursos c'
     cursor.execute(query)
     cursos = cursor.fetchall()
 

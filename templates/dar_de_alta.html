@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Dar de Alta
+{% endblock %}
+
+{% block header %}
+  Dar de Alta
+{% endblock %}
+
+{% block sidebar_btns %}
+<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+<a
+href="{{ url_for('alta') }}"
+class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+>
+<i class='bx bx-user-plus'></i>
+    Dar de alta
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="">
+  <form action="http://localhost:5000/Dar_de_alta" method="POST">
+    <div class="col-sm-6 col-md-5 col-lg-4">
+      <p style="margin: 10px 10px 5px 0px; padding: auto;">Nombre del estudiante que se agregara</p>
+      <input type="text" id="new_user" name="new_user" class="form-control mb-2" placeholder="Nombre de estudiante" required>
+      <p style="margin: 10px 10px 5px 0px; padding: auto;">Telefono del estudiante</p>
+      <input type="text" id="phone_num" name="phone_num" class="form-control mb-2" placeholder="Numero celular" required>
+      <p style="margin: 10px 10px 5px 0px; padding: auto;">Correo que se le asignara</p>
+      <input type="text" id="new_mail" name="new_mail" class="form-control mb-2" placeholder="Correo" required>
+      <p style="margin: 10px 10px 5px 0px; padding: auto;">Contraseña para su correo de estudiante</p>
+      <input type="password" id="new_pswd" name="new_pswd" class="form-control" placeholder="Contraseña" required>
+    </div>
+    <br>
+    <button class="btn btn-primary" type="submit">Agregar Alumno</button>
+  </form>
+</div>
+
+{% if saved == 'True' %}
+  <div class="alert alert-danger" role="alert">
+      El alumno se guardo correctamente
+  </div>
+{% endif %}
+
+{% if saved == 'False' %}
+<div class="alert alert-danger" role="alert">
+  El alumno no se guardo de forma devida
+</div>
+{% endif %}
+
+{% endblock %}
