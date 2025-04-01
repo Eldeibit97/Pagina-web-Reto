@@ -144,11 +144,6 @@ def crear_curso():
     courseImagen_url = data.get('courseImagen_url')
     modulos =data.get('modulos')
 
-    print("Datos recibidos:")
-    print(f"courseNombre: {courseNombre}")
-    print(f"courseDescripcion: {courseDescripcion}")
-    print(f"courseImagen_url: {courseImagen_url}")
-    print(f"modulos: {modulos}")
 
     try:
         operaciones_sql.crear_curso(courseNombre, courseDescripcion, courseImagen_url, modulos)

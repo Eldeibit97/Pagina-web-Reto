@@ -1,4 +1,5 @@
 import mysql.connector
+import datetime
 
 
 
@@ -99,21 +100,47 @@ def get_lecciones(id_curso):
 
 
 # Crear y agregar cursos 
-def crear_curso(cursoNombre, descripcion, imagen_url, Modulos): 
+def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
     connection = connect()
     cursor = connection.cursor()
 
-    query = "INSERT INTO Cursos (Nom_Curso, Descripcion, Link_Img_Curso) VALUES (%s, %s, %s);"
-    values = (cursoNombre, descripcion, imagen_url)
-    cursor.execute(query, values)
+    query_curso = "INSERT INTO Cursos (Nom_Curso, Descripcion, Link_Img_Curso) VALUES (%s, %s, %s);"
+    values_curso = (nom_curso, desc_curso, img_curso)
+    cursor.execute(query_curso, values_curso)
 
     curso_id = cursor.lastrowid
 
     query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+    query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+    query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+
     for modulo in Modulos:
-        moduloNombre = modulo['nombre']
-        values_modulo = (moduloNombre, curso_id)
+        nom_modulo = modulo['nomModulo']
+        values_modulo = (nom_modulo, curso_id)
         cursor.execute(query_modulo, values_modulo)
+
+        modulo_id = cursor.lastrowid
+        fecha_creacion = datetime.datetime.now()
+
+        for tarjeta in modulo['tarjetas']:
+            tipo_archivo = tarjeta['tipoArchivo']
+            nom_tarjeta = tarjeta['nomTarjeta']
+
+            if tipo_archivo == 'lectura':
+                # lectura_text = tarjeta.get('lecturaText', '')
+                values_lectura = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_lectura, values_lectura)
+
+            elif tipo_archivo == 'video':
+                video_url = tarjeta.get('videoUrl', '')
+                values_video = (nom_tarjeta, video_url, modulo_id, fecha_creacion)
+                cursor.execute(query_video, values_video)
+
+            elif tipo_archivo == 'cuestionario':
+                # pregunta = tarjeta.get('pregunta', '')
+                values_cuestionario = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_cuestionario, values_cuestionario)
 
     connection.commit() #commit the change
 
