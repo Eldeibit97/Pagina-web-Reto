@@ -14,7 +14,7 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
   {% for curso in cursos %}
     <div class="col">
-      <form action="http://localhost:5000/cursos" method="post">
+      <form action="{{ url_for('cursos') }}" method="post">
         <input type="hidden" name="id_curso" value="{{ curso[0] }}">
         <button type="submit" class="card h-100 w-100">
           <div class="square-img-container">
