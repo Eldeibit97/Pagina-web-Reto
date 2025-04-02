@@ -1,5 +1,6 @@
 import mysql.connector
-
+import datetime
+import os
 
 
 # Conectarse a base de datos
@@ -52,6 +53,8 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
+
+        os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
@@ -63,6 +66,7 @@ def find_cursos(id):
     connection = connect()
     cursor = connection.cursor()
 
+
     query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc INNER JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
     cursor.execute(query)
     cursos = cursor.fetchall()
@@ -71,6 +75,7 @@ def find_cursos(id):
     connection.close()
 
     return cursos
+
 
 ## Obtener curso especifico
 def get_curso(id):
@@ -111,6 +116,55 @@ def get_lecciones(id_curso):
 
     return list
 
+
+
+# Crear y agregar cursos 
+def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
+    connection = connect()
+    cursor = connection.cursor()
+
+    query_curso = "INSERT INTO Cursos (Nom_Curso, Descripcion, Link_Img_Curso) VALUES (%s, %s, %s);"
+    values_curso = (nom_curso, desc_curso, img_curso)
+    cursor.execute(query_curso, values_curso)
+
+    curso_id = cursor.lastrowid
+
+    query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+    query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+    query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+
+    for modulo in Modulos:
+        nom_modulo = modulo['nomModulo']
+        values_modulo = (nom_modulo, curso_id)
+        cursor.execute(query_modulo, values_modulo)
+
+        modulo_id = cursor.lastrowid
+        fecha_creacion = datetime.datetime.now()
+
+        for tarjeta in modulo['tarjetas']:
+            tipo_archivo = tarjeta['tipoArchivo']
+            nom_tarjeta = tarjeta['nomTarjeta']
+
+            if tipo_archivo == 'lectura':
+                # lectura_text = tarjeta.get('lecturaText', '')
+                values_lectura = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_lectura, values_lectura)
+
+            elif tipo_archivo == 'video':
+                video_url = tarjeta.get('videoUrl', '')
+                values_video = (nom_tarjeta, video_url, modulo_id, fecha_creacion)
+                cursor.execute(query_video, values_video)
+
+            elif tipo_archivo == 'cuestionario':
+                # pregunta = tarjeta.get('pregunta', '')
+                values_cuestionario = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_cuestionario, values_cuestionario)
+
+    connection.commit() #commit the change
+
+    cursor.close()
+    connection.close()    
     
 ## Video ##
 def get_video(id):
@@ -174,3 +228,4 @@ def get_lectura(id):
     cursor.close()
     connection.close()
     return lectura, paginas
+

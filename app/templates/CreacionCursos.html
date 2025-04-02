@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Curso</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .icon-upload {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .icon-upload img {
+      width: 40px;
+      height: auto;
+      display: none;
+    }
+    .icon-upload button {
+      background-color: #000;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .next-button {
+      background-color: #ffd700;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+      width: 100%;
+    }
+    .next-button:hover {
+      background-color: #e6c200;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Crear Curso</h1>
+    <label for="course-name">Nombre del curso</label>
+    <input type="text" id="course-name" name="course-name" placeholder="Título del curso">
+    
+    <label for="description">Descripción</label>
+    <input type="text" id="description" name="description" placeholder="Breve descripción">
+    
+    <label>Imagen</label>
+    <div class="icon-upload">
+      <!-- La imagen se mostrará en este elemento al guardar la URL -->
+      <img id="imagen" src="" alt="Imagen cargada">
+      <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
+      <button id="btnImagen" onclick="pedirImagen()">+</button>
+    </div>
+    
+    <!-- El botón "Siguiente" validará datos antes de redirigir -->
+    <button class="next-button" onclick="validarDatos()">Siguiente</button>
+  </div>
+  
+  <script>
+    function pedirImagen() {
+      let url = prompt("Introduce la URL de la imagen:");
+      if (url) {
+        localStorage.setItem("imagenURL", url);
+        mostrarImagen(url);
+        // Cambiar el icono del botón a lápiz
+        document.getElementById("btnImagen").textContent = "✎";
+      }
+    }
+    
+    function mostrarImagen(url) {
+      let img = document.getElementById("imagen");
+      img.src = url;
+      img.style.display = "block";
+    }
+    
+    // Validar que se hayan ingresado todos los datos
+    function validarDatos() {
+      let nombre = document.getElementById("course-name").value.trim();
+      let descripcion = document.getElementById("description").value.trim();
+      let imagen = localStorage.getItem("imagenURL");
+      
+      if (!nombre || !descripcion || !imagen) {
+        alert("Ingresa todos los datos necesarios");
+        return; // No avanza si falta alguno
+      }
+
+      sessionStorage.setItem('courseName', nombre);
+      sessionStorage.setItem('courseDesc', descripcion);
+      sessionStorage.setItem('courseImage', imagen);
+      
+      // Si todos los campos están completos, redirige a la siguiente página
+      console.log('clicked');
+      window.location.href = "/crear_modulo_form";
+    }
+    
+
+    // Al cargar la página, se verifica si hay una imagen guardada y se muestra
+    window.onload = function () {
+      let urlGuardada = localStorage.getItem("imagenURL");
+      if (urlGuardada) {
+        mostrarImagen(urlGuardada);
+        document.getElementById("btnImagen").textContent = "✎";
+      }
+    };
+  </script>
+</body>
+</html>

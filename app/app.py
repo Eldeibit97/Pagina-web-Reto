@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, request, render_template, session
+
+from flask import Flask, redirect, jsonify, url_for, request, render_template, session
 import operaciones_sql
 from openai import OpenAI
 import os
@@ -24,12 +25,13 @@ def cursos():
         if 'username' in session:
             session['section'] = 'cursos'
             cursos = operaciones_sql.find_cursos(session['id'])
-            print(cursos)
+
             return render_template('cursos.html', cursos=cursos)
         
         else:
             return redirect(url_for('login', fail='False'))
     else:
+
         session['section'] = 'vista_curso'
         id_curso = request.form['id_curso']
         curso = operaciones_sql.get_curso(id_curso)
@@ -62,6 +64,7 @@ def leccion(id_curso, tipo, id):
             return redirect(url_for('cursos'))
     else:
         return redirect(url_for('login', fail='False'))
+
 
 @app.route('/whirlChat', methods=['GET', 'POST'])
 def whirlChat():
@@ -147,5 +150,35 @@ def home():
     return redirect(url_for('login', fail='False'))
 
 
+@app.route('/crear_curso_form', methods=['GET'])
+def crear_curso_form():
+    return render_template('CreacionCursos.html')
+
+@app.route('/crear_modulo_form', methods=['GET'])
+def crear_modulo_form():
+    return render_template('CreacionModulos.html')
+
+
+@app.route('/crear_curso', methods=['POST'])
+def crear_curso():
+    # if 'username' not in session:
+    #     return jsonify({'message': 'No autorizado'}), 401
+
+    data = request.get_json()
+    print("JSON recibido:", data)
+
+    courseNombre = data.get('courseNombre')
+    courseDescripcion = data.get('courseDescripcion')
+    courseImagen_url = data.get('courseImagen_url')
+    modulos =data.get('modulos')
+
+
+    try:
+        operaciones_sql.crear_curso(courseNombre, courseDescripcion, courseImagen_url, modulos)
+        return jsonify({'message': 'Curso creado exitosamente'})
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Error al crear el curso'}), 500
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000)
+    app.run(debug=True)
