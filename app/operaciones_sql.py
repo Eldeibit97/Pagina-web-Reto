@@ -53,6 +53,7 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
+
         os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
@@ -65,7 +66,8 @@ def find_cursos(id):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc LEFT JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
+
+    query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc INNER JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
     cursor.execute(query)
     cursos = cursor.fetchall()
 
@@ -73,6 +75,21 @@ def find_cursos(id):
     connection.close()
 
     return cursos
+
+
+## Obtener curso especifico
+def get_curso(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT c.Nom_Curso, c.Descripcion FROM Cursos c WHERE c.ID_Curso = " + str(id)
+    cursor.execute(query)
+    curso = cursor.fetchall()
+    curso = curso[0]
+
+    cursor.close()
+    connection.close()
+    return curso
 
 # Obtener las lecciones de un curso
 def get_lecciones(id_curso):
@@ -98,6 +115,7 @@ def get_lecciones(id_curso):
     connection.close()
 
     return list
+
 
 
 # Crear y agregar cursos 
@@ -147,3 +165,67 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
 
     cursor.close()
     connection.close()    
+    
+## Video ##
+def get_video(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT v.Nombre_Video, v.Link_Video FROM Video v WHERE v.ID_Video = " + str(id)
+    cursor.execute(query)
+    video = cursor.fetchall()
+    video = video[0]
+
+    cursor.close()
+    connection.close()
+    return video
+
+## Cuestionario ##
+def get_cuestionario(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Obtener el nombre y tiempo del cuestionario
+    query = "SELECT c.Nom_Cuestionario, c.Tiempo FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
+    cursor.execute(query)
+    cuestionario = cursor.fetchall()
+    cuestionario = cuestionario[0]
+
+    # Obtener preguntas y respuestas
+    query = "SELECT p.Pregunta, p.ID_Pregunta FROM Preguntas p WHERE p.ID_Cuestionario = " + str(id)
+    cursor.execute(query)
+    preguntas = cursor.fetchall()
+    preguntas_respuestas = []
+
+    # Obtener respuestas
+    for pregunta in preguntas:
+        query = "SELECT * FROM Respuestas r WHERE r.ID_Pregunta = " + str(pregunta[1])
+        cursor.execute(query)
+        respuestas = cursor.fetchall()
+        preguntas_respuestas.append([pregunta, respuestas])
+
+    #print(preguntas_respuestas)
+
+    cursor.close()
+    connection.close()
+    return cuestionario, preguntas_respuestas
+
+## Lectura ##
+def get_lectura(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT * FROM Lectura l WHERE l.ID_Lectura = " + str(id)
+    cursor.execute(query)
+    lectura = cursor.fetchall()
+    lectura = lectura[0]
+
+    # obtener las paginas
+    query = "SELECT p.ID_Pagina, p.Texto_Pagina, i.URL_Imagen, p.Nom_Pagina FROM Pagina p LEFT JOIN Imagen i ON p.ID_Pagina = i.ID_Pagina WHERE p.ID_Lectura = " + str(id) + " ORDER BY p.ID_Pagina ASC"
+    cursor.execute(query)
+    paginas = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    return lectura, paginas
+
