@@ -1,6 +1,6 @@
 import mysql.connector
 import datetime
-
+import os
 
 
 # Conectarse a base de datos
@@ -53,6 +53,7 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
+        os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
