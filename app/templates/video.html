@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Video - {{ video[0] }}
+{% endblock %}
+
+{% block header %}
+  Video - {{ video[0] }}
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('cursos') }}" method="post">
+    <input type="hidden" name="id_curso" value="{{ id_curso }}">
+    <button type="submit" class="btn btn-warning"><i class='bx bx-arrow-back'></i> Regresar a Curso</button>
+</form>
+<br>
+
+<p>Observa el video hasta el final para completar esta lección.</p>
+
+<div id="player"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/get-video-id/dist/get-video-id.umd.min.js"></script>
+<script>
+  var videoInfo = getVideoId('{{ video[1] }}');
+  var videoId = videoInfo.id;
+
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '315',
+      width: '560',
+      videoId: videoId,
+      playerVars: {
+        'playsinline': 1,
+        'rel': 0,
+        'modestbranding': 1
+      },
+      events: {
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  // detectar fin del video
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+      alert('¡Felicidades! Has completado la lección.');
+    }
+  }
+</script>
+
+{% endblock %}
