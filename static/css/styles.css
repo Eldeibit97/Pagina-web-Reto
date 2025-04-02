@@ -50,9 +50,17 @@ height: 100%;
 .dar-de-alta-container{
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 50px;
 }
 
 .forms-container{
-    width: 50rem;
+    width: 35rem;
+}
+
+
+
+.img-container{
+    width: 13rem;
+    height: 13rem;
 }

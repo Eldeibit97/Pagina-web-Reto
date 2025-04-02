@@ -27,7 +27,8 @@ def cursos():
                 cursos = operaciones_sql.get_cursos()
                 return render_template('cursos_admin.html', cursos = cursos)
             else:
-                return render_template('cursos_profesor.html', cursos = cursos)
+                cursos = operaciones_sql.get_cursos()
+                return render_template('cursos_profesores.html', cursos = cursos)
         else:
             return redirect(url_for('login', fail='False'))
     else:

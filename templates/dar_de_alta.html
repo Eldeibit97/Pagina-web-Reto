@@ -21,25 +21,33 @@ class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-
 
 {% block content %}
 <div class="dar-de-alta-container">
-  <div> 
-    <form action="http://localhost:5000/Dar_de_alta" method="POST">
-      <img src="" alt="">
+  <div class="img-container"> 
+    <form action="http://localhost:5000/Dar_de_alta" method="post">
+      <div><img src="/static/img/pfp.jpg" alt="default_user_jpg"></div>
     </form>
   </div>
   <div class="forms-container">
-    <form action="http://localhost:5000/Dar_de_alta" method="POST">
-      <div class="col-sm-6 col-md-5 col-lg-4">
-        <p style="margin: 10px 10px 5px 10px; padding: auto; width: 25rem;">Nombre del estudiante que se agregara</p>
+    <form action="http://localhost:5000/Dar_de_alta" method="post">
+      <div class="col-sm-12 col-md-7 col-lg-6">
+        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Nombre del estudiante que se agregara</p>
         <input type="text" id="new_user" name="new_user" class="form-control mb-2 ms-2" placeholder="Nombre de estudiante" required>
-        <p style="margin: 10px 10px 5px 10px; padding: auto; width: 25rem;">Telefono del estudiante</p>
+        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Telefono del estudiante</p>
         <input type="text" id="phone_num" name="phone_num" class="form-control mb-2 ms-2" placeholder="Numero celular" required>
-        <p style="margin: 10px 10px 5px 10px; padding: auto; width: 25rem;">Correo que se le asignara</p>
+        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Correo que se le asignara</p>
         <input type="text" id="new_mail" name="new_mail" class="form-control mb-2 ms-2" placeholder="Correo" required>
-        <p style="margin: 10px 10px 5px 10px; padding: auto; width: 25rem;">Contraseña para su correo de estudiante</p>
+        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Rol del empleado</p>
+        <div class="dropdown">
+          <select class="btn btn-warning dropdown-toggle mb-2 ms-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+            <option value="">Seleccione un rol</option>
+            <option value="3" aria-current="false"> Profesor </option>
+            <option value="1" aria-current="false"> Estudiante </option>
+          </select>
+        </div>
+        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Contraseña para su correo de estudiante</p>
         <input type="password" id="new_pswd" name="new_pswd" class="form-control mb-2 ms-2" placeholder="Contraseña" required>
       </div>
       <br>
-      <button class="btn btn-primary" type="submit">Agregar Alumno</button>
+      <button class="btn btn-primary  mb-2 ms-2" type="submit">Agregar Alumno</button>
     </form>
   </div>
 </div>
