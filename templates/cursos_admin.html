@@ -11,7 +11,7 @@
 {% block sidebar_btns %}
 <a
 href="{{ url_for('alta') }}"
-class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+class="btn {% if session['section'] == 'Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
 >
 <i class='bx bx-book-add'></i>
     Crear Curso
@@ -21,7 +21,7 @@ class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-
 
 <a
 href="{{ url_for('alta') }}"
-class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+class="btn {% if session['section'] == 'Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
 >
 <i class='bx bx-user-plus'></i>
     Dar de alta

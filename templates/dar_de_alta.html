@@ -9,12 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<div class="dar-de-alta-container">
-  <div class="img-container"> 
-    <form action="http://localhost:5000/Dar_de_alta" method="post">
-      <img src="/static/img/pfp.jpg" alt="default_user_jpg">
-    </form>
-  </div>
   <div class="forms-container">
     <form action="http://localhost:5000/Dar_de_alta" method="post">
       <div class="col-sm-12 col-md-7 col-lg-6">
@@ -47,7 +41,7 @@
 
   {% if saved == 'False' %}
   <div class="alert alert-danger" role="alert">
-    El alumno no se guardo de forma devida
+    Este correo ya esta asignado a otro alumno
   </div>
   {% endif %}
 </div>

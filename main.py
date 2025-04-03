@@ -129,7 +129,7 @@ def home():
 
 @app.route('/Dar_de_alta', methods=["GET","POST"])
 def alta():
-    session['section'] = 'Dar de Alta'
+    session['section'] = 'Alta'
     if session['id_rol'] == 2:
         if request.method == "POST":
             alumno = request.form['new_user']
@@ -137,17 +137,27 @@ def alta():
             cel = request.form['phone_num']
             tipo_rol = request.form['rol_type']
             pswd = request.form['new_pswd']
-            
-            operaciones_sql.agregar_estudiantes(alumno, correo, cel, tipo_rol, pswd)
 
-            created = operaciones_sql.verificar_estudiante(correo)
+            exists = operaciones_sql.verificar_estudiante(correo)
 
-            if created:
+            print(exists)
+
+            if not exists:
+                operaciones_sql.agregar_estudiantes(alumno, correo, cel, tipo_rol, pswd)
                 return render_template('dar_de_alta.html', saved = 'True')
             else:
                 return render_template('dar_de_alta.html', saved = 'False')
         else:
             return render_template('dar_de_alta.html')
+    else:
+        return redirect(url_for('cursos'))
+
+@app.route('/Alumnos')
+def visualizar_alumnos():
+    session['section'] = 'Vista_alumnos'
+    if session['id_rol'] == 3:
+        alumnos = operaciones_sql.get_alumnos()
+        return render_template('vista_alumnos.html', alumnos = alumnos)
     else:
         return redirect(url_for('cursos'))
 

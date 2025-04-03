@@ -20,7 +20,7 @@ def validate_credentials(username, password):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS is_valid FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "' AND u.Password = '" + password + "'"
+    query = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS is_valid FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "' OR u.Password = '" + password + "'"
     cursor.execute(query)
     is_valid = cursor.fetchall()
 
@@ -39,7 +39,7 @@ def validate_credentials(username, password):
     else:
         cursor.close()
         connection.close()
-        return False, 0, "_"
+        return False, 0, "_",0
     
 def get_pfp(username):
     connection = connect()
@@ -59,7 +59,7 @@ def get_pfp(username):
     else:
         return None
     
-#Dar de alta a nuevos tecnicos estudiantes
+#Dar de alta a nuevos tecnicos estudiantes/profesores
 def agregar_estudiantes(nombre, correo, telefono, rol_id, pswd):
     connection = connect()
     cursor = connection.cursor()
@@ -71,19 +71,20 @@ def agregar_estudiantes(nombre, correo, telefono, rol_id, pswd):
     cursor.close()
     connection.close()
 
-#Verificar que se haya creado el usuario
+#Verificar que el usuario que se intente crear no exista ya o 
+# las credenciales planteadas ya pertenezcan a otro tecnico
 def verificar_estudiante(correo):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END AS created FROM Usuarios u WHERE u.Correo_Cliente = '"+ correo +"'"
+    query = "SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END AS 'already exists' FROM Usuarios u WHERE Correo_Cliente = '"+ correo +"'"
     cursor.execute(query)
-    created = cursor.fetchall()
+    exists = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    if created[0][0] == 1:
+    if exists[0][0] == 1:
         return True
     else:
         return False
@@ -116,6 +117,20 @@ def get_cursos():
     connection.close()
 
     return cursos
+
+# Obtener a los diferentes alumnos ya registrados en la DB
+def get_alumnos():
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT u.Nom_Usuario, u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 1"
+    cursor.execute(query)
+    alumnos = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return alumnos
 
 # Obtener las lecciones de un curso
 def get_lecciones(id_curso):
