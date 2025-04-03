@@ -39,7 +39,7 @@ def cursos():
         descripcion_curso = curso[1]
 
         modulos = operaciones_sql.get_lecciones(id_curso)
-        print(modulos)
+        #print(modulos)
 
         return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos)
     
@@ -114,6 +114,20 @@ def whirlChat():
         
         return render_template("whirlChat.html", history=history)
 
+## Subir Calificacion ##
+@app.route('/subir_calificacion', methods=['POST'])
+def subir_calificacion():
+    # Recibir datos del formulario
+    data = request.get_json()
+
+    id_leccion = data['id']
+    tipo = data['tipo']
+    calificacion = data['calificacion']
+
+    # Subir a la base de datos
+    operaciones_sql.subir_calificacion(id_leccion, tipo, calificacion)
+
+    return {"success": True}, 200
 
 @app.route('/check', methods=['POST'])
 def check():

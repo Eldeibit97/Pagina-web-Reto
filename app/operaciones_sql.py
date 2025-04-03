@@ -1,7 +1,7 @@
 import mysql.connector
 import datetime
 import os
-
+from flask import session
 
 # Conectarse a base de datos
 def connect():
@@ -109,7 +109,26 @@ def get_lecciones(id_curso):
         query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
         cursor.execute(query)
         lecciones = cursor.fetchall()
-        list.append([modulo, lecciones])
+        
+        # obtener calificaciones de las lecciones
+        lecciones_lista = []
+
+        for leccion in lecciones:
+            if leccion[1] == 'Lectura':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Lectura ul WHERE ID_Lectura = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Video':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Video uv  WHERE ID_Video  = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Cuestionario':
+                query = "SELECT IFNULL((SELECT Puntaje FROM Evaluaciones WHERE ID_Usuario = " + str(session['id']) +  " AND ID_Cuestionario = " + str(leccion[0]) + " ORDER BY Fecha DESC LIMIT 1), -1)"
+                cursor.execute(query)
+            
+            calificacion = cursor.fetchone()
+            lecciones_lista.append([leccion, calificacion[0]])
+
+
+        list.append([modulo, lecciones_lista])
 
     cursor.close()
     connection.close()
@@ -171,7 +190,7 @@ def get_video(id):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT v.Nombre_Video, v.Link_Video FROM Video v WHERE v.ID_Video = " + str(id)
+    query = "SELECT v.Nombre_Video, v.Link_Video, v.ID_Video FROM Video v WHERE v.ID_Video = " + str(id)
     cursor.execute(query)
     video = cursor.fetchall()
     video = video[0]
@@ -186,7 +205,7 @@ def get_cuestionario(id):
     cursor = connection.cursor()
 
     # Obtener el nombre y tiempo del cuestionario
-    query = "SELECT c.Nom_Cuestionario, c.Tiempo FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
+    query = "SELECT c.Nom_Cuestionario, c.Tiempo, c.ID_Cuestionario FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
     cursor.execute(query)
     cuestionario = cursor.fetchall()
     cuestionario = cuestionario[0]
@@ -229,3 +248,20 @@ def get_lectura(id):
     connection.close()
     return lectura, paginas
 
+## Subir calificacion ##
+def subir_calificacion(id_leccion, tipo, calificacion):
+    connection = connect()
+    cursor = connection.cursor()
+
+    if tipo == 'Video':
+        query = "INSERT INTO Usuario_Video (Fecha_Video, ID_Usuario, ID_Video) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Lectura":
+        query = "INSERT INTO Usuario_Lectura (Fecha_Lectura, ID_Usuario, ID_Lectura) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Cuestionario":
+        query = "INSERT INTO Evaluaciones (ID_Usuario, Puntaje, ID_Cuestionario, Fecha ) VALUES (" + str(session['id']) + ", " + str(calificacion) + ", " + str(id_leccion) + ", NOW())"
+        cursor.execute(query)
+        connection.commit()

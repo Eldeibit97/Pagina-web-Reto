@@ -87,8 +87,22 @@
         total = preguntas_respuestas.length
 
         calificacion = score / total * 100;
+        calificacion = Number((calificacion).toFixed(2));
 
-        alert(calificacion);
+        alert("Calificación: " + String(calificacion));
+
+        // Subir calificación mediante un POST
+        fetch('/subir_calificacion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: {{ cuestionario[2] }},
+              tipo: 'Cuestionario',
+              calificacion: calificacion
+            })
+          })
 
         // esconder boton de entregar y mostrar boton de finalizar
 

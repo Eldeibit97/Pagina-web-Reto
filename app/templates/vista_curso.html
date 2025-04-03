@@ -27,13 +27,18 @@
   <ol class="list-group list-group-numbered">
     {% for leccion in modulo[1] %}
     <li>
-      <a class="list-group-item d-flex justify-content-between align-items-start" href="{{ url_for('leccion', id_curso=id_curso, tipo=leccion[1], id=leccion[0]) }}">
+      <a class="list-group-item d-flex justify-content-between align-items-start" href="{{ url_for('leccion', id_curso=id_curso, tipo=leccion[0][1], id=leccion[0][0]) }}">
         <div class="ms-2 me-auto">
-          <div class="fw-bold">{{ leccion[3] }}</div>
+          <div class="fw-bold">{{ leccion[0][3] }}</div>
         </div>
-          <span class="badge text-bg-warning rounded-pill ms-3">{{ leccion[1] }}</span>
+          {% if leccion[1] != -1 %}
+            <span class="badge text-bg-primary rounded-pill">{{ leccion[1] }}</span>
+          {% endif %}
 
-          <span class="badge text-bg-primary rounded-pill">100%</span>
+
+          <span class="badge text-bg-warning rounded-pill" style="margin-left: 10px;">{{ leccion[0][1] }}</span>
+
+          
       </a>
     </li>
 
