@@ -130,30 +130,26 @@ def home():
 @app.route('/Dar_de_alta', methods=["GET","POST"])
 def alta():
     session['section'] = 'Dar de Alta'
-    if request.method == "POST":
-        print(request.form)
-        alumno = request.form['new_user']
-        correo = request.form['new_mail']
-        cel = request.form['phone_num']
-        pswd = request.form['new_pswd']
-        
-        operaciones_sql.agregar_estudiantes(alumno, correo, cel, pswd)
+    if session['id_rol'] == 2:
+        if request.method == "POST":
+            alumno = request.form['new_user']
+            correo = request.form['new_mail']
+            cel = request.form['phone_num']
+            tipo_rol = request.form['rol_type']
+            pswd = request.form['new_pswd']
+            
+            operaciones_sql.agregar_estudiantes(alumno, correo, cel, tipo_rol, pswd)
 
-        created = operaciones_sql.verificar_estudiante(correo)
+            created = operaciones_sql.verificar_estudiante(correo)
 
-        if created:
-            return redirect(url_for('verificar_alumno', saved = 'True'))
+            if created:
+                return render_template('dar_de_alta.html', saved = 'True')
+            else:
+                return render_template('dar_de_alta.html', saved = 'False')
         else:
-            return redirect(url_for('verificar_alumno', saved = 'False'))
+            return render_template('dar_de_alta.html')
     else:
-        return render_template('dar_de_alta.html')
-
-@app.route('/verificar_alumno/<saved>')
-def verificar_alumno(saved):
-    if (saved == 'True'):
-        return render_template('dar_de_alta.html', saved = 'True')
-    else:
-        return render_template('dar_de_alta.html', saved = 'False')
+        return redirect(url_for('cursos'))
 
 if __name__ == '__main__':
     app.run(debug=True)

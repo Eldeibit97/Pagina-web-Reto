@@ -9,7 +9,16 @@
 {% endblock %}
 
 {% block sidebar_btns %}
+<a
+href="{{ url_for('alta') }}"
+class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+>
+<i class='bx bx-book-add'></i>
+    Crear Curso
+</a>
+
 <p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+
 <a
 href="{{ url_for('alta') }}"
 class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"

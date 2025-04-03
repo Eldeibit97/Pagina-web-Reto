@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "cursos_admin.html" %}
 
 {% block title %}
   Dar de Alta
@@ -8,22 +8,11 @@
   Dar de Alta
 {% endblock %}
 
-{% block sidebar_btns %}
-<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
-<a
-href="{{ url_for('alta') }}"
-class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
->
-<i class='bx bx-user-plus'></i>
-    Dar de alta
-</a>
-{% endblock %}
-
 {% block content %}
 <div class="dar-de-alta-container">
   <div class="img-container"> 
     <form action="http://localhost:5000/Dar_de_alta" method="post">
-      <div><img src="/static/img/pfp.jpg" alt="default_user_jpg"></div>
+      <img src="/static/img/pfp.jpg" alt="default_user_jpg">
     </form>
   </div>
   <div class="forms-container">
@@ -37,7 +26,7 @@ class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-
         <input type="text" id="new_mail" name="new_mail" class="form-control mb-2 ms-2" placeholder="Correo" required>
         <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Rol del empleado</p>
         <div class="dropdown">
-          <select class="btn btn-warning dropdown-toggle mb-2 ms-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+          <select class="btn btn-warning dropdown-toggle mb-2 ms-2" name="rol_type" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" required>
             <option value="">Seleccione un rol</option>
             <option value="3" aria-current="false"> Profesor </option>
             <option value="1" aria-current="false"> Estudiante </option>
@@ -50,18 +39,16 @@ class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-
       <button class="btn btn-primary  mb-2 ms-2" type="submit">Agregar Alumno</button>
     </form>
   </div>
-</div>
-
-{% if saved == 'True' %}
-  <div class="alert alert-danger" role="alert">
-      El alumno se guardo correctamente
+  {% if saved == 'True' %}
+  <div class="alert alert-success" role="alert">
+        El alumno se guardo correctamente
   </div>
-{% endif %}
+  {% endif %}
 
-{% if saved == 'False' %}
-<div class="alert alert-danger" role="alert">
-  El alumno no se guardo de forma devida
+  {% if saved == 'False' %}
+  <div class="alert alert-danger" role="alert">
+    El alumno no se guardo de forma devida
+  </div>
+  {% endif %}
 </div>
-{% endif %}
-
 {% endblock %}

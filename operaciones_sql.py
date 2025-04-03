@@ -60,13 +60,14 @@ def get_pfp(username):
         return None
     
 #Dar de alta a nuevos tecnicos estudiantes
-def agregar_estudiantes(nombre, correo, telefono, pswd):
+def agregar_estudiantes(nombre, correo, telefono, rol_id, pswd):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "INSERT INTO Usuarios(Nom_Usuario, Correo_Cliente, Tel_Cliente, Password, ID_Rol) VALUES('" + nombre + "', '" + correo + "', " + str(telefono) + ", '" + pswd + "', " + str(1) + ")"
+    query = "INSERT INTO Usuarios(Nom_Usuario, Correo_Cliente, Tel_Cliente, Password, ID_Rol) VALUES('" + nombre + "', '" + correo + "', " + str(telefono) + ", '" + pswd + "', " + str(rol_id) + ")"
     cursor.execute(query)
     
+    connection.commit()
     cursor.close()
     connection.close()
 
