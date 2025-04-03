@@ -38,10 +38,10 @@ def cursos():
         nombre_curso = curso[0]
         descripcion_curso = curso[1]
 
-        modulos = operaciones_sql.get_lecciones(id_curso)
+        modulos, progreso = operaciones_sql.get_lecciones(id_curso)
         #print(modulos)
 
-        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos)
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso)
     
 @app.route('/leccion/<id_curso>/<tipo>/<id>')
 def leccion(id_curso, tipo, id):

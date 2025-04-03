@@ -102,13 +102,16 @@ def get_lecciones(id_curso):
     modulos = cursor.fetchall()
 
     list = []
-
+    completadas = 0.0
+    total = 0.0
     for modulo in modulos:
         # obtener lecciones
         id_str = str(modulo[1])
         query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
         cursor.execute(query)
         lecciones = cursor.fetchall()
+
+        
         
         # obtener calificaciones de las lecciones
         lecciones_lista = []
@@ -127,13 +130,21 @@ def get_lecciones(id_curso):
             calificacion = cursor.fetchone()
             lecciones_lista.append([leccion, calificacion[0]])
 
+            if calificacion[0] != -1 :
+                completadas = completadas + 1
+            total = total + 1
+
 
         list.append([modulo, lecciones_lista])
 
     cursor.close()
     connection.close()
 
-    return list
+    # calcular progreso
+    progreso = completadas / total * 100
+    progreso = round(progreso, 2)
+
+    return list, progreso
 
 
 

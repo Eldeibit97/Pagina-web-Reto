@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block header %}
-    {{ cuestionario[0] }} - {{ cuestionario[1] }}
+    {{ cuestionario[0] }} - <span id="timer">{{ cuestionario[1] }}</span>
 {% endblock %}
 
 {% block content %}
@@ -51,6 +51,8 @@
 </div>
 
 <script>
+    
+
     function checarRespuestas() {
         var preguntas_respuestas = {{ preguntas_respuestas|tojson }};
 
