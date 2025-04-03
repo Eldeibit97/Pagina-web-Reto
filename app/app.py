@@ -55,6 +55,7 @@ def leccion(id_curso, tipo, id):
             return render_template('video.html', video=video, id_curso=id_curso)
         elif tipo == 'Cuestionario':
             cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
+
             return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas)
         elif tipo == 'Lectura':
             lectura, paginas = operaciones_sql.get_lectura(id)

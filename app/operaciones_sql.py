@@ -131,7 +131,7 @@ def get_lecciones(id_curso):
             lecciones_lista.append([leccion, calificacion[0]])
 
             if calificacion[0] != -1 :
-                completadas = completadas + 1
+                completadas = completadas + calificacion[0]/100
             total = total + 1
 
 
