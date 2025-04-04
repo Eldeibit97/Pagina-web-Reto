@@ -1,5 +1,7 @@
 import mysql.connector
 import datetime
+import os
+from flask import session
 
 
 # Conectarse a base de datos
@@ -157,8 +159,6 @@ def get_lecciones(id_curso):
 
     return list
 
-    
-
 # Crear y agregar cursos 
 def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
     connection = connect()
@@ -206,13 +206,13 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
 
     cursor.close()
     connection.close()    
-    
+      
 ## Video ##
 def get_video(id):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT v.Nombre_Video, v.Link_Video FROM Video v WHERE v.ID_Video = " + str(id)
+    query = "SELECT v.Nombre_Video, v.Link_Video, v.ID_Video FROM Video v WHERE v.ID_Video = " + str(id)
     cursor.execute(query)
     video = cursor.fetchall()
     video = video[0]
@@ -227,7 +227,7 @@ def get_cuestionario(id):
     cursor = connection.cursor()
 
     # Obtener el nombre y tiempo del cuestionario
-    query = "SELECT c.Nom_Cuestionario, c.Tiempo FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
+    query = "SELECT c.Nom_Cuestionario, c.Tiempo, c.ID_Cuestionario FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
     cursor.execute(query)
     cuestionario = cursor.fetchall()
     cuestionario = cuestionario[0]
@@ -269,3 +269,21 @@ def get_lectura(id):
     cursor.close()
     connection.close()
     return lectura, paginas
+
+## Subir calificacion ##
+def subir_calificacion(id_leccion, tipo, calificacion):
+    connection = connect()
+    cursor = connection.cursor()
+
+    if tipo == 'Video':
+        query = "INSERT INTO Usuario_Video (Fecha_Video, ID_Usuario, ID_Video) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Lectura":
+        query = "INSERT INTO Usuario_Lectura (Fecha_Lectura, ID_Usuario, ID_Lectura) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Cuestionario":
+        query = "INSERT INTO Evaluaciones (ID_Usuario, Puntaje, ID_Cuestionario, Fecha ) VALUES (" + str(session['id']) + ", " + str(calificacion) + ", " + str(id_leccion) + ", NOW())"
+        cursor.execute(query)
+        connection.commit()
