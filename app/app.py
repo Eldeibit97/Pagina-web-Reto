@@ -47,9 +47,9 @@ def cursos():
 
         if session['id_rol'] == 3 or session['id_rol'] == 2:
             asignados, no_asignados = operaciones_sql.get_alumnos_curso(id_curso)
-            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados)
+            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados, id_rol=id_rol)
         else:
-            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None)
+            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None, id_rol=id_rol)
     
 
 @app.route('/vista_curso/<id_curso>')
