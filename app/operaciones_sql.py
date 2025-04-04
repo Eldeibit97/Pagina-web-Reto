@@ -22,7 +22,7 @@ def validate_credentials(username, password):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS is_valid FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "' OR u.Password = '" + password + "'"
+    query = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS is_valid FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "' AND u.Password = '" + password + "'"
     cursor.execute(query)
     is_valid = cursor.fetchall()
 
