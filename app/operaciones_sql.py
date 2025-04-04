@@ -133,6 +133,8 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
     query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
     query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
     query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pregunta = "INSERT INTO Preguntas (Pregunta, ID_Cuestionario) VALUES (%s, %s);"
+    query_respuesta = "INSERT INTO Respuestas (Respuestas, ID_Pregunta, Correcta) VALUES (%s, %s, %s);"
 
     for modulo in Modulos:
         nom_modulo = modulo['nomModulo']
@@ -157,9 +159,24 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
                 cursor.execute(query_video, values_video)
 
             elif tipo_archivo == 'cuestionario':
-                # pregunta = tarjeta.get('pregunta', '')
                 values_cuestionario = (nom_tarjeta, modulo_id, fecha_creacion)
                 cursor.execute(query_cuestionario, values_cuestionario)
+                cuestionario_id = cursor.lastrowid
+
+                preguntas = tarjeta.get('pregunta', [])
+                for pregunta in preguntas:
+                    texto_pregunta = pregunta.get('pregunta')
+                    cursor.execute(query_pregunta, (texto_pregunta, cuestionario_id))
+                    pregunta_id = cursor.lastrowid
+
+                    respuestas = pregunta.get('opciones', [])
+                    correctas = pregunta.get('correctas', [])  # 'correctas' のリストを取得（デフォルトは空リスト）
+
+                    for i, respuesta in enumerate(respuestas):
+                        # 'correctas' に値がある場合、それを使用し、ない場合は 0 にする
+                        correcta = correctas[i] if i < len(correctas) else 0  
+                        cursor.execute(query_respuesta, (respuesta, pregunta_id, correcta))
+
 
     connection.commit() #commit the change
 

@@ -69,12 +69,34 @@
       margin-top: 20px;
       width: 100%;
     }
+
+    /* Botón para volver a la página de cursos */
+    #btnVolver {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #2c00f0;
+      color: white;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    #btnVolver:hover {
+      background-color: #130170;
+    }
+
     .next-button:hover {
       background-color: #e6c200;
     }
   </style>
 </head>
 <body>
+  <button id="btnVolver" >Volver a Cursos</button>
+
   <div class="container">
     <h1>Crear Curso</h1>
     <label for="course-name">Nombre del curso</label>
@@ -91,11 +113,18 @@
       <button id="btnImagen" onclick="pedirImagen()">+</button>
     </div>
     
+
     <!-- El botón "Siguiente" validará datos antes de redirigir -->
     <button class="next-button" onclick="validarDatos()">Siguiente</button>
   </div>
   
   <script>
+    const btnVolver = document.getElementById('btnVolver');
+
+    btnVolver.addEventListener('click', () => {
+      window.location.href = "/cursos"; 
+    });
+
     function pedirImagen() {
       let url = prompt("Introduce la URL de la imagen:");
       if (url) {
@@ -132,7 +161,11 @@
       window.location.href = "/crear_modulo_form";
     }
     
-
+    // Función para volver a la página de cursos
+    function volverACursos() {
+      window.location.href = "/cursos";
+    }
+    
     // Al cargar la página, se verifica si hay una imagen guardada y se muestra
     window.onload = function () {
       let urlGuardada = localStorage.getItem("imagenURL");
