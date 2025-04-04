@@ -55,6 +55,7 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
+        os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
@@ -184,7 +185,10 @@ def get_lecciones(id_curso):
     connection.close()
 
     # calcular progreso
-    progreso = completadas / total * 100
+    if total == 0:
+        progreso = 0
+    else:
+        progreso = completadas / total * 100
     progreso = round(progreso, 2)
 
     return list, progreso
@@ -331,3 +335,85 @@ def subir_calificacion(id_leccion, tipo, calificacion):
         query = "INSERT INTO Evaluaciones (ID_Usuario, Puntaje, ID_Cuestionario, Fecha ) VALUES (" + str(session['id']) + ", " + str(calificacion) + ", " + str(id_leccion) + ", NOW())"
         cursor.execute(query)
         connection.commit()
+
+def get_alumnos_curso(id_curso):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = """
+        SELECT u.Nom_Usuario, u.ID_Usuario FROM Usuarios u
+        LEFT JOIN Usuario_Curso uc ON uc.ID_Usuario = u.ID_Usuario
+        WHERE ID_Rol = 1 AND uc.ID_Curso = """ + str(id_curso)
+    cursor.execute(query)
+    asignados = cursor.fetchall()
+
+    query = """
+        SELECT u.Nom_Usuario, u.ID_Usuario
+        FROM Usuarios u
+        WHERE u.ID_Rol = 1
+        AND u.ID_Usuario NOT IN (
+            SELECT uc.ID_Usuario
+            FROM Usuario_Curso uc
+            WHERE uc.ID_Curso = """ + str(id_curso) + ")"
+    cursor.execute(query)
+    no_asignados = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return asignados, no_asignados
+
+def asignar_alumno(id_curso, id_usuario):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "INSERT INTO Usuario_Curso (ID_Usuario, ID_Curso) VALUES (" + str(id_usuario) + ", " + str(id_curso) + ")"
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def remover_alumno(id_curso, id_usuario):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "DELETE FROM Usuario_Curso WHERE ID_Usuario = " + str(id_usuario) + " AND ID_Curso = " + str(id_curso)
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def alumnos_todos(id_curso, tipo):
+    connection = connect()
+    cursor = connection.cursor()
+
+    if tipo == 'asignar':
+        query = """
+        INSERT INTO Usuario_Curso (ID_Usuario, ID_Curso)
+        SELECT u.ID_Usuario, %s
+        FROM Usuarios u
+        WHERE u.ID_Rol = 1
+        AND u.ID_Usuario NOT IN (
+        SELECT uc.ID_Usuario
+        FROM Usuario_Curso uc
+        WHERE uc.ID_Curso = %s
+        )
+        """
+        values = (id_curso, id_curso)
+        cursor.execute(query, values)
+        connection.commit()
+    
+    elif tipo == 'remover':
+        query = """
+            DELETE uc
+            FROM Usuario_Curso uc
+            JOIN Usuarios u ON uc.ID_Usuario = u.ID_Usuario
+            WHERE uc.ID_Curso = %s AND u.ID_Rol = 1
+        """
+        values = (id_curso,)
+        cursor.execute(query, values)
+        connection.commit()
+    cursor.close()
+    connection.close()

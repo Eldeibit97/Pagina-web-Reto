@@ -44,8 +44,33 @@ def cursos():
         modulos, progreso = operaciones_sql.get_lecciones(id_curso)
         #print(modulos)
 
-        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso)
+        if session['id_rol'] == 3 or session['id_rol'] == 2:
+            asignados, no_asignados = operaciones_sql.get_alumnos_curso(id_curso)
+            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados)
+        else:
+            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None)
     
+
+@app.route('/vista_curso/<id_curso>')
+def vista_curso(id_curso):
+    return f'''
+        <html>
+        <head>
+            <title>Redirecting...</title>
+            <script type="text/javascript">
+                window.onload = function() {{
+                    document.getElementById('redirectForm').submit();
+                }}
+            </script>
+        </head>
+        <body>
+            <form id="redirectForm" action="/cursos" method="POST">
+                <input type="hidden" name="id_curso" value="{id_curso}">
+            </form>
+            
+        </body>
+        </html>
+        '''
 
 #vista de las lecciones
 @app.route('/leccion/<id_curso>/<tipo>/<id>')
@@ -239,6 +264,28 @@ def crear_curso():
     except Exception as e:
         print(e)
         return jsonify({'message': 'Error al crear el curso'}), 500
+
+
+@app.route('/asignar_alumno/<id_curso>/<id_alumno>')
+def asignar_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.asignar_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/remover_alumno/<id_curso>/<id_alumno>')
+def remover_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.remover_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/alumnos_todos/<id_curso>/<tipo>')
+def alumnos_todos(id_curso, tipo):
+    operaciones_sql.alumnos_todos(id_curso, tipo)
+    return redirect(url_for('vista_curso', id_curso=id_curso))
 
 
 if __name__ == '__main__':

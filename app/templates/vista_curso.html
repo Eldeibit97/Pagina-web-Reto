@@ -8,40 +8,6 @@
   Cursos - {{ nombre_curso }}
 {% endblock %}
 
-{% block sidebar_btns %}
-{% if session['id_rol'] == 2 %}
-<a
-href="{{ url_for('crear_curso_form') }}"
-class="btn {% if session['section'] == 'creacion_curso' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
->
-<i class='bx bx-book-add'></i>
-    Crear Curso
-</a>
-
-<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
-
-<a
-href="{{ url_for('alta') }}"
-class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
->
-<i class='bx bx-user-plus'></i>
-    Dar de alta
-</a>
-{% endif %}
-
-{% if session['id_rol'] == 3 %}
-<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
-<a
-href="{{ url_for('visualizar_alumnos') }}"
-class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
->
-<i class='bx bxs-user-detail'></i>
-    Alumnos
-</a>
-{% endif %}
-
-{% endblock %}
-
 {% block content %}
 <a
     href="{{ url_for('cursos') }}"
@@ -56,13 +22,71 @@ class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}bt
 <p class="text-secondary">{{ descripcion_curso }}</p>
 <br>
 
+
+
+
+
+
+
+
+
+<!-- Parte del profesor -->
+{% if session['id_rol'] == 3 %}
+
+<h5>Alumnos asignados a este curso:</h5>
+<ol class="list-group list-group-numbered">
+  {% for asignado in asignados %}
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ asignado[0] }}</div>
+    </div>
+    <a href="{{ url_for('remover_alumno', id_curso=id_curso, id_alumno=asignado[1]) }}">
+      <button class="btn btn-danger">-</button>
+    </a>
+  </li>
+  {% endfor %}
+</ol>
+<br>
+
+<a href="{{ url_for('alumnos_todos', id_curso=id_curso, tipo='remover') }}">
+  <button class="btn btn-danger">Remover todos</button>
+</a>
+<a href="{{ url_for('alumnos_todos', id_curso=id_curso, tipo='asignar') }}">
+  <button class="btn btn-success">Asignar todos</button>
+</a>
+<br>
+<br>
+
+<h5>Alumnos no asignados a este curso:</h5>
+<ol class="list-group list-group-numbered">
+  {% for no_asignado in no_asignados %}
+  <li class="list-group-item d-flex justify-content-between align-items-start">
+    <div class="ms-2 me-auto">
+        <div class="fw-bold">{{ no_asignado[0] }}</div>
+    </div>
+    <a href="{{ url_for('asignar_alumno', id_curso=id_curso, id_alumno=no_asignado[1]) }}">
+      <button class="btn btn-success">+</button>
+    </a>
+  </li>
+  {% endfor %}
+</ol>
+
+<br>
+<br>
+{% endif %}
+
+<!-- Alumno -->
+{% if session['id_rol'] == 1 %}
+
 <h5>Progreso: {{ progreso }}%</h5>
 <br>
 <div class="progress" style="height: 30px;">
   <div class="progress-bar" role="progressbar" style="width: {{ progreso }}%;" aria-valuenow="{{ progreso }}" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
-<br>
+
+
+{% endif %}
 
 {% for modulo in modulos %}
   <h5>{{ modulo[0][0] }}</h5>
@@ -91,4 +115,7 @@ class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}bt
 
 {% endfor %}
 
+
+
 {% endblock %}
+
