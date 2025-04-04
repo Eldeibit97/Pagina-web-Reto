@@ -173,6 +173,10 @@ def crear_curso_form():
 def crear_modulo_form():
     return render_template('CreacionModulos.html')
 
+@app.route('/crear_cuestionario_form', methods=['GET'])
+def crear_cuestionario_form():
+    return render_template('CreacionCuestionarios.html')
+
 
 @app.route('/crear_curso', methods=['POST'])
 def crear_curso():
@@ -186,7 +190,6 @@ def crear_curso():
     courseDescripcion = data.get('courseDescripcion')
     courseImagen_url = data.get('courseImagen_url')
     modulos =data.get('modulos')
-
 
     try:
         operaciones_sql.crear_curso(courseNombre, courseDescripcion, courseImagen_url, modulos)

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creacion de cuestionario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            justify-content: space-between;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #backButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #backButton:hover {
+            background-color: darkblue;
+        }
+
+        #saveButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #saveButton:hover {
+            background-color: darkorange;
+        }
+
+        #Title {
+            margin-top: 50px;
+            text-align: center;
+            
+        }
+
+        #questionList {
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+            overflow: auto;
+        }
+
+        #questionList h2 {
+            text-align: center;
+        }
+
+        .question {
+            background-color: rgba(0, 255, 255, 0.327);
+            border: 2px solid black;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+   
+        .question input[type="text"] {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            height: 20px
+        }
+
+        .option-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .option-wrapper input[type="text"] {
+            flex: 1;
+            margin-right: 5px;
+            padding: 5px;
+            width: 300px;
+        }
+
+        .option-wrapper input[type="checkbox"] {
+            margin-left: 5px;
+            align-items:flex-start;
+        }
+
+        .option-wrapper label {
+            width: 70px;
+            margin-left: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .correct-option {
+            color: green;
+        }
+
+        .incorrect-option {
+            color: red;
+        }
+
+        /* 質問追加ボタン */
+        #addQuestion {
+            background-color: green;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            float: right;
+        }
+
+        #addQuestion:hover {
+            background-color: darkgreen;
+        }
+
+        .deletePreguntaButton {
+            background-color: rgb(255, 47, 0);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 100px;
+            float: right;
+            margin-bottom: 10px;
+        }
+
+        .deletePreguntaButton:hover {
+            background-color: rgb(139, 28, 3);
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="backButton">Back to Courses</button>
+
+    <button id="saveButton">Guardar</button>
+
+    <h1 id = "Title">Editar Cuestionario: </h1>
+
+    <div id="questionList">
+        <h2>Agregar la pregunta manual</h2>
+        <fieldset class="question">
+            <legend>Pregunta 1</legend>
+            <button class="deletePreguntaButton">×</button>
+            <input type="text" placeholder="Ingresar Pregunta">
+            <div class="options">
+                <div class="option-wrapper">
+                    <input type="text" placeholder="Opcion 1">
+                    <input type="checkbox" id="option1" title="Esta es la respuesta correcta">
+                    <label for="option1" class="incorrect-option">Incorrecta</label>
+                </div>
+                <div class="option-wrapper">
+                    <input type="text" placeholder="Opcion 2">
+                    <input type="checkbox" id="option2" title="Esta es la respuesta correcta">
+                    <label for="option2" class="incorrect-option">Incorrecta</label>
+                </div>
+                <div class="option-wrapper">
+                    <input type="text" placeholder="Opcion 3">
+                    <input type="checkbox" id="option3" title="Esta es la respuesta correcta">
+                    <label for="option3" class="incorrect-option">Incorrecta</label>
+                </div>
+                <div class="option-wrapper">
+                    <input type="text" placeholder="Opcion 4">
+                    <input type="checkbox" id="option4" title="Esta es la respuesta correcta">
+                    <label for="option4" class="incorrect-option">Incorrecta</label>
+                </div>
+            </div>
+        </fieldset>
+ 
+    <button id="addQuestion">Agregar preguntas</button>
+    </div>
+
+    
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const addQuestionButton = document.getElementById("addQuestion");
+            const questionList = document.getElementById("questionList");
+
+            questionList.addEventListener("click", function (event) {
+                if (event.target && event.target.classList.contains("deletePreguntaButton")) {
+                    const questionFieldset = event.target.closest(".question");
+                    if (questionFieldset) {
+                        questionFieldset.remove();
+                        renumberQuestions();
+                    }
+                }
+            });
+
+        addQuestionButton.addEventListener("click", function () {
+            const newQuestion = document.createElement("fieldset");
+            newQuestion.classList.add("question");
+
+            const legend = document.createElement("legend");
+            newQuestion.appendChild(legend);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "×";
+            deleteBtn.classList.add("deletePreguntaButton");
+            newQuestion.appendChild(deleteBtn);
+
+            const questionInput = document.createElement("input");
+            questionInput.type = "text";
+            questionInput.placeholder = "Ingresar Pregunta";
+            newQuestion.appendChild(questionInput);
+
+            const optionsContainer = document.createElement("div");
+            optionsContainer.classList.add("options");
+
+            for (let i = 1; i <= 4; i++) {
+                const optionWrapper = document.createElement("div");
+                optionWrapper.classList.add("option-wrapper");
+
+                const optionInput = document.createElement("input");
+                optionInput.type = "text";
+                optionInput.placeholder = `Opcion ${i}`;
+                optionWrapper.appendChild(optionInput);
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.title = "Esta es la respuesta correcta";
+                optionWrapper.appendChild(checkbox);
+
+                const label = document.createElement("label");
+                label.classList.add("incorrect-option");
+                label.textContent = "Incorrecta";
+                optionWrapper.appendChild(label);
+
+                checkbox.addEventListener("change", function() {
+                    if (checkbox.checked) {
+                        label.classList.remove("incorrect-option");
+                        label.classList.add("correct-option");
+                        label.textContent = "Correcta";
+                    } else {
+                        label.classList.remove("correct-option");
+                        label.classList.add("incorrect-option");
+                        label.textContent = "Incorrecta";
+                    }
+                });
+
+                optionsContainer.appendChild(optionWrapper);
+            }
+
+            newQuestion.appendChild(optionsContainer);
+
+            questionList.insertBefore(newQuestion, addQuestionButton);
+
+            renumberQuestions();
+        });
+
+        document.querySelectorAll(".option-wrapper input[type='checkbox']").forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                const label = this.nextElementSibling;
+                if (this.checked) {
+                    label.classList.remove("incorrect-option");
+                    label.classList.add("correct-option");
+                    label.textContent = "Correcta";
+                } else {
+                    label.classList.remove("correct-option");
+                    label.classList.add("incorrect-option");
+                    label.textContent = "Incorrecta";
+                }
+            });
+        });
+
+
+        function renumberQuestions() {
+            const allQuestions = document.querySelectorAll(".question");
+            allQuestions.forEach((questionElem, index) => {
+                const legend = questionElem.querySelector("legend");
+                if (legend) {
+                    legend.textContent = "Pregunta " + (index + 1);
+                }
+            });
+        }
+
+        renumberQuestions();
+    });
+
+    const cuestionarioTitle = sessionStorage.getItem('cuestionarioTitle')  || "Nuevo Cuestionario";
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.getElementById("Title").textContent = "Editar Cuestionario: " + cuestionarioTitle;
+
+        const saveButton = document.getElementById("saveButton");
+
+        saveButton.addEventListener("click", function () {
+            const questions = document.querySelectorAll(".question");
+            let questionData = [];
+
+            questions.forEach((question, index) => {
+                let pregunta = question.querySelector("input[type='text']").value;
+                let opciones = [];
+                let correctas = [];
+
+                question.querySelectorAll(".option-wrapper").forEach((optionWrapper, optionIndex) => {
+                    let opcionTexto = optionWrapper.querySelector("input[type='text']").value;
+                    let checkbox = optionWrapper.querySelector("input[type='checkbox']");
+
+                    opciones.push(opcionTexto);
+                    correctas.push(checkbox.checked ? 1 : 0); 
+
+                });
+
+                questionData.push({
+                    id: index + 1,
+                    pregunta: pregunta,
+                    opciones: opciones,
+                    correctas: correctas
+                });
+            });
+
+            
+            const jsonData = JSON.stringify({
+                title: cuestionarioTitle,
+                preguntas: questionData
+            });
+            console.log(jsonData);
+            
+            sessionStorage.setItem("cuestionarioData", jsonData);
+
+            alert("Saved");
+
+            window.location.href = "/crear_modulo_form";
+        });
+    });
+
+    </script>
+</body>
+</html>
