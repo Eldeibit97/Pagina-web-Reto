@@ -145,19 +145,49 @@ def get_lecciones(id_curso):
     modulos = cursor.fetchall()
 
     list = []
-
+    completadas = 0.0
+    total = 0.0
     for modulo in modulos:
         # obtener lecciones
         id_str = str(modulo[1])
         query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
         cursor.execute(query)
         lecciones = cursor.fetchall()
-        list.append([modulo, lecciones])
+
+        
+        
+        # obtener calificaciones de las lecciones
+        lecciones_lista = []
+
+        for leccion in lecciones:
+            if leccion[1] == 'Lectura':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Lectura ul WHERE ID_Lectura = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Video':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Video uv  WHERE ID_Video  = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Cuestionario':
+                query = "SELECT IFNULL((SELECT Puntaje FROM Evaluaciones WHERE ID_Usuario = " + str(session['id']) +  " AND ID_Cuestionario = " + str(leccion[0]) + " ORDER BY Fecha DESC LIMIT 1), -1)"
+                cursor.execute(query)
+            
+            calificacion = cursor.fetchone()
+            lecciones_lista.append([leccion, calificacion[0]])
+
+            if calificacion[0] != -1 :
+                completadas = completadas + calificacion[0]/100
+            total = total + 1
+
+
+        list.append([modulo, lecciones_lista])
 
     cursor.close()
     connection.close()
 
-    return list
+    # calcular progreso
+    progreso = completadas / total * 100
+    progreso = round(progreso, 2)
+
+    return list, progreso
 
 # Crear y agregar cursos 
 def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
@@ -206,7 +236,21 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
 
     cursor.close()
     connection.close()    
-      
+#
+def get_curso(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT c.Nom_Curso, c.Descripcion FROM Cursos c WHERE c.ID_Curso = " + str(id)
+    cursor.execute(query)
+    curso = cursor.fetchall()
+    curso = curso[0]
+
+    cursor.close()
+    connection.close()
+    return curso
+
+
 ## Video ##
 def get_video(id):
     connection = connect()

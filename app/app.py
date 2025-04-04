@@ -21,27 +21,30 @@ def cursos():
     if request.method == 'GET':
         if 'username' in session:
             session['section'] = 'cursos'
+            id_rol = session['id_rol']
             cursos = operaciones_sql.find_cursos(session['id'])
             if session['id_rol'] == 1:
-                return render_template('cursos_alumnos.html', cursos = cursos)
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
             elif session['id_rol'] == 2:
                 cursos = operaciones_sql.get_cursos()
-                return render_template('cursos_admin.html', cursos = cursos)
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
             else:
                 cursos = operaciones_sql.get_cursos()
-                return render_template('cursos_profesores.html', cursos = cursos)
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
         else:
             return redirect(url_for('login', fail='False'))
     else:
-        curso_str = request.form['curso']
-        curso_str = curso_str.strip('()')
-        curso = ast.literal_eval('(' + curso_str + ')')
-        print(curso)
+        
+        session['section'] = 'vista_curso'
+        id_curso = request.form['id_curso']
+        curso = operaciones_sql.get_curso(id_curso)
+        nombre_curso = curso[0]
+        descripcion_curso = curso[1]
 
-        modulos = operaciones_sql.get_lecciones(curso[0])
-        print(modulos)
+        modulos, progreso = operaciones_sql.get_lecciones(id_curso)
+        #print(modulos)
 
-        return render_template('vista_curso.html', curso=curso, modulos=modulos)
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso)
     
 
 #vista de las lecciones
@@ -49,6 +52,7 @@ def cursos():
 def leccion(id_curso, tipo, id):
     if 'username' in session:
         session['section'] = 'leccion'
+
         # Video
         if tipo == 'Video':
             video = operaciones_sql.get_video(id)
@@ -115,6 +119,20 @@ def whirlChat():
         session.modified = True  # Mark session as modified
         
         return render_template("whirlChat.html", history=history)
+
+@app.route('/subir_calificacion', methods=['POST'])
+def subir_calificacion():
+    # Recibir datos del formulario
+    data = request.get_json()
+
+    id_leccion = data['id']
+    tipo = data['tipo']
+    calificacion = data['calificacion']
+
+    # Subir a la base de datos
+    operaciones_sql.subir_calificacion(id_leccion, tipo, calificacion)
+
+    return {"success": True}, 200
 
 
 @app.route('/check', methods=['POST'])
@@ -224,4 +242,5 @@ def crear_curso():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

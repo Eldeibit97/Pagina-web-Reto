@@ -1,104 +1,107 @@
-{% extends "base.html" %} 
+{% extends "cursos.html" %} 
 
 {% block title %} 
 Lectura - {{ lectura[0] }} 
-{% endblock %} 
+{%endblock %} 
 
 {% block header %} 
 Lectura - {{ lectura[0] }} 
 {% endblock %} 
 
-{%block content %}
-  <form action="{{ url_for('cursos') }}" method="post">
-    <input type="hidden" name="id_curso" value="{{ id_curso }}" />
-    <button type="submit" class="btn btn-warning">
-      <i class="bx bx-arrow-back"></i> Regresar a Curso
+{% block sidebar_btns %}
+{% if id_rol == 2 %}
+<a
+href="{{ url_for('crear_curso_form') }}"
+class="btn {% if session['section'] == 'creacion_curso' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+>
+<i class='bx bx-book-add'></i>
+    Crear Curso
+</a>
+
+<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+
+<a
+href="{{ url_for('alta') }}"
+class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+>
+<i class='bx bx-user-plus'></i>
+    Dar de alta
+</a>
+{% endif %}
+
+{% if id_rol == 3 %}
+<p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+<a
+href="{{ url_for('visualizar_alumnos') }}"
+class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+>
+<i class='bx bxs-user-detail'></i>
+    Alumnos
+</a>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('cursos') }}" method="post">
+  <input type="hidden" name="id_curso" value="{{ id_curso }}" />
+  <button type="submit" class="btn btn-warning">
+    <i class="bx bx-arrow-back"></i> Regresar a Curso
+  </button>
+</form>
+<br />
+<h2 id="nombre_pagina" style="text-align: center">{{ paginas[0][3] }}</h2>
+<br />
+<div class="row">
+  <div class="d-flex justify-content-between">
+    <button id="anterior" class="btn btn-warning disabled" onclick="anterior()">
+      <i class="bx bxs-left-arrow"></i> Página anterior
     </button>
-  </form>
-  <br />
-  <h2 id="nombre_pagina" style="text-align: center">{{ paginas[0][3] }}</h2>
-  <br />
-  <div class="row">
-    <div class="d-flex justify-content-between">
-      <button id="anterior" class="btn btn-warning disabled" onclick="anterior()">
-        <i class="bx bxs-left-arrow"></i> Página anterior
-      </button>
-      <p><span id="currentPage">1</span> / <span id="totalPages">{{ length }}</span></p>
-      <button id="siguiente" class="btn btn-warning" onclick="siguiente()">
-        Página siguiente <i class="bx bxs-right-arrow"></i>
-      </button>
-    </div>
+    <p><span id="currentPage">1</span> / <span id="totalPages">{{ length }}</span></p>
+    <button id="siguiente" class="btn btn-warning" onclick="siguiente()">
+      Página siguiente <i class="bx bxs-right-arrow"></i>
+    </button>
   </div>
-  
-  <br />
-  <p id="texto">{{ paginas[0][1] }}</p>
-  
-  <img
-    src="{{ paginas[0][2] }}"
-    id="imagen"
-    style="display: block; margin-left: auto; margin-right: auto; width: 50%"
-  />
-  
-  <script>
-  
-    var page = 1;
-    var paginas = {{ paginas|tojson }};
-    var length = {{ length }};
-  
-    var botonSiguiente = document.getElementById("siguiente");
-    if(length == 1) {
-      botonSiguiente.innerHTML = "Finalizar <i class='bx bx-check'></i>";
-    }
-  
-    // elementos
-    var botonAnterior = document.getElementById("anterior");
-    var currentPage = document.getElementById("currentPage");
-    var texto = document.getElementById("texto");
-    var imagen = document.getElementById("imagen");
-    var nombre_pagina = document.getElementById("nombre_pagina");
-  
-    // ver si mostrar imagen inicial o no
-    if(paginas[page - 1][2] == null) {
-      document.getElementById("imagen").style.display = "none";
-    }
-    else {
-      document.getElementById("imagen").style.display = "block";
-    }
-  
-    function siguiente() {
-      if(page < length) {
-        page++;
-        currentPage.textContent = page;
-        document.getElementById("texto").innerHTML = paginas[page - 1][1];
-        if(paginas[page - 1][2] == null) {
-          document.getElementById("imagen").style.display = "none";
-        }
-        else {
-          document.getElementById("imagen").src = paginas[page - 1][2];
-          document.getElementById("imagen").style.display = "block";
-        }
-        
-        document.getElementById("nombre_pagina").innerHTML = paginas[page - 1][3];
-  
-        if(page == length) {
-          botonSiguiente.innerHTML = "Finalizar <i class='bx bx-check'></i>";
-        }
-  
-        if(page == 2) {
-          botonAnterior.classList.remove("disabled");
-        }
-        
-      }
-      else {
-        alert('¡Felicidades! Has completado la lección.');
-        subirCalificacion({{ lectura[2] }});
-      }
-    }
-  
-    function anterior() {
-      page--;
-  
-      // cambiar pagina
+</div>
+
+<br />
+<p id="texto">{{ paginas[0][1] }}</p>
+
+<img
+  src="{{ paginas[0][2] }}"
+  id="imagen"
+  style="display: block; margin-left: auto; margin-right: auto; width: 50%"
+/>
+
+<script>
+
+  var page = 1;
+  var paginas = {{ paginas|tojson }};
+  var length = {{ length }};
+
+  var botonSiguiente = document.getElementById("siguiente");
+  if(length == 1) {
+    botonSiguiente.innerHTML = "Finalizar <i class='bx bx-check'></i>";
+  }
+
+  // elementos
+  var botonAnterior = document.getElementById("anterior");
+  var currentPage = document.getElementById("currentPage");
+  var texto = document.getElementById("texto");
+  var imagen = document.getElementById("imagen");
+  var nombre_pagina = document.getElementById("nombre_pagina");
+
+  // ver si mostrar imagen inicial o no
+  if(paginas[page - 1][2] == null) {
+    document.getElementById("imagen").style.display = "none";
+  }
+  else {
+    document.getElementById("imagen").style.display = "block";
+  }
+
+  function siguiente() {
+    if(page < length) {
+      page++;
       currentPage.textContent = page;
       document.getElementById("texto").innerHTML = paginas[page - 1][1];
       if(paginas[page - 1][2] == null) {
@@ -110,49 +113,80 @@ Lectura - {{ lectura[0] }}
       }
       
       document.getElementById("nombre_pagina").innerHTML = paginas[page - 1][3];
-  
-      // cambiar botones
-      if(page < 2) {
-        botonAnterior.classList.add("disabled");
+
+      if(page == length) {
+        botonSiguiente.innerHTML = "Finalizar <i class='bx bx-check'></i>";
       }
-      botonSiguiente.innerHTML = "Página siguiente <i class='bx bxs-right-arrow'></i>";
+
+      if(page == 2) {
+        botonAnterior.classList.remove("disabled");
+      }
+      
     }
-    function subirCalificacion(id_lectura) {
-      fetch('/subir_calificacion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id: id_lectura,
-          tipo: 'Lectura',
-          calificacion: 100
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // hacer un post para regresar a vista curso
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '{{ url_for('cursos') }}';
-    
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'id_curso';
-    input.value = {{ id_curso }};
-    form.appendChild(input);
-    
-    document.body.appendChild(form);
-    form.submit();
-        } else {
-          alert('Error al subir la calificación.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    else {
+      alert('¡Felicidades! Has completado la lección.');
+      subirCalificacion({{ lectura[2] }});
     }
-  </script>
+  }
+
+  function anterior() {
+    page--;
+
+    // cambiar pagina
+    currentPage.textContent = page;
+    document.getElementById("texto").innerHTML = paginas[page - 1][1];
+    if(paginas[page - 1][2] == null) {
+      document.getElementById("imagen").style.display = "none";
+    }
+    else {
+      document.getElementById("imagen").src = paginas[page - 1][2];
+      document.getElementById("imagen").style.display = "block";
+    }
+    
+    document.getElementById("nombre_pagina").innerHTML = paginas[page - 1][3];
+
+    // cambiar botones
+    if(page < 2) {
+      botonAnterior.classList.add("disabled");
+    }
+    botonSiguiente.innerHTML = "Página siguiente <i class='bx bxs-right-arrow'></i>";
+  }
+  function subirCalificacion(id_lectura) {
+    fetch('/subir_calificacion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id_lectura,
+        tipo: 'Lectura',
+        calificacion: 100
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // hacer un post para regresar a vista curso
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '{{ url_for('cursos') }}';
   
-  {% endblock %}
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'id_curso';
+  input.value = {{ id_curso }};
+  form.appendChild(input);
+  
+  document.body.appendChild(form);
+  form.submit();
+      } else {
+        alert('Error al subir la calificación.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+{% endblock %}

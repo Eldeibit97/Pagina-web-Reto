@@ -42,7 +42,7 @@ padding: 1rem;
 }
 
 /* Make sure form takes full width of its container */
-form {
+.forms {
 width: 100%;
 height: 100%;
 }
