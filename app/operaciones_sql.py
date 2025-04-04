@@ -55,6 +55,7 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
+        os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
@@ -184,7 +185,10 @@ def get_lecciones(id_curso):
     connection.close()
 
     # calcular progreso
-    progreso = completadas / total * 100
+    if total == 0:
+        progreso = 0
+    else:
+        progreso = completadas / total * 100
     progreso = round(progreso, 2)
 
     return list, progreso
