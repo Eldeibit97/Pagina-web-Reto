@@ -40,33 +40,54 @@ def cursos():
         curso = operaciones_sql.get_curso(id_curso)
         nombre_curso = curso[0]
         descripcion_curso = curso[1]
+        id_rol=session['id_rol']
 
         modulos, progreso = operaciones_sql.get_lecciones(id_curso)
         #print(modulos)
 
-        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso)
-    
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, id_rol=id_rol)
+
+@app.route('/vista_curso/<id_curso>')
+def vista_curso(id_curso):
+    return f'''
+        <html>
+        <head>
+            <title>Redirecting...</title>
+            <script type="text/javascript">
+                window.onload = function() {{
+                    document.getElementById('redirectForm').submit();
+                }}
+            </script>
+        </head>
+        <body>
+            <form id="redirectForm" action="/cursos" method="POST">
+                <input type="hidden" name="id_curso" value="{id_curso}">
+            </form>
+            
+        </body>
+        </html>
+        '''
 
 #vista de las lecciones
 @app.route('/leccion/<id_curso>/<tipo>/<id>')
 def leccion(id_curso, tipo, id):
     if 'username' in session:
         session['section'] = 'leccion'
-
+        id_rol = session['id_rol']
         # Video
         if tipo == 'Video':
             video = operaciones_sql.get_video(id)
             print(video[1])
-            return render_template('video.html', video=video, id_curso=id_curso)
+            return render_template('video.html', video=video, id_curso=id_curso, id_rol=id_rol)
         elif tipo == 'Cuestionario':
             cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
-            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas)
+            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas, id_rol=id_rol)
         elif tipo == 'Lectura':
             lectura, paginas = operaciones_sql.get_lectura(id)
             print(paginas)
-            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas))
+            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas), id_rol=id_rol)
         else:
-            return redirect(url_for('cursos'))
+            return redirect(url_for('cursos', id_rol=id_rol))
     else:
         return redirect(url_for('login', fail='False'))
 
@@ -152,10 +173,10 @@ def check():
         print(id)
         operaciones_sql.get_pfp(username_input)
 
-        return redirect(url_for('cursos'))
+        return redirect(url_for('cursos', id_rol=id_rol))
     
     else:
-        return redirect(url_for('login', fail='True'))
+        return redirect(url_for('login', fail='True', id_rol=id_rol))
 
 
 @app.route('/login/<fail>', methods=['GET'])
@@ -169,7 +190,8 @@ def login(fail):
 @app.route('/Dar_de_alta', methods=["GET","POST"])
 def alta():
     session['section'] = 'Alta'
-    if session['id_rol'] == 2:
+    id_rol = session['id_rol']
+    if id_rol == 2:
         if request.method == "POST":
             alumno = request.form['new_user']
             correo = request.form['new_mail']
@@ -183,22 +205,23 @@ def alta():
 
             if not exists:
                 operaciones_sql.agregar_estudiantes(alumno, correo, cel, tipo_rol, pswd)
-                return render_template('dar_de_alta.html', saved = 'True')
+                return render_template('dar_de_alta.html', saved = 'True', id_rol=id_rol)
             else:
-                return render_template('dar_de_alta.html', saved = 'False')
+                return render_template('dar_de_alta.html', saved = 'False', id_rol=id_rol)
         else:
-            return render_template('dar_de_alta.html')
+            return render_template('dar_de_alta.html', id_rol=id_rol)
     else:
-        return redirect(url_for('cursos'))
+        return redirect(url_for('cursos', id_rol=id_rol))
 
 @app.route('/Alumnos')
 def visualizar_alumnos():
     session['section'] = 'Vista_alumnos'
+    id_rol = session['id_rol']
     if session['id_rol'] == 3:
         alumnos = operaciones_sql.get_alumnos()
-        return render_template('vista_alumnos.html', alumnos = alumnos)
+        return render_template('vista_alumnos.html', alumnos = alumnos, id_rol=id_rol)
     else:
-        return redirect(url_for('cursos'))
+        return redirect(url_for('cursos', id_rol=id_rol))
     
     
 @app.route('/')
@@ -209,14 +232,16 @@ def home():
 @app.route('/crear_curso_form', methods=['GET'])
 def crear_curso_form():
     session['section'] = 'creacion_curso'
+    id_rol = session['id_rol']
     if session['id_rol'] == 2:
-        return render_template('CreacionCursos.html')
+        return render_template('CreacionCursos.html', id_rol=id_rol)
     else:
-        return redirect(url_for('cursos'))
+        return redirect(url_for('cursos', id_rol))
 
 @app.route('/crear_modulo_form', methods=['GET'])
 def crear_modulo_form():
-    return render_template('CreacionModulos.html')
+    id_rol = session['id_rol']
+    return render_template('CreacionModulos.html', id_rol=id_rol)
 
 
 @app.route('/crear_curso', methods=['POST'])
@@ -239,6 +264,28 @@ def crear_curso():
     except Exception as e:
         print(e)
         return jsonify({'message': 'Error al crear el curso'}), 500
+
+
+@app.route('/asignar_alumno/<id_curso>/<id_alumno>')
+def asignar_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.asignar_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/remover_alumno/<id_curso>/<id_alumno>')
+def remover_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.remover_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/alumnos_todos/<id_curso>/<tipo>')
+def alumnos_todos(id_curso, tipo):
+    operaciones_sql.alumnos_todos(id_curso, tipo)
+    return redirect(url_for('vista_curso', id_curso=id_curso))
 
 
 if __name__ == '__main__':

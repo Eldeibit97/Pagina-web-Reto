@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "cursos.html" %}
 
 {% block title %}
   Crear modulo
@@ -43,20 +43,22 @@ class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}bt
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="/static/css/creacion_modulos_styles.css">
-<div class="monitor">
-  <div id="listaModulosView">
-    <h1 class="headers">Módulos</h1>
-    <ul id="lista-modulos"></ul>
-    <button id="btnAgregar">+</button>
-    <button id="btnListo">Listo</button>
+<div class="cuerpo">
+  <link rel="stylesheet" href="/static/css/creacion_modulos_styles.css">
+  <div class="monitor">
+    <div id="listaModulosView">
+      <h1 class="headers">Módulos</h1>
+      <ul id="lista-modulos"></ul>
+      <button id="btnAgregar"><i class='bx bx-plus'></i></button>
+      <button id="btnListo">Listo</button>
+    </div>
+    <div id="edicionModuloView" class="oculto">
+      <h2 class="headers" id="tituloEdicion">Editar: (Módulo)</h2>
+      <div class="contenedor-tarjetas" id="contenedorTarjetas"></div>
+      <button id="btnAgregarTarjeta"><i class='bx bx-plus'></i></button>
+      <button id="btnGuardar" >Guardar</button>
+    </div>
   </div>
-  <div id="edicionModuloView" class="oculto">
-    <h2 class="headers" id="tituloEdicion">Editar: (Módulo)</h2>
-    <div class="contenedor-tarjetas" id="contenedorTarjetas"></div>
-    <button id="btnAgregarTarjeta">+</button>
-    <button id="btnGuardar" >Guardar</button>
-  </div>
+  <script src="/static/js/creacion_modulos.js"></script>
 </div>
-<script src="/static/js/creacion_modulos.js"></script>
 {% endblock %}
