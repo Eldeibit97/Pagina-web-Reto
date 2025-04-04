@@ -1,5 +1,5 @@
 import mysql.connector
-
+import datetime
 
 
 # Conectarse a base de datos
@@ -158,4 +158,114 @@ def get_lecciones(id_curso):
     return list
 
     
+
+# Crear y agregar cursos 
+def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
+    connection = connect()
+    cursor = connection.cursor()
+
+    query_curso = "INSERT INTO Cursos (Nom_Curso, Descripcion, Link_Img_Curso) VALUES (%s, %s, %s);"
+    values_curso = (nom_curso, desc_curso, img_curso)
+    cursor.execute(query_curso, values_curso)
+
+    curso_id = cursor.lastrowid
+
+    query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+    query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+    query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+
+    for modulo in Modulos:
+        nom_modulo = modulo['nomModulo']
+        values_modulo = (nom_modulo, curso_id)
+        cursor.execute(query_modulo, values_modulo)
+
+        modulo_id = cursor.lastrowid
+        fecha_creacion = datetime.datetime.now()
+
+        for tarjeta in modulo['tarjetas']:
+            tipo_archivo = tarjeta['tipoArchivo']
+            nom_tarjeta = tarjeta['nomTarjeta']
+
+            if tipo_archivo == 'lectura':
+                # lectura_text = tarjeta.get('lecturaText', '')
+                values_lectura = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_lectura, values_lectura)
+
+            elif tipo_archivo == 'video':
+                video_url = tarjeta.get('videoUrl', '')
+                values_video = (nom_tarjeta, video_url, modulo_id, fecha_creacion)
+                cursor.execute(query_video, values_video)
+
+            elif tipo_archivo == 'cuestionario':
+                # pregunta = tarjeta.get('pregunta', '')
+                values_cuestionario = (nom_tarjeta, modulo_id, fecha_creacion)
+                cursor.execute(query_cuestionario, values_cuestionario)
+
+    connection.commit() #commit the change
+
+    cursor.close()
+    connection.close()    
     
+## Video ##
+def get_video(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT v.Nombre_Video, v.Link_Video FROM Video v WHERE v.ID_Video = " + str(id)
+    cursor.execute(query)
+    video = cursor.fetchall()
+    video = video[0]
+
+    cursor.close()
+    connection.close()
+    return video
+
+## Cuestionario ##
+def get_cuestionario(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Obtener el nombre y tiempo del cuestionario
+    query = "SELECT c.Nom_Cuestionario, c.Tiempo FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
+    cursor.execute(query)
+    cuestionario = cursor.fetchall()
+    cuestionario = cuestionario[0]
+
+    # Obtener preguntas y respuestas
+    query = "SELECT p.Pregunta, p.ID_Pregunta FROM Preguntas p WHERE p.ID_Cuestionario = " + str(id)
+    cursor.execute(query)
+    preguntas = cursor.fetchall()
+    preguntas_respuestas = []
+
+    # Obtener respuestas
+    for pregunta in preguntas:
+        query = "SELECT * FROM Respuestas r WHERE r.ID_Pregunta = " + str(pregunta[1])
+        cursor.execute(query)
+        respuestas = cursor.fetchall()
+        preguntas_respuestas.append([pregunta, respuestas])
+
+    #print(preguntas_respuestas)
+
+    cursor.close()
+    connection.close()
+    return cuestionario, preguntas_respuestas
+
+## Lectura ##
+def get_lectura(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT * FROM Lectura l WHERE l.ID_Lectura = " + str(id)
+    cursor.execute(query)
+    lectura = cursor.fetchall()
+    lectura = lectura[0]
+
+    # obtener las paginas
+    query = "SELECT p.ID_Pagina, p.Texto_Pagina, i.URL_Imagen, p.Nom_Pagina FROM Pagina p LEFT JOIN Imagen i ON p.ID_Pagina = i.ID_Pagina WHERE p.ID_Lectura = " + str(id) + " ORDER BY p.ID_Pagina ASC"
+    cursor.execute(query)
+    paginas = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    return lectura, paginas

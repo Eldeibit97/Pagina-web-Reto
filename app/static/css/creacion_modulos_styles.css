@@ -1,0 +1,171 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #fff, #63efff6c);
+  margin: 0; 
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.monitor {
+  background-color: #fff;
+  width: 900px; 
+  min-height: 600px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  padding: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.headers{
+  margin: 0;
+  text-align: center;
+  color: #333;
+}
+.oculto {
+  display: none !important;
+}
+#listaModulosView {
+  flex: 1;
+}
+#lista-modulos {
+  list-style-type: none;
+  margin: 0; 
+  padding: 0;
+}
+#lista-modulos li {
+  background: #f9f9f9;
+  margin: 10px 0; 
+  padding: 15px;
+  border-radius: 8px;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 18px; 
+  color: #555;
+}
+.contenedor-acciones {
+  display: flex; 
+  gap: 10px;
+}
+.editar, .borrar {
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+.editar:hover, .borrar:hover {
+  transform: scale(1.2);
+}
+#btnAgregar {
+  position: absolute; 
+  bottom: 20px; 
+  left: 20px;
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%;
+  border: none; 
+  background-color: #2980b9; 
+  color: #fff;
+  font-size: 32px; 
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+}
+#btnAgregar:hover {
+  background-color: #1c5980;
+}
+#btnListo {
+  position: absolute; 
+  bottom: 20px; 
+  right: 20px;
+  background-color: #ffd700; 
+  border: none; 
+  padding: 10px 20px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  border-radius: 5px; 
+  font-size: 18px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+}
+#btnListo:hover {
+  background-color: #e6c200;
+}
+#edicionModuloView {
+  flex: 1;
+}
+#tituloEdicion {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+.contenedor-tarjetas {
+  display: flex; 
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.tarjeta {
+  background-color: #f9f9f9;
+  width: 200px; 
+  min-height: 130px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 10px;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between;
+}
+.tarjeta p {
+  margin: 0;
+  color: #333;
+}
+.media-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.upload-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+.upload-icon:hover {
+  transform: scale(1.2);
+}
+#btnAgregarTarjeta {
+  background-color: #2980b9; 
+  color: #fff;
+  border: none; 
+  border-radius: 50%;
+  width: 50px; 
+  height: 50px;
+  font-size: 28px; 
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+#btnAgregarTarjeta:hover {
+  background-color: #1c5980;
+}
+#btnGuardar {
+  background-color: #ffd700;
+  border: none; 
+  padding: 10px 20px;
+  font-weight: bold; 
+  cursor: pointer;
+  border-radius: 5px; 
+  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background-color 0.3s;
+}
+#btnGuardar:hover {
+  background-color: #e6c200;
+}

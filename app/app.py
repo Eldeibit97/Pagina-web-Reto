@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, render_template, session
+from flask import Flask, jsonify, redirect, url_for, request, render_template, session
 import operaciones_sql
 #from openai import OpenAI
 import os
@@ -15,6 +15,7 @@ app.secret_key = 'super secret key'
 
 # Endpoints
 
+#vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])
 def cursos():
     if request.method == 'GET':
@@ -42,6 +43,31 @@ def cursos():
 
         return render_template('vista_curso.html', curso=curso, modulos=modulos)
     
+
+#vista de las lecciones
+@app.route('/leccion/<id_curso>/<tipo>/<id>')
+def leccion(id_curso, tipo, id):
+    if 'username' in session:
+        session['section'] = 'leccion'
+        # Video
+        if tipo == 'Video':
+            video = operaciones_sql.get_video(id)
+            print(video[1])
+            return render_template('video.html', video=video, id_curso=id_curso)
+        elif tipo == 'Cuestionario':
+            cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
+            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas)
+        elif tipo == 'Lectura':
+            lectura, paginas = operaciones_sql.get_lectura(id)
+            print(paginas)
+            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas))
+        else:
+            return redirect(url_for('cursos'))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+
+
 @app.route('/whirlChat', methods=['GET', 'POST'])
 def whirlChat():
     # Initialize history only if it doesn't exist yet
@@ -121,11 +147,6 @@ def login(fail):
     else:
         return render_template('login.html', fail='False')
 
-    
-@app.route('/')
-def home():
-    return redirect(url_for('login', fail='False'))
-
 
 @app.route('/Dar_de_alta', methods=["GET","POST"])
 def alta():
@@ -160,6 +181,47 @@ def visualizar_alumnos():
         return render_template('vista_alumnos.html', alumnos = alumnos)
     else:
         return redirect(url_for('cursos'))
+    
+    
+@app.route('/')
+def home():
+    return redirect(url_for('login', fail='False'))
+
+
+@app.route('/crear_curso_form', methods=['GET'])
+def crear_curso_form():
+    session['section'] = 'creacion_curso'
+    if session['id_rol'] == 2:
+        return render_template('CreacionCursos.html')
+    else:
+        return redirect(url_for('cursos'))
+
+@app.route('/crear_modulo_form', methods=['GET'])
+def crear_modulo_form():
+    return render_template('CreacionModulos.html')
+
+
+@app.route('/crear_curso', methods=['POST'])
+def crear_curso():
+    # if 'username' not in session:
+    #     return jsonify({'message': 'No autorizado'}), 401
+
+    data = request.get_json()
+    print("JSON recibido:", data)
+
+    courseNombre = data.get('courseNombre')
+    courseDescripcion = data.get('courseDescripcion')
+    courseImagen_url = data.get('courseImagen_url')
+    modulos =data.get('modulos')
+
+
+    try:
+        operaciones_sql.crear_curso(courseNombre, courseDescripcion, courseImagen_url, modulos)
+        return jsonify({'message': 'Curso creado exitosamente'})
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Error al crear el curso'}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

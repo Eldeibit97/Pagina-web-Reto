@@ -1,0 +1,34 @@
+{% extends "cursos_admin.html" %}
+
+{% block title %}
+  Crear Curso
+{% endblock %}
+
+{% block header %}
+  Crear Curso
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <link rel="stylesheet" href="/static/css/creacion_cursos_styles.css">
+  <h1 class="headers">Crear Curso</h1>
+  <label for="course-name" class="etiqueta">Nombre del curso</label>
+  <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
+  
+  <label for="description">Descripción</label>
+  <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
+  
+  <label class="etiqueta">Imagen</label>
+  <div class="icon-upload">
+    <!-- La imagen se mostrará en este elemento al guardar la URL -->
+    <img id="imagen" src="" alt="Imagen cargada">
+    <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
+    <button id="btnImagen" onclick="pedirImagen()">+</button>
+  </div>
+  
+  <!-- El botón "Siguiente" validará datos antes de redirigir -->
+  <button class="next-button" onclick="validarDatos()">Siguiente</button>
+</div>
+
+<script src="/app/static/js/creacion_cursos.js"></script>
+{% endblock %}

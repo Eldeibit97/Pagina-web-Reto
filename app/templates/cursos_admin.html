@@ -10,8 +10,8 @@
 
 {% block sidebar_btns %}
 <a
-href="{{ url_for('alta') }}"
-class="btn {% if session['section'] == 'Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+href="{{ url_for('crear_curso_form') }}"
+class="btn {% if session['section'] == 'creacion_curso' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
 >
 <i class='bx bx-book-add'></i>
     Crear Curso

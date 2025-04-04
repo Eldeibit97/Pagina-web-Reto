@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cuestionario - {{ cuestionario[0] }}
+{% endblock %}
+
+{% block header %}
+    {{ cuestionario[0] }} - <span id="contador">{{ cuestionario[1] }}</span>
+{% endblock %}
+
+{% block content %}
+
+<form action="{{ url_for('cursos') }}" method="post">
+<input type="hidden" name="id_curso" value="{{ id_curso }}" />
+<button type="submit" class="btn btn-warning">
+    <i class="bx bx-arrow-back"></i> Regresar a Curso
+</button>
+</form>
+<br />
+<h2 id="nombre_pagina" style="text-align: center">{{ cuestionario[0] }}</h2>
+<br />
+
+{% for pregunta in preguntas_respuestas %}
+    <div id="{{ pregunta[0][1] }}">
+        <h5>{{ pregunta[0][0] }}</h5>
+
+        {% for respuesta in pregunta[1] %}
+            <input type="radio" id="{{ respuesta[1] }}" name="{{ respuesta[2] }}" value="{{ respuesta[3] }}">
+            <label for="{{ respuesta[1] }}">{{ respuesta[0] }}</label><br>
+        {% endfor %}
+
+        
+    </div>
+    <br>
+
+{% endfor %}
+
+<div class="row">
+    <div class="d-flex justify-content-center">
+        <button id="botonEntregar" class="btn btn-warning" style="width: 300px;" onclick="checarRespuestas()">
+            Entregar Cuestionario
+        </button>
+
+        <form action="{{ url_for('cursos') }}" method="post">
+            <input type="hidden" name="id_curso" value="{{ id_curso }}" />
+            <button id="botonFinalizar" type="submit" class="btn btn-warning" style="display: none; width: 300px;">
+                Finalizar
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    var hms = "{{ cuestionario[1] }}";
+    var a = hms.split(':');
+
+    var segundos = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+
+    const spanContador = document.getElementById("contador");
+
+    const intervalo = setInterval(() => {
+      segundos--;
+      spanContador.textContent = formatearTiempo(segundos);
+
+      if (segundos === 0) {
+        clearInterval(intervalo);
+        checarRespuestas();
+      }
+    }, 1000);
+
+    function formatearTiempo(segundos) {
+      const h = String(Math.floor(segundos / 3600)).padStart(2, '0');
+      const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+      const s = String(segundos % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function checarRespuestas() {
+        var preguntas_respuestas = {{ preguntas_respuestas|tojson }};
+
+        var score = 0.0;
+
+
+        // checar cada pregunta por id
+        for(let i = 0; i < preguntas_respuestas.length; i++) {
+            var id = preguntas_respuestas[i][0][1];
+            var respuesta = 0;
+            if(document.querySelector('input[name="' + id.toString() + '"]:checked')) {
+                var respuesta = parseInt(document.querySelector('input[name="' + id.toString() + '"]:checked').value);
+                
+            }
+
+            // sumar a score 1 o 0
+            score += respuesta;
+
+            // cambiar color a verde o rojo y desactivar
+            var elemento = document.getElementById(id);
+            elemento.style.pointerEvents = "none";
+            //elemento.style.opacity = "0.5";
+            elemento.style.cursor = "not-allowed";
+
+            if(respuesta == 1) {
+                elemento.style.backgroundColor = "PaleGreen";
+            }
+            else {
+                elemento.style.backgroundColor = "LightCoral";
+            }
+
+        }
+
+        total = preguntas_respuestas.length
+
+        calificacion = score / total * 100;
+        calificacion = Number((calificacion).toFixed(2));
+
+        alert("Calificación: " + String(calificacion));
+
+        // Subir calificación mediante un POST
+        fetch('/subir_calificacion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: {{ cuestionario[2] }},
+              tipo: 'Cuestionario',
+              calificacion: calificacion
+            })
+          })
+
+        // esconder boton de entregar y mostrar boton de finalizar
+
+        botonEntregar = document.getElementById("botonEntregar");
+        botonEntregar.style.display = "none";
+
+        botonFinalizar = document.getElementById("botonFinalizar");
+        botonFinalizar.style.display = "block";
+    }
+</script>
+
+{% endblock %}
