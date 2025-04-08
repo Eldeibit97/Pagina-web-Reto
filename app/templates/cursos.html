@@ -16,9 +16,8 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
   {% for curso in cursos %}
     <div class="col">
-      <form action="{{ url_for('cursos') }}" method="post">
-        <input type="hidden" name="id_curso" value="{{ curso[0] }}">
-        <button type="submit" class="card h-100 w-100">
+      <a href="{{ url_for('vista_curso', id_curso=curso[0]) }}" class="link-offset-2 link-underline link-underline-opacity-0">
+        <div class="card h-100 w-100">
           <div class="square-img-container">
             <img class="card-img-top square-img" src="{{ curso[3] }}" alt="Card image cap">
           </div>
@@ -26,8 +25,8 @@
             <h5 class="card-title">{{ curso[1] }}</h5>
             <p class="card-text">{{ curso[2] }}</p>
           </div>
-        </button>
-      </form>
+        </div>
+      </a>
     </div>
   {% endfor %}
 </div>

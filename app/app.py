@@ -35,43 +35,25 @@ def cursos():
             return redirect(url_for('login', fail='False'))
     else:
         
-        session['section'] = 'vista_curso'
-        id_curso = request.form['id_curso']
-        curso = operaciones_sql.get_curso(id_curso)
-        nombre_curso = curso[0]
-        descripcion_curso = curso[1]
-        id_rol=session['id_rol']
-
-        modulos, progreso = operaciones_sql.get_lecciones(id_curso)
-        #print(modulos)
-
-        if session['id_rol'] == 3 or session['id_rol'] == 2:
-            asignados, no_asignados = operaciones_sql.get_alumnos_curso(id_curso)
-            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados, id_rol=id_rol)
-        else:
-            return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None, id_rol=id_rol)
+        return redirect(url_for('vista_curso', id_curso=request.form['id_curso']))
     
 
 @app.route('/vista_curso/<id_curso>')
 def vista_curso(id_curso):
-    return f'''
-        <html>
-        <head>
-            <title>Redirecting...</title>
-            <script type="text/javascript">
-                window.onload = function() {{
-                    document.getElementById('redirectForm').submit();
-                }}
-            </script>
-        </head>
-        <body>
-            <form id="redirectForm" action="/cursos" method="POST">
-                <input type="hidden" name="id_curso" value="{id_curso}">
-            </form>
-            
-        </body>
-        </html>
-        '''
+    session['section'] = 'vista_curso'
+    curso = operaciones_sql.get_curso(id_curso)
+    nombre_curso = curso[0]
+    descripcion_curso = curso[1]
+    id_rol=session['id_rol']
+
+    modulos, progreso = operaciones_sql.get_lecciones(id_curso)
+    #print(modulos)
+
+    if session['id_rol'] == 3 or session['id_rol'] == 2:
+        asignados, no_asignados = operaciones_sql.get_alumnos_curso(id_curso)
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados, id_rol=id_rol)
+    else:
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None, id_rol=id_rol)
 
 #vista de las lecciones
 @app.route('/leccion/<id_curso>/<tipo>/<id>')
@@ -294,5 +276,5 @@ def alumnos_todos(id_curso, tipo):
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
+    #app.run(host='0.0.0.0', port=5000)
