@@ -11,7 +11,7 @@
 
 {% block content %}
 {% if id_rol == 1 %}
-<p class="text-secondary">Aquí encontrarás todos los cursos que te han sido asignados.</p>
+<p class="text-secondary">Aquí encontrarás todos los cursos que te han sido asignados. Haz clic en un curso para entrar en él.</p>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
   {% for curso in cursos %}
@@ -33,13 +33,12 @@
 {% endif %}
 
 {% if id_rol == 2 or id_rol == 3%}
-<p class="text-secondary">Aquí puedes visualizar todos los cursos que han sido creados.</p>
+<p class="text-secondary">Aquí puedes visualizar todos los cursos que han sido creados. Haz clic en un curso para asignar o remover alumnos de él y/o visualizar sus contenidos.</p>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
   {% for curso in cursos %}
     <div class="col">
-      <form action="{{ url_for('cursos') }}" method="post">
-        <input type="hidden" name="id_curso" value="{{ curso[0] }}">
+      <a href="{{ url_for('vista_curso', id_curso=curso[0]) }}" class="link-offset-2 link-underline link-underline-opacity-0">
         <button type="submit" class="card h-100 w-100">
           <div class="square-img-container">
             <img class="card-img-top square-img" src="{{ curso[3] }}" alt="Card image cap">
@@ -49,7 +48,7 @@
             <p class="card-text">{{ curso[2] }}</p>
           </div>
         </button>
-      </form>
+      </a>
     </div>
   {% endfor %}
 </div>
