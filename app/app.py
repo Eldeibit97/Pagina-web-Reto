@@ -180,6 +180,11 @@ def login(fail):
         return render_template('login.html', fail='True')
     else:
         return render_template('login.html', fail='False')
+    
+@app.route('/log_out')
+def log_out():
+    session.clear()
+    return redirect(url_for('login', fail='False'))
 
 
 @app.route('/Dar_de_alta', methods=["GET","POST"])
