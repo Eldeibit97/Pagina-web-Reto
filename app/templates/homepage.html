@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}
+TecniCORE - Inicio
+{% endblock %}
+
+{% block header %}
+TecniCORE - Inicio
+{% endblock %}
+
+{% block content %}
+
+<h1>¡Bienvenido/a a Whirlpool TecniCORE, {{ session['name'] }}!</h1>
+<br>
+{% if id_rol == 1 %}
+<p>Como estudiante, estas son las acciones que puedes realizar:</p>
+<br>
+<ol>
+    <li>
+        <h5>Ver cursos asignados</h5>
+        <p>Si haces click en el botón de <i class='bx bx-home-alt'></i> <b>Cursos</b> situado en la barra lateral, puedes observar los cursos que te han sido asignados.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Acceder a un curso</h5>
+        <p>Al hacer click en uno de tus cursos asignados, puedes accederlo y ver tu progreso y los módulos del curso con sus respectivas lecciones.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Completar lecciones</h5>
+        <p>Para completar una lección, haz click en ella y complétala para aumentar tu progreso. Hay tres tipos de lecciones:</p>
+        <ul>
+            <li><i class='bx bx-book-open'></i> <b>Lecturas:</b> Lee las páginas con información importante.</li>
+            <li><i class='bx bxs-videos' ></i> <b>Videos:</b> Observa el video hasta el final para completar la lección.</li>
+            <li><i class='bx bx-question-mark' ></i> <b>Cuestionarios:</b> Contesta todas las preguntas del cuestionario y recibe tu calificación y retroalimentación al terminar.</li>
+        </ul>
+    </li>
+</ol>
+<br>
+<p>Si tienes alguna duda, contacta a tu instructor o a un administrador.</p>
+{% endif %}
+{% if id_rol == 3 %}
+<p>Como instructor, estas son las acciones que puedes realizar:</p>
+<br>
+<ol>
+    <li>
+        <h5>Ver catálogo de cursos</h5>
+        <p>Si haces click en el botón de <i class='bx bx-home-alt'></i> <b>Cursos</b> situado en la barra lateral, puedes observar el catálogo de cursos de la plataforma.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Asignar o remover estudiantes de un curso</h5>
+        <p>Al hacer click en uno de los cursos, puedes asignar (+) o remover (-) estudiantes de él. También puedes asignar o remover todos los estudiantes de un curso. También puedes ir a la sección de <i class='bx bxs-user-detail'></i> <b>Alumnos</b> para asignar o remover los cursos de un estudiante.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Visualizar lecciones</h5>
+        <p>Para visualizar el contenido de una lección, haz click en ella. Puedes completarla como si fueras un estudiante. Hay tres tipos de lecciones:</p>
+        <ul>
+            <li><i class='bx bx-book-open'></i> <b>Lecturas:</b> Contienen páginas con texto e imágenes.</li>
+            <li><i class='bx bxs-videos' ></i> <b>Videos:</b> El estudiante debe observar el video hasta el final para completar la lección.</li>
+            <li><i class='bx bx-question-mark' ></i> <b>Cuestionarios:</b> El estudiante contesta todas las preguntas del cuestionario y recibe su calificación y retroalimentación al terminar.</li>
+        </ul>
+    </li>
+    <br>
+    <li>
+        <h5>Ver alumnos</h5>
+        <p>Si haces click en el botón de <i class='bx bxs-user-detail'></i> <b>Alumnos</b> situado en la barra lateral, puedes ver los estudiantes dados de alta en la plataforma. Si haces click en un estudiante, puedes:</p>
+        <ul>
+            <li><b>Ver información:</b> Ver su correo, teléfono, foto de perfil y cursos asignados.</li>
+            <li><b>Asignar o remover cursos:</b> Puedes asignar (+) o remover (-) cursos del catálogo para el alumno.</li>
+        </ul>
+    </li>
+    <br>
+    <li>
+        <h5>Ver desempeño</h5>
+        <p>Al hacer click en el botón de <i class='bx bxs-star'></i> <b>Desempeño</b> en la barra lateral, podrás ver diferentes métricas para monitorear el desempeño de los alumnos.</p>
+    </li>
+</ol>
+<br>
+{% endif %}
+{% if id_rol == 2 %}
+<p>Como administrador, estas son las acciones que puedes realizar en la plataforma:</p>
+<br>
+<ol>
+    <li>
+        <h5>Ver catálogo de cursos</h5>
+        <p>Si haces click en el botón de <i class='bx bx-home-alt'></i> <b>Cursos</b> situado en la barra lateral, puedes observar el catálogo de cursos de la plataforma.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Crear cursos</h5>
+        <p>Al hacer click en el botón de <i class='bx bx-book-add'></i> <b>Crear Curso</b>, puedes crear un nuevo curso para la plataforma.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Dar de alta estudiantes</h5>
+        <p>Al hacer click en el botón de <i class='bx bx-user-plus'></i> <b>Dar de alta</b>, puedes dar de alta a un nuevo estudiante en la plataforma.</p>
+    </li>
+    <br>
+    <li>
+        <h5>Ver alumnos</h5>
+        <p>Si haces click en el botón de <i class='bx bxs-user-detail'></i> <b>Alumnos</b> situado en la barra lateral, puedes ver los estudiantes dados de alta en la plataforma. Si haces click en un estudiante, puedes:</p>
+        <ul>
+            <li><b>Ver información:</b> Ver su correo, teléfono, foto de perfil y cursos asignados.</li>
+            <li><b>Asignar o remover cursos:</b> Puedes asignar (+) o remover (-) cursos del catálogo para el alumno.</li>
+        </ul>
+    </li>
+    <br>
+    <li>
+        <h5>Ver desempeño</h5>
+        <p>Al hacer click en el botón de <i class='bx bxs-star'></i> <b>Desempeño</b> en la barra lateral, podrás ver diferentes métricas para monitorear el desempeño de los alumnos.</p>
+    </li>
+</ol>
+</div>
+{% endif %}
+
+<a class="btn btn-warning" href="{{ url_for('cursos', id_rol=id_rol) }}">
+    Ir a Cursos
+</a>
+<br>
+{% endblock %}

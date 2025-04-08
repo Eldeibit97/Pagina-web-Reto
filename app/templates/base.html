@@ -24,6 +24,13 @@
                         
                         <div class="card p-3" style="width: 200px; height: 100%; border: none;">
                             <p>Whirlpool <b>TecniCORE</b></p>
+                            <a
+                                href="{{ url_for('homepage') }}"
+                                class="btn {% if session['section'] == 'homepage' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                                <i class='bx bx-info-circle'></i>
+                                    Inicio
+                            </a>
                             <p style="margin: 10px 10px 5px 0px; padding: auto;">Cursos</p>
                             <a
                                 href="{{ url_for('cursos') }}"

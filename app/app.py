@@ -160,11 +160,19 @@ def check():
         print(id)
         operaciones_sql.get_pfp(username_input)
 
-        return redirect(url_for('cursos', id_rol=id_rol))
+        return redirect(url_for('homepage'))
     
     else:
         return redirect(url_for('login', fail='True', id_rol=id_rol))
 
+@app.route('/homepage', methods=['GET'])
+def homepage():
+    if 'username' in session:
+        session['section'] = 'homepage'
+        id_rol = session['id_rol']
+        return render_template('homepage.html', id_rol=id_rol)
+    else:
+        return redirect(url_for('login', fail='False'))
 
 @app.route('/login/<fail>', methods=['GET'])
 def login(fail):
@@ -273,6 +281,7 @@ def remover_alumno(id_curso, id_alumno):
 def alumnos_todos(id_curso, tipo):
     operaciones_sql.alumnos_todos(id_curso, tipo)
     return redirect(url_for('vista_curso', id_curso=id_curso))
+
 
 
 if __name__ == '__main__':
