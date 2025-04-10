@@ -378,7 +378,15 @@
               boton.innerHTML = campo === 'tipoArchivo' ? `<img src="${tar[campo]}" alt="" style="width:24px;height:24px;border-radius:4px;">` : '✅';
               sessionStorage.setItem('modulos', JSON.stringify(modulos));
               window.location.href = "/crear_cuestionario_form";
-            } else {
+            } 
+            else if (tipoArchivo === 'lectura')
+            {
+              tar.tipoArchivo = tipoArchivo;
+              tar.lectura = [];
+              sessionStorage.setItem('modulos', JSON.stringify(modulos));
+              window.location.href = "/crear_lectura_form";
+            }
+            else {
               const valor = prompt(promptMsg);
 
               if (valor && valor.trim() !== '') {
@@ -419,7 +427,7 @@
 
     window.onload = () => {
       const storedModulos = JSON.parse(sessionStorage.getItem('modulos'));
-      
+      console.log(storedModulos);
       if (storedModulos) {
         modulos = storedModulos;
         renderizarListaModulos();
@@ -433,21 +441,27 @@
           sessionStorage.removeItem('tarjetaIndex');
 
           const cuestionarioData = JSON.parse(sessionStorage.getItem("cuestionarioData"));
-          
+          const lecturaData = JSON.parse(sessionStorage.getItem("lecturaData"));
+          console.log(lecturaData);
+
           const tarjetas = storedModulos.tarjetas || (storedModulos[0]?.tarjetas);
           if (tarjetas) {
             tarjetas.forEach(tarjeta => {
               if (
-                tarjeta.nomTarjeta === cuestionarioData.title &&
+                // tarjeta.nomTarjeta === cuestionarioData.title &&
                 tarjeta.tipoArchivo === "cuestionario"
               ) {
                 tarjeta.pregunta = cuestionarioData.preguntas;
+              } else if (
+                tarjeta.tipoArchivo === "lectura"
+              ) {
+                tarjeta.lectura = lecturaData;
               }
             });
             console.log("✅ 結合後の tarjetas:", tarjetas);
           } 
 
-          console.log("✅ 結合後の tarjeta:", storedModulos[0].tarjetas.find(t => t.nomTarjeta === cuestionarioData.title));
+          // console.log("✅ 結合後の tarjeta:", storedModulos[0].tarjetas.find(t => t.nomTarjeta === cuestionarioData.title));
 
         }
       }

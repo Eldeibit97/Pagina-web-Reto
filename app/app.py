@@ -158,6 +158,10 @@ def crear_curso_form():
 def crear_modulo_form():
     return render_template('CreacionModulos.html')
 
+@app.route('/crear_lectura_form', methods=['GET'])
+def crear_lectura_form():
+    return render_template('CreacionLecturas.html')
+
 @app.route('/crear_cuestionario_form', methods=['GET'])
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Lectura</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f6f9fc, #e9eff5);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .monitor {
+      background: #fff;
+      width: 900px;
+      min-height: 600px;
+      border-radius: 12px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      padding: 40px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    h1 {
+      margin: 0;
+      text-align: center;
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    #btnVolver {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #2c00f0;
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #btnVolver:hover {
+      background-color: #130170;
+    }
+    .contenedor-paginas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagina {
+      background: #f9f9f9;
+      width: 300px;
+      min-height: 250px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+    }
+    .titulo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .titulo-container h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #333;
+      flex: 1;
+    }
+    .editar-titulo {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      transition: transform 0.2s;
+    }
+    .editar-titulo:hover {
+      transform: scale(1.1);
+    }
+    .editar-titulo svg {
+      width: 20px;
+      height: 20px;
+      fill: #2980b9;
+    }
+    .pagina textarea {
+      width: 100%;
+      height: 120px;
+      resize: vertical;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .imagen-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+      padding: 5px;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .imagen-btn:hover {
+      transform: scale(1.1);
+    }
+    .imagen-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: #2980b9;
+    }
+    #btnAnadirPag {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      background-color: #2980b9;
+      color: #fff;
+      font-size: 32px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    #btnAnadirPag:hover {
+      background-color: #1c5980;
+    }
+    #btnListo {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: #ffd700;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 18px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    #btnListo:hover {
+      background-color: #e6c200;
+    }
+  </style>
+</head>
+<body>
+  <button id="btnVolver">Volver a Cursos</button>
+  <div class="monitor">
+    <h1>Editar Lectura</h1>
+    <div class="contenedor-paginas" id="contenedorPaginas">
+      <!-- Las páginas se agregarán dinámicamente -->
+    </div>
+    <button id="btnAnadirPag">+</button>
+    <button id="btnListo">Listo</button>
+  </div>
+  <script>
+    let pageCounter = 0;
+    const btnVolver = document.getElementById('btnVolver');
+    const btnAnadirPag = document.getElementById('btnAnadirPag');
+    const btnListo = document.getElementById('btnListo');
+    const contenedorPaginas = document.getElementById('contenedorPaginas');
+
+    btnVolver.addEventListener('click', () => {
+      if (confirm('¿Deseas volver? Se perderán los cambios no guardados.')) {
+        window.location.href = '/cursos';
+      }
+    });
+
+    btnAnadirPag.addEventListener('click', () => {
+      // Solicitar el título de la página
+      let tituloInput = prompt("Introduce el título de la página:");
+      if (!tituloInput || tituloInput.trim() === "") {
+        tituloInput = 'Página ${pageCounter}';
+      }
+      
+      // Crear el contenedor de la página
+      const nuevaPagina = document.createElement('div');
+      nuevaPagina.classList.add('pagina');
+
+      // Contenedor para el título y el icono de edición
+      const tituloContainer = document.createElement('div');
+      tituloContainer.classList.add('titulo-container');
+
+      // Crear el título
+      const tituloElem = document.createElement('h2');
+      tituloElem.textContent = tituloInput;
+      
+      // Icono de lápiz para editar el título
+      const btnEditarTitulo = document.createElement('button');
+      btnEditarTitulo.classList.add('editar-titulo');
+      btnEditarTitulo.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04
+        c.39-.39.39-1.02 0-1.41l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83
+        3.75 3.75 1.84-1.83z"/>
+      </svg>`;
+      btnEditarTitulo.addEventListener('click', () => {
+        const nuevoTitulo = prompt("Editar título:", tituloElem.textContent);
+        if (nuevoTitulo && nuevoTitulo.trim() !== "") {
+          tituloElem.textContent = nuevoTitulo.trim();
+        }
+      });
+      
+      tituloContainer.appendChild(tituloElem);
+      tituloContainer.appendChild(btnEditarTitulo);
+
+      // Crear textarea para el contenido de la página
+      const texto = document.createElement('textarea');
+      texto.placeholder = 'Texto de la página...';
+
+      // Botón para añadir una imagen mediante URL, mostrando un icono
+      const botonImagen = document.createElement('button');
+      botonImagen.classList.add('imagen-btn');
+      botonImagen.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M21 19V5H3v14h18zM3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3
+          c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm10 14l-2.03-2.71-2.97 3.71H21l-4-5z"/>
+      </svg>`;
+      botonImagen.addEventListener('click', () => {
+        const urlImagen = prompt("Introduce la URL de una imagen en internet:");
+        if (urlImagen && urlImagen.trim() !== "") {
+          let img = nuevaPagina.querySelector('img');
+          if (img) {
+            img.src = urlImagen;
+          } else {
+            img = document.createElement('img');
+            img.src = urlImagen;
+            img.style.maxWidth = "100%";
+            img.style.marginTop = "10px";
+            img.style.borderRadius = "4px";
+            nuevaPagina.appendChild(img);
+          }
+        }
+      });
+
+      // Agregar los elementos a la página
+      nuevaPagina.appendChild(tituloContainer);
+      nuevaPagina.appendChild(texto);
+      nuevaPagina.appendChild(botonImagen);
+      contenedorPaginas.appendChild(nuevaPagina);
+      
+      pageCounter++;
+    });
+
+    btnListo.addEventListener('click', () => {
+      // Recopilar datos de cada página
+      const paginas = [];
+      const paginasDOM = document.querySelectorAll('.pagina');
+      paginasDOM.forEach(pagina => {
+        const titulo = pagina.querySelector('h2')?.textContent || "";
+        const texto = pagina.querySelector('textarea')?.value || "";
+        const imagen = pagina.querySelector('img')?.src || "";
+        paginas.push({ titulo, texto, imagen });
+      });
+      // Guardar en sessionStorage para luego acceder desde creacionmodulos.html
+      //console.log(JSON.stringify(paginas));
+      sessionStorage.setItem('lecturaData', JSON.stringify(paginas));
+      
+      // Redirigir a creacionmodulos.html para continuar la edición
+      window.location.href = "/crear_modulo_form";
+    });
+  </script>
+</body>
+</html>

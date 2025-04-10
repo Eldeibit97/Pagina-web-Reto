@@ -4,3 +4,4 @@ Este repositorio se utilizara para mantener un control del progreso de la pagina
 
 
 pip install openai
+pip install Jinja2

@@ -130,8 +130,14 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
     curso_id = cursor.lastrowid
 
     query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+
     query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pagina = "INSERT INTO Pagina (Nom_Pagina, Texto_Pagina, ID_Lectura) VALUES (%s, %s, %s);"
+    query_imagen = "INSERT INTO Imagen (URL_Imagen, ID_Pagina) VALUES (%s, %s);"
+    # query_texto = "INSERT INTO Texto (Texto, ID_Pagina) VALUES (%s, %s);"
+
     query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+
     query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
     query_pregunta = "INSERT INTO Preguntas (Pregunta, ID_Cuestionario) VALUES (%s, %s);"
     query_respuesta = "INSERT INTO Respuestas (Respuestas, ID_Pregunta, Correcta) VALUES (%s, %s, %s);"
@@ -149,9 +155,21 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
             nom_tarjeta = tarjeta['nomTarjeta']
 
             if tipo_archivo == 'lectura':
-                # lectura_text = tarjeta.get('lecturaText', '')
                 values_lectura = (nom_tarjeta, modulo_id, fecha_creacion)
                 cursor.execute(query_lectura, values_lectura)
+                lectura_id = cursor.lastrowid
+
+                lecturas = tarjeta.get('lectura', [])
+                for lectura in lecturas:
+                    titulo = lectura.get('titulo')
+                    texto = lectura.get('texto')
+                    imagen = lectura.get('imagen')
+                    cursor.execute(query_pagina, (titulo, texto, lectura_id))
+                    
+                    pagina_id = cursor.lastrowid
+                    cursor.execute(query_imagen, (imagen, pagina_id))
+
+
 
             elif tipo_archivo == 'video':
                 video_url = tarjeta.get('videoUrl', '')
@@ -170,10 +188,10 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
                     pregunta_id = cursor.lastrowid
 
                     respuestas = pregunta.get('opciones', [])
-                    correctas = pregunta.get('correctas', [])  # 'correctas' のリストを取得（デフォルトは空リスト）
+                    correctas = pregunta.get('correctas', [])
 
                     for i, respuesta in enumerate(respuestas):
-                        # 'correctas' に値がある場合、それを使用し、ない場合は 0 にする
+                        
                         correcta = correctas[i] if i < len(correctas) else 0  
                         cursor.execute(query_respuesta, (respuesta, pregunta_id, correcta))
 
