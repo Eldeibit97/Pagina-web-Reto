@@ -8,15 +8,37 @@
   Cursos
 {% endblock %}
 
+
 {% block content %}
-<p class="text-secondary">Aquí encontrarás todos los cursos que te han sido asignados.</p>
+{% if id_rol == 1 %}
+<p class="text-secondary">Aquí encontrarás todos los cursos que te han sido asignados. Haz clic en un curso para entrar en él.</p>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
   {% for curso in cursos %}
     <div class="col">
+      <a href="{{ url_for('vista_curso', id_curso=curso[0]) }}" class="link-offset-2 link-underline link-underline-opacity-0">
+        <div class="card h-100 w-100">
+          <div class="square-img-container">
+            <img class="card-img-top square-img" src="{{ curso[3] }}" alt="Card image cap">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ curso[1] }}</h5>
+            <p class="card-text">{{ curso[2] }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
 
-      <form action="{{ url_for('cursos') }}" method="post">
-        <input type="hidden" name="id_curso" value="{{ curso[0] }}">
+{% if id_rol == 2 or id_rol == 3%}
+<p class="text-secondary">Aquí puedes visualizar todos los cursos que han sido creados. Haz clic en un curso para asignar o remover alumnos de él y/o visualizar sus contenidos.</p>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  {% for curso in cursos %}
+    <div class="col">
+      <a href="{{ url_for('vista_curso', id_curso=curso[0]) }}" class="link-offset-2 link-underline link-underline-opacity-0">
         <button type="submit" class="card h-100 w-100">
           <div class="square-img-container">
             <img class="card-img-top square-img" src="{{ curso[3] }}" alt="Card image cap">
@@ -26,79 +48,11 @@
             <p class="card-text">{{ curso[2] }}</p>
           </div>
         </button>
-      </form>
+      </a>
     </div>
   {% endfor %}
 </div>
-
-
-<!-- Botón flotante para crear un curso -->
-<a href="{{ url_for('crear_curso_form') }}" class="add-course-button">+</a>
-
-<style>
-  .square-img-container {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio */
-    overflow: hidden;
-  }
-  
-  .square-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* This ensures the image covers the area without distortion */
-  }
-  
-  button.card {
-    border: 1px solid rgba(0,0,0,.125);
-    background-color: white;
-    padding: 0;
-    text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  button.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  }
-  
-  .card-body {
-    padding: 1rem;
-  }
-  
-  /* Make sure form takes full width of its container */
-  form {
-    width: 100%;
-    height: 100%;
-  }
-
-
-   /* Estilos para el botón flotante */
-   .add-course-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background-color: #007bff;
-    color: white;
-    font-size: 36px;
-    font-weight: bold;
-    text-align: center;
-    line-height: 60px;
-    border-radius: 50%;
-    text-decoration: none;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-
-  .add-course-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
-  }
-</style>
+{% endif %}
 
 {% endblock %}
+

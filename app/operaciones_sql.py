@@ -1,6 +1,7 @@
 import mysql.connector
 import datetime
 import os
+from flask import session
 
 
 # Conectarse a base de datos
@@ -26,20 +27,21 @@ def validate_credentials(username, password):
     is_valid = cursor.fetchall()
 
     if is_valid[0][0] == 1:
-        query = "SELECT u.ID_Usuario, u.Nom_Usuario FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "'"
+        query = "SELECT u.ID_Usuario, u.Nom_Usuario, u.ID_Rol FROM Usuarios u WHERE u.Correo_Cliente = '" + username + "'"
         cursor.execute(query)
         answer = cursor.fetchall()[0]
 
         user_id = answer[0]
         name = answer[1]
+        rol = answer[2]
 
         cursor.close()
         connection.close()
-        return True, user_id, name
+        return True, user_id, name, rol
     else:
         cursor.close()
         connection.close()
-        return False, 0, "_"
+        return False, 0, "_",0
     
 def get_pfp(username):
     connection = connect()
@@ -53,7 +55,6 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-
         os.makedirs("static/images", exist_ok=True)
         with open("static/images/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
@@ -61,13 +62,43 @@ def get_pfp(username):
     else:
         return None
     
+#Dar de alta a nuevos tecnicos estudiantes/profesores
+def agregar_estudiantes(nombre, correo, telefono, rol_id, pswd):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "INSERT INTO Usuarios(Nom_Usuario, Correo_Cliente, Tel_Cliente, Password, ID_Rol) VALUES('" + nombre + "', '" + correo + "', " + str(telefono) + ", '" + pswd + "', " + str(rol_id) + ")"
+    cursor.execute(query)
+    
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+#Verificar que el usuario que se intente crear no exista ya o 
+# las credenciales planteadas ya pertenezcan a otro tecnico
+def verificar_estudiante(correo):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END AS 'already exists' FROM Usuarios u WHERE Correo_Cliente = '"+ correo +"'"
+    cursor.execute(query)
+    exists = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    if exists[0][0] == 1:
+        return True
+    else:
+        return False
+
+
 # Encontrar cursos del usuario (tecnico)
 def find_cursos(id):
     connection = connect()
     cursor = connection.cursor()
 
-
-    query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc INNER JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
+    query = "SELECT uc.ID_Curso, c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Usuario_Curso uc LEFT JOIN Cursos c ON uc.ID_Curso = c.ID_Curso WHERE uc.ID_Usuario = " + str(id)
     cursor.execute(query)
     cursos = cursor.fetchall()
 
@@ -76,20 +107,33 @@ def find_cursos(id):
 
     return cursos
 
-
-## Obtener curso especifico
-def get_curso(id):
+# Obtener todos los cursos creados (Para el admin y el profesor)
+def get_cursos():
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT c.Nom_Curso, c.Descripcion FROM Cursos c WHERE c.ID_Curso = " + str(id)
+    query = 'SELECT ID_Curso, Nom_Curso, Descripcion, Link_Img_Curso  FROM Cursos c'
     cursor.execute(query)
-    curso = cursor.fetchall()
-    curso = curso[0]
+    cursos = cursor.fetchall()
 
     cursor.close()
     connection.close()
-    return curso
+
+    return cursos
+
+# Obtener a los diferentes alumnos ya registrados en la DB
+def get_alumnos():
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT u.Nom_Usuario, u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 1"
+    cursor.execute(query)
+    alumnos = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return alumnos
 
 # Obtener las lecciones de un curso
 def get_lecciones(id_curso):
@@ -102,21 +146,52 @@ def get_lecciones(id_curso):
     modulos = cursor.fetchall()
 
     list = []
-
+    completadas = 0.0
+    total = 0.0
     for modulo in modulos:
         # obtener lecciones
         id_str = str(modulo[1])
         query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
         cursor.execute(query)
         lecciones = cursor.fetchall()
-        list.append([modulo, lecciones])
+
+        
+        
+        # obtener calificaciones de las lecciones
+        lecciones_lista = []
+
+        for leccion in lecciones:
+            if leccion[1] == 'Lectura':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Lectura ul WHERE ID_Lectura = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Video':
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Video uv  WHERE ID_Video  = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                cursor.execute(query)
+            elif leccion[1] == 'Cuestionario':
+                query = "SELECT IFNULL((SELECT Puntaje FROM Evaluaciones WHERE ID_Usuario = " + str(session['id']) +  " AND ID_Cuestionario = " + str(leccion[0]) + " ORDER BY Fecha DESC LIMIT 1), -1)"
+                cursor.execute(query)
+            
+            calificacion = cursor.fetchone()
+            lecciones_lista.append([leccion, calificacion[0]])
+
+            if calificacion[0] != -1 :
+                completadas = completadas + calificacion[0]/100
+            total = total + 1
+
+
+        list.append([modulo, lecciones_lista])
 
     cursor.close()
     connection.close()
 
-    return list
+    # calcular progreso
+    if total == 0:
+        progreso = 0
+    else:
+        progreso = completadas / total * 100
+    progreso = round(progreso, 2)
 
-
+    return list, progreso
 
 # Crear y agregar cursos 
 def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 
@@ -200,13 +275,27 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
 
     cursor.close()
     connection.close()    
-    
+#
+def get_curso(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT c.Nom_Curso, c.Descripcion FROM Cursos c WHERE c.ID_Curso = " + str(id)
+    cursor.execute(query)
+    curso = cursor.fetchall()
+    curso = curso[0]
+
+    cursor.close()
+    connection.close()
+    return curso
+
+
 ## Video ##
 def get_video(id):
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT v.Nombre_Video, v.Link_Video FROM Video v WHERE v.ID_Video = " + str(id)
+    query = "SELECT v.Nombre_Video, v.Link_Video, v.ID_Video FROM Video v WHERE v.ID_Video = " + str(id)
     cursor.execute(query)
     video = cursor.fetchall()
     video = video[0]
@@ -221,7 +310,7 @@ def get_cuestionario(id):
     cursor = connection.cursor()
 
     # Obtener el nombre y tiempo del cuestionario
-    query = "SELECT c.Nom_Cuestionario, c.Tiempo FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
+    query = "SELECT c.Nom_Cuestionario, c.Tiempo, c.ID_Cuestionario FROM Cuestionario c WHERE c.ID_Cuestionario = " + str(id)
     cursor.execute(query)
     cuestionario = cursor.fetchall()
     cuestionario = cuestionario[0]
@@ -264,3 +353,102 @@ def get_lectura(id):
     connection.close()
     return lectura, paginas
 
+## Subir calificacion ##
+def subir_calificacion(id_leccion, tipo, calificacion):
+    connection = connect()
+    cursor = connection.cursor()
+
+    if tipo == 'Video':
+        query = "INSERT INTO Usuario_Video (Fecha_Video, ID_Usuario, ID_Video) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Lectura":
+        query = "INSERT INTO Usuario_Lectura (Fecha_Lectura, ID_Usuario, ID_Lectura) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        cursor.execute(query)
+        connection.commit()
+    elif tipo == "Cuestionario":
+        query = "INSERT INTO Evaluaciones (ID_Usuario, Puntaje, ID_Cuestionario, Fecha ) VALUES (" + str(session['id']) + ", " + str(calificacion) + ", " + str(id_leccion) + ", NOW())"
+        cursor.execute(query)
+        connection.commit()
+
+def get_alumnos_curso(id_curso):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = """
+        SELECT u.Nom_Usuario, u.ID_Usuario FROM Usuarios u
+        LEFT JOIN Usuario_Curso uc ON uc.ID_Usuario = u.ID_Usuario
+        WHERE ID_Rol = 1 AND uc.ID_Curso = """ + str(id_curso)
+    cursor.execute(query)
+    asignados = cursor.fetchall()
+
+    query = """
+        SELECT u.Nom_Usuario, u.ID_Usuario
+        FROM Usuarios u
+        WHERE u.ID_Rol = 1
+        AND u.ID_Usuario NOT IN (
+            SELECT uc.ID_Usuario
+            FROM Usuario_Curso uc
+            WHERE uc.ID_Curso = """ + str(id_curso) + ")"
+    cursor.execute(query)
+    no_asignados = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return asignados, no_asignados
+
+def asignar_alumno(id_curso, id_usuario):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "INSERT INTO Usuario_Curso (ID_Usuario, ID_Curso) VALUES (" + str(id_usuario) + ", " + str(id_curso) + ")"
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def remover_alumno(id_curso, id_usuario):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "DELETE FROM Usuario_Curso WHERE ID_Usuario = " + str(id_usuario) + " AND ID_Curso = " + str(id_curso)
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def alumnos_todos(id_curso, tipo):
+    connection = connect()
+    cursor = connection.cursor()
+
+    if tipo == 'asignar':
+        query = """
+        INSERT INTO Usuario_Curso (ID_Usuario, ID_Curso)
+        SELECT u.ID_Usuario, %s
+        FROM Usuarios u
+        WHERE u.ID_Rol = 1
+        AND u.ID_Usuario NOT IN (
+        SELECT uc.ID_Usuario
+        FROM Usuario_Curso uc
+        WHERE uc.ID_Curso = %s
+        )
+        """
+        values = (id_curso, id_curso)
+        cursor.execute(query, values)
+        connection.commit()
+    
+    elif tipo == 'remover':
+        query = """
+            DELETE uc
+            FROM Usuario_Curso uc
+            JOIN Usuarios u ON uc.ID_Usuario = u.ID_Usuario
+            WHERE uc.ID_Curso = %s AND u.ID_Rol = 1
+        """
+        values = (id_curso,)
+        cursor.execute(query, values)
+        connection.commit()
+    cursor.close()
+    connection.close()

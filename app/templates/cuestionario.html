@@ -1,15 +1,15 @@
-{% extends "base.html" %}
+{% extends "cursos.html" %}
 
 {% block title %}
   Cuestionario - {{ cuestionario[0] }}
 {% endblock %}
 
 {% block header %}
-    {{ cuestionario[0] }} - {{ cuestionario[1] }}
+    {{ cuestionario[0] }} - <span id="contador">{{ cuestionario[1] }}</span>
 {% endblock %}
 
-{% block content %}
 
+{% block content %}
 <form action="{{ url_for('cursos') }}" method="post">
 <input type="hidden" name="id_curso" value="{{ id_curso }}" />
 <button type="submit" class="btn btn-warning">
@@ -51,6 +51,30 @@
 </div>
 
 <script>
+    var hms = "{{ cuestionario[1] }}";
+    var a = hms.split(':');
+
+    var segundos = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+
+    const spanContador = document.getElementById("contador");
+
+    const intervalo = setInterval(() => {
+      segundos--;
+      spanContador.textContent = formatearTiempo(segundos);
+
+      if (segundos === 0) {
+        clearInterval(intervalo);
+        checarRespuestas();
+      }
+    }, 1000);
+
+    function formatearTiempo(segundos) {
+      const h = String(Math.floor(segundos / 3600)).padStart(2, '0');
+      const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+      const s = String(segundos % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
     function checarRespuestas() {
         var preguntas_respuestas = {{ preguntas_respuestas|tojson }};
 
@@ -87,8 +111,22 @@
         total = preguntas_respuestas.length
 
         calificacion = score / total * 100;
+        calificacion = Number((calificacion).toFixed(2));
 
-        alert(calificacion);
+        alert("Calificación: " + String(calificacion));
+
+        // Subir calificación mediante un POST
+        fetch('/subir_calificacion', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id: {{ cuestionario[2] }},
+              tipo: 'Cuestionario',
+              calificacion: calificacion
+            })
+          })
 
         // esconder boton de entregar y mostrar boton de finalizar
 

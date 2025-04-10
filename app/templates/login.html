@@ -8,12 +8,12 @@
 </head>
 <body class="d-flex flex-column align-items-center justify-content-center vh-100">
     <div class="container text-center">
-        <img src="{{ url_for('static', filename='images/whirlpool-logo.png') }}" width="200pt" />
+        <img src="{{ url_for('static', filename='/img/whirlpool-logo.png') }}" width="200pt" />
         <h1 class="tituloGrande">TecniCORE</h1>
 
         <p>Inicia sesión con tus credenciales Whirlpool.</p>
 
-        <form action="{{ url_for('check') }}" method="post">
+        <form class="forms" action="{{ url_for('check') }}" method="post">
             <div>
                 <div class="row justify-content-center">
                     <div class="col-sm-6 col-md-5 col-lg-4">

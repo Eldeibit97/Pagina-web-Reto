@@ -1,5 +1,4 @@
-
-from flask import Flask, redirect, jsonify, url_for, request, render_template, session
+from flask import Flask, jsonify, redirect, url_for, request, render_template, session
 import operaciones_sql
 from openai import OpenAI
 import os
@@ -14,54 +13,68 @@ app.secret_key = 'super secret key'
 ## Funciones ##
 
 
-
-
-
 # Endpoints
 
+#vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])
 def cursos():
     if request.method == 'GET':
         if 'username' in session:
             session['section'] = 'cursos'
+            id_rol = session['id_rol']
             cursos = operaciones_sql.find_cursos(session['id'])
-
-            return render_template('cursos.html', cursos=cursos)
-        
+            if session['id_rol'] == 1:
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
+            elif session['id_rol'] == 2:
+                cursos = operaciones_sql.get_cursos()
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
+            else:
+                cursos = operaciones_sql.get_cursos()
+                return render_template('cursos.html', cursos = cursos, id_rol = id_rol)
         else:
             return redirect(url_for('login', fail='False'))
     else:
-
-        session['section'] = 'vista_curso'
-        id_curso = request.form['id_curso']
-        curso = operaciones_sql.get_curso(id_curso)
-        nombre_curso = curso[0]
-        descripcion_curso = curso[1]
-
-        modulos = operaciones_sql.get_lecciones(id_curso)
-        print(modulos)
-
-        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos)
+        
+        return redirect(url_for('vista_curso', id_curso=request.form['id_curso']))
     
+
+@app.route('/vista_curso/<id_curso>')
+def vista_curso(id_curso):
+    session['section'] = 'vista_curso'
+    curso = operaciones_sql.get_curso(id_curso)
+    nombre_curso = curso[0]
+    descripcion_curso = curso[1]
+    id_rol=session['id_rol']
+
+    modulos, progreso = operaciones_sql.get_lecciones(id_curso)
+    #print(modulos)
+
+    if session['id_rol'] == 3 or session['id_rol'] == 2:
+        asignados, no_asignados = operaciones_sql.get_alumnos_curso(id_curso)
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=asignados, no_asignados = no_asignados, id_rol=id_rol)
+    else:
+        return render_template('vista_curso.html', id_curso=id_curso, nombre_curso=nombre_curso, descripcion_curso=descripcion_curso, modulos=modulos, progreso=progreso, asignados=None, no_asignados=None, id_rol=id_rol)
+
+#vista de las lecciones
 @app.route('/leccion/<id_curso>/<tipo>/<id>')
 def leccion(id_curso, tipo, id):
     if 'username' in session:
         session['section'] = 'leccion'
-        
+        id_rol = session['id_rol']
         # Video
         if tipo == 'Video':
             video = operaciones_sql.get_video(id)
             print(video[1])
-            return render_template('video.html', video=video, id_curso=id_curso)
+            return render_template('video.html', video=video, id_curso=id_curso, id_rol=id_rol)
         elif tipo == 'Cuestionario':
             cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
-            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas)
+            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas, id_rol=id_rol)
         elif tipo == 'Lectura':
             lectura, paginas = operaciones_sql.get_lectura(id)
             print(paginas)
-            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas))
+            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas), id_rol=id_rol)
         else:
-            return redirect(url_for('cursos'))
+            return redirect(url_for('cursos', id_rol=id_rol))
     else:
         return redirect(url_for('login', fail='False'))
 
@@ -114,6 +127,20 @@ def whirlChat():
         
         return render_template("whirlChat.html", history=history)
 
+@app.route('/subir_calificacion', methods=['POST'])
+def subir_calificacion():
+    # Recibir datos del formulario
+    data = request.get_json()
+
+    id_leccion = data['id']
+    tipo = data['tipo']
+    calificacion = data['calificacion']
+
+    # Subir a la base de datos
+    operaciones_sql.subir_calificacion(id_leccion, tipo, calificacion)
+
+    return {"success": True}, 200
+
 
 @app.route('/check', methods=['POST'])
 def check():
@@ -122,20 +149,29 @@ def check():
     password_input = request.form['password']
 
     # Validar credenciales
-    valid, id, name = operaciones_sql.validate_credentials(username_input, password_input)
+    valid, id, name, id_rol = operaciones_sql.validate_credentials(username_input, password_input)
 
     if valid:
         session['username'] = username_input
         session['id'] = id
         session['name'] = name
+        session['id_rol'] = id_rol
         print(id)
         operaciones_sql.get_pfp(username_input)
 
-        return redirect(url_for('cursos'))
+        return redirect(url_for('homepage'))
     
     else:
-        return redirect(url_for('login', fail='True'))
+        return redirect(url_for('login', fail='True', id_rol=id_rol))
 
+@app.route('/homepage', methods=['GET'])
+def homepage():
+    if 'username' in session:
+        session['section'] = 'homepage'
+        id_rol = session['id_rol']
+        return render_template('homepage.html', id_rol=id_rol)
+    else:
+        return redirect(url_for('login', fail='False'))
 
 @app.route('/login/<fail>', methods=['GET'])
 def login(fail):
@@ -143,7 +179,49 @@ def login(fail):
         return render_template('login.html', fail='True')
     else:
         return render_template('login.html', fail='False')
+    
+@app.route('/log_out')
+def log_out():
+    session.clear()
+    return redirect(url_for('login', fail='False'))
 
+
+@app.route('/Dar_de_alta', methods=["GET","POST"])
+def alta():
+    session['section'] = 'Alta'
+    id_rol = session['id_rol']
+    if id_rol == 2:
+        if request.method == "POST":
+            alumno = request.form['new_user']
+            correo = request.form['new_mail']
+            cel = request.form['phone_num']
+            tipo_rol = request.form['rol_type']
+            pswd = request.form['new_pswd']
+
+            exists = operaciones_sql.verificar_estudiante(correo)
+
+            print(exists)
+
+            if not exists:
+                operaciones_sql.agregar_estudiantes(alumno, correo, cel, tipo_rol, pswd)
+                return render_template('dar_de_alta.html', saved = 'True', id_rol=id_rol)
+            else:
+                return render_template('dar_de_alta.html', saved = 'False', id_rol=id_rol)
+        else:
+            return render_template('dar_de_alta.html', id_rol=id_rol)
+    else:
+        return redirect(url_for('cursos', id_rol=id_rol))
+
+@app.route('/Alumnos')
+def visualizar_alumnos():
+    session['section'] = 'Vista_alumnos'
+    id_rol = session['id_rol']
+    if session['id_rol'] == 3:
+        alumnos = operaciones_sql.get_alumnos()
+        return render_template('vista_alumnos.html', alumnos = alumnos, id_rol=id_rol)
+    else:
+        return redirect(url_for('cursos', id_rol=id_rol))
+    
     
 @app.route('/')
 def home():
@@ -152,11 +230,17 @@ def home():
 
 @app.route('/crear_curso_form', methods=['GET'])
 def crear_curso_form():
-    return render_template('CreacionCursos.html')
+    session['section'] = 'creacion_curso'
+    id_rol = session['id_rol']
+    if session['id_rol'] == 2:
+        return render_template('CreacionCursos.html', id_rol=id_rol)
+    else:
+        return redirect(url_for('cursos', id_rol))
 
 @app.route('/crear_modulo_form', methods=['GET'])
 def crear_modulo_form():
-    return render_template('CreacionModulos.html')
+    id_rol = session['id_rol']
+    return render_template('CreacionModulos.html', id_rol=id_rol)
 
 @app.route('/crear_lectura_form', methods=['GET'])
 def crear_lectura_form():
@@ -165,7 +249,6 @@ def crear_lectura_form():
 @app.route('/crear_cuestionario_form', methods=['GET'])
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')
-
 
 @app.route('/crear_curso', methods=['POST'])
 def crear_curso():
@@ -187,5 +270,30 @@ def crear_curso():
         print(e)
         return jsonify({'message': 'Error al crear el curso'}), 500
 
+
+@app.route('/asignar_alumno/<id_curso>/<id_alumno>')
+def asignar_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.asignar_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/remover_alumno/<id_curso>/<id_alumno>')
+def remover_alumno(id_curso, id_alumno):
+    if 'username' in session:
+        operaciones_sql.remover_alumno(id_curso, id_alumno)
+        return redirect(url_for('vista_curso', id_curso=id_curso))
+    else:
+        return redirect(url_for('login', fail='False'))
+
+@app.route('/alumnos_todos/<id_curso>/<tipo>')
+def alumnos_todos(id_curso, tipo):
+    operaciones_sql.alumnos_todos(id_curso, tipo)
+    return redirect(url_for('vista_curso', id_curso=id_curso))
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

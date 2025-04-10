@@ -1,6 +1,15 @@
-{% extends "base.html" %} {% block title %} Lectura - {{ lectura[0] }} {%
-endblock %} {% block header %} Lectura - {{ lectura[0] }} {% endblock %} {%
-block content %}
+{% extends "cursos.html" %} 
+
+{% block title %} 
+Lectura - {{ lectura[0] }} 
+{%endblock %} 
+
+{% block header %} 
+Lectura - {{ lectura[0] }} 
+{% endblock %} 
+
+
+{% block content %}
 <form action="{{ url_for('cursos') }}" method="post">
   <input type="hidden" name="id_curso" value="{{ id_curso }}" />
   <button type="submit" class="btn btn-warning">
@@ -82,7 +91,8 @@ block content %}
       
     }
     else {
-      alert("Finalizando lectura...");
+      alert('¡Felicidades! Has completado la lección.');
+      subirCalificacion({{ lectura[2] }});
     }
   }
 
@@ -107,6 +117,42 @@ block content %}
       botonAnterior.classList.add("disabled");
     }
     botonSiguiente.innerHTML = "Página siguiente <i class='bx bxs-right-arrow'></i>";
+  }
+  function subirCalificacion(id_lectura) {
+    fetch('/subir_calificacion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id_lectura,
+        tipo: 'Lectura',
+        calificacion: 100
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // hacer un post para regresar a vista curso
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '{{ url_for('cursos') }}';
+  
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'id_curso';
+  input.value = {{ id_curso }};
+  form.appendChild(input);
+  
+  document.body.appendChild(form);
+  form.submit();
+      } else {
+        alert('Error al subir la calificación.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   }
 </script>
 

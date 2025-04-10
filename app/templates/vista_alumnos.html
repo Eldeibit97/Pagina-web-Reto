@@ -1,0 +1,22 @@
+{% extends "cursos.html" %}
+
+{% block title %}
+  Alumnos
+{% endblock %}
+
+{% block header %}
+  Alumnos
+{% endblock %}
+
+
+{% block content %}
+<p class="text-secondary">Aquí puedes encontrar a todos los alumnos existentes.</p>
+<ul class="list-group">
+  {% for alumno in alumnos %}
+  <li class="list-group-item">
+      <img src="{{ alumno[1] }}" alt="pfp.jpg" width="50pt" class="p-2">
+      {{ alumno[0] }}
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
