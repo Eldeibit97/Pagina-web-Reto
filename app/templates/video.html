@@ -16,12 +16,20 @@
 </form>
 <br>
 
-<p>Observa el video hasta el final para completar esta lección.</p>
+<p>Observa el video completo para terminar esta lección.</p>
 
 <div id="player"></div>
 
+<br>
+
+<h5><span id="contador"></span></h5>
+
 <script src="https://cdn.jsdelivr.net/npm/get-video-id/dist/get-video-id.umd.min.js"></script>
 <script>
+  // timer
+  var timerStarted = false;
+  var timerInterval = null;
+
   var videoInfo = getVideoId('{{ video[1] }}');
   var videoId = videoInfo.id;
 
@@ -39,7 +47,8 @@
       playerVars: {
         'playsinline': 1,
         'rel': 0,
-        'modestbranding': 1
+        'modestbranding': 1,
+        'controls': 0
       },
       events: {
         'onStateChange': onPlayerStateChange
@@ -49,10 +58,18 @@
 
   // detectar fin del video
   function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.ENDED) {
-      alert('¡Felicidades! Has completado la lección.');
-      subirCalificacion({{ video[2] }});
-
+    if (event.data === YT.PlayerState.PLAYING && !timerStarted) {
+      timerStarted = true;
+      const duration = player.getDuration();
+      const roundedDuration = Math.round(duration);
+      iniciarTemporizador(roundedDuration);
+    } else if (event.data === YT.PlayerState.PAUSED) {
+      // Pause the timer when the video is paused
+      clearInterval(timerInterval);
+    } else if (event.data === YT.PlayerState.PLAYING && timerStarted) {
+      // Resume the timer when the video is played again
+      const remainingTime = parseInt(spanContador.textContent.split(':').reduce((acc, time) => (60 * acc) + +time));
+      iniciarTemporizador(remainingTime);
     }
   }
 
@@ -91,6 +108,29 @@
     .catch((error) => {
       console.error('Error:', error);
     });
+  }
+
+  const spanContador = document.getElementById("contador");
+
+  function iniciarTemporizador(segundos) {
+    clearInterval(timerInterval); // Clear any existing interval
+    timerInterval = setInterval(() => {
+      segundos--;
+      spanContador.textContent = formatearTiempo(segundos);
+  
+      if (segundos === 0) {
+        clearInterval(timerInterval);
+        alert('¡Felicidades! Has completado la lección.');
+        subirCalificacion({{ video[2] }});
+      }
+    }, 1000);
+  }
+
+  function formatearTiempo(segundos) {
+    const h = String(Math.floor(segundos / 3600)).padStart(2, '0');
+    const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+    const s = String(segundos % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
   }
 </script>
 
