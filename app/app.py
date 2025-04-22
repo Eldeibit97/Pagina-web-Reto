@@ -160,6 +160,9 @@ def check():
         print(id)
         operaciones_sql.get_pfp(username_input)
 
+        # Registrar entrada
+        operaciones_sql.entrada(id)
+
         return redirect(url_for('homepage'))
     
     else:

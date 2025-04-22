@@ -417,3 +417,23 @@ def alumnos_todos(id_curso, tipo):
         connection.commit()
     cursor.close()
     connection.close()
+
+def entrada(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Verificar que no ha entrado el usuario en el dia actual
+    query = """
+        INSERT INTO Entrada (Fecha, ID_Usuario)
+        SELECT CURDATE(), %s
+        FROM DUAL
+        WHERE NOT EXISTS (
+            SELECT 1 FROM Entrada WHERE Fecha = CURDATE() AND ID_Usuario = %s
+        );
+    """
+    values = (id, id)
+    cursor.execute(query, values)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
