@@ -1,0 +1,25 @@
+{% extends "cursos.html" %}
+
+{% block title %}
+  Crear cuestionario
+{% endblock %}
+
+{% block header %}
+  Crear cuestionario
+{% endblock %}
+
+{% block content %}
+<div class="cuerpo">
+  <link rel="stylesheet" href="/static/css/creacion_cuestionarios_styles.css">
+  <div class="monitor">
+    <button id="saveButton">Guardar</button>
+
+    <h1 id="Title">Editar Cuestionario: </h1>
+
+    <div id="questionList">
+      <button id="addQuestion">Agregar preguntas</button>
+    </div>
+  </div>
+  <script src="/static/js/creacion_cuestionarios.js"></script>
+</div>
+{% endblock %}

@@ -1,11 +1,20 @@
 {% extends "cursos.html" %}
 
 {% block title %}
-  Crear modulo
+  {% if id_curso %}
+    Editar Modulo
+  {% else %}
+    Crear Modulo
+  {% endif %}
 {% endblock %}
 
+
 {% block header %}
-  Crear modulo
+  {% if id_curso %}
+  Editar Modulo
+  {% else %}
+  Crear Modulo
+  {% endif %}
 {% endblock %}
 
 
@@ -13,18 +22,28 @@
 <div class="cuerpo">
   <link rel="stylesheet" href="/static/css/creacion_modulos_styles.css">
   <div class="monitor">
+
     <div id="listaModulosView">
-      <h1 class="headers">Módulos</h1>
+      <h1 class="headers" id="modulo-header">Módulos</h1>
       <ul id="lista-modulos"></ul>
-      <button id="btnAgregar"><i class='bx bx-plus'></i></button>
+      <button id="btnAgregarModulo" class="AddButton"><i class='bx bx-plus'></i></button>
       <button id="btnListo">Listo</button>
     </div>
+
     <div id="edicionModuloView" class="oculto">
-      <h2 class="headers" id="tituloEdicion">Editar: (Módulo)</h2>
-      <div class="contenedor-tarjetas" id="contenedorTarjetas"></div>
-      <button id="btnAgregarTarjeta"><i class='bx bx-plus'></i></button>
-      <button id="btnGuardar" >Guardar</button>
+      <h1 class="headers" id="tituloEdicion">Editar: (Módulo)</h1>
+      <div id="contenedorTarjetas"></div>
+      <button id="btnAgregarTarjeta" class="AddButton"><i class='bx bx-plus'></i></button>
+      <button id="btnGuardarTarjeta" class = 'SaveButton'>Guardar</button>
     </div>
+
+    <div id="edicionLecturaView" class="oculto">
+      <h1 class="headers" id="tituloEdicion">Editar Lectura</h1>
+      <div class="contenedor-paginas" id="contenedorPaginas"></div>
+      <button id="btnAnadirPag" class="AddButton"><i class='bx bx-plus'></i></button>
+      <button id="btnGuardarPag" class = 'SaveButton'>Listo</button>
+    </div>
+
   </div>
   <script src="/static/js/creacion_modulos.js"></script>
 </div>

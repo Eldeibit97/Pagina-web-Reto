@@ -20,7 +20,19 @@
   color: #333;
 }
 .oculto{
-  display: none !important;
+  display: none;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+button:disabled:hover {
+  background-color: none;
+  color: none;
+  transform: none;
+  box-shadow: none;
 }
 #listaModulosView {
   flex: 1;
@@ -32,6 +44,7 @@
 }
 #lista-modulos li {
   background: #f9f9f9;
+  border-width: 1px;
   margin: 10px 0; 
   padding: 15px;
   border-radius: 8px;
@@ -42,21 +55,28 @@
   font-size: 18px; 
   color: #555;
 }
+
+.inputModule {
+  width: 55%; 
+  margin-right: 10px;
+}
+
 .contenedor-acciones {
   display: flex; 
   gap: 10px;
 }
-.editar, .borrar {
-  background: none; 
-  border: none; 
+.editarButton, .borrarButton {
+  background: none;
+  border-width: 1px; 
   cursor: pointer; 
   font-size: 18px;
   transition: transform 0.2s;
 }
-.editar:hover, .borrar:hover {
+.editarButton:hover, .borrarButton:hover {
   transform: scale(1.2);
 }
-#btnAgregar {
+
+.AddButton {
   position: absolute; 
   bottom: 20px; 
   left: 20px;
@@ -72,9 +92,10 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   transition: background-color 0.3s;
 }
-#btnAgregar:hover {
+.AddButton:hover {
   background-color: #1c5980;
 }
+
 #btnListo {
   position: absolute; 
   bottom: 20px; 
@@ -99,13 +120,14 @@
   margin-bottom: 20px;
   font-size: 28px;
 }
-.contenedor-tarjetas {
+#contenedorTarjetas {
   display: flex; 
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
 .tarjeta {
+  position: relative;
   background-color: #f9f9f9;
   width: 200px; 
   min-height: 130px;
@@ -120,6 +142,19 @@
   margin: 0;
   color: #333;
 }
+.btn-cerrar {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  border: none;
+  font-size: 16px;
+  background-color: transparent ;
+  cursor: pointer;
+}
+.btn-cerrar:hover{
+  background-color: darkred;
+}
+
 .media-container {
   display: flex;
   justify-content: flex-end;
@@ -135,23 +170,11 @@
 .upload-icon:hover {
   transform: scale(1.2);
 }
-#btnAgregarTarjeta {
-  background-color: #2980b9; 
-  color: #fff;
-  border: none; 
-  border-radius: 50%;
-  padding: 1px 6px 8px;
-  width: 50px; 
-  height: 50px;
-  font-size: 28px; 
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: background-color 0.3s;
-}
-#btnAgregarTarjeta:hover {
-  background-color: #1c5980;
-}
-#btnGuardar {
+
+.SaveButton {
+  position: absolute; 
+  bottom: 20px; 
+  right: 20px;
   background-color: #ffd700;
   border: none; 
   padding: 10px 20px;
@@ -162,6 +185,92 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   transition: background-color 0.3s;
 }
-#btnGuardar:hover {
+.SaveButton:hover {
   background-color: #e6c200;
 }
+
+.confirmar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4em;
+  padding: 4px;
+  color: green;
+}
+
+.contenedor-paginas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.pagina {
+  background: #f9f9f9;
+  width: 300px;
+  min-height: 250px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+}
+.titulo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.titulo-container h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #333;
+  flex: 1;
+}
+.editar-titulo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+.editar-titulo:hover {
+  transform: scale(1.1);
+}
+.editar-titulo svg {
+  width: 20px;
+  height: 20px;
+  fill: #2980b9;
+}
+.pagina textarea {
+  width: 100%;
+  height: 120px;
+  resize: vertical;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-family: Arial, sans-serif;
+}
+.imagen-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 5px;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imagen-btn:hover {
+  transform: scale(1.1);
+}
+.imagen-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: #2980b9;
+}
+

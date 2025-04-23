@@ -1,18 +1,32 @@
 {% extends "cursos.html" %}
 
 {% block title %}
-  Crear Curso
+  {% if id_curso %}
+    Editar Curso
+  {% else %}
+    Crear Curso
+  {% endif %}
 {% endblock %}
 
+
 {% block header %}
+  {% if id_curso %}
+  Editar Curso
+  {% else %}
   Crear Curso
+  {% endif %}
 {% endblock %}
 
 
 {% block content %}
+<input type="hidden" id="curso-nombre" value="{{ curso[0] if curso else '' }}">
+<input type="hidden" id="curso-descripcion" value="{{ curso[1] if curso else '' }}">
+<input type="hidden" id="curso-imagen" value="{{ curso[2] if curso else '' }}">
+<input type="hidden" id="curso-id" value="{{ id_curso if id_curso else '' }}">
+
 <div class="container">
   <link rel="stylesheet" href="/static/css/creacion_cursos_styles.css">
-  <h1 class="headers">Crear Curso</h1>
+  <h1 class="headers" id = "form-title">Crear Curso</h1>
   <label for="course-name" class="etiqueta">Nombre del curso</label>
   <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
   
@@ -30,6 +44,8 @@
   <!-- El botón "Siguiente" validará datos antes de redirigir -->
   <button class="next-button" onclick="validarDatos()">Siguiente</button>
 </div>
+
+
 
 <script src="/static/js/creacion_cursos.js"></script>
 {% endblock %}

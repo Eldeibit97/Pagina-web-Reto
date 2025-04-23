@@ -1,10 +1,12 @@
+let url;
+let idCurso;
+
 function pedirImagen() {
-  let url = prompt("Introduce la URL de la imagen:");
+  url = prompt("Introduce la URL de la imagen:");
   if (url) {
-    localStorage.setItem("imagenURL", url);
     mostrarImagen(url);
     // Cambiar el icono del botón a lápiz
-    document.getElementById("btnImagen").textContent = "✎";
+    
   }
 }
 
@@ -12,13 +14,14 @@ function mostrarImagen(url) {
   let img = document.getElementById("imagen");
   img.src = url;
   img.style.display = "block";
+  document.getElementById("btnImagen").textContent = "✎";
 }
 
 // Validar que se hayan ingresado todos los datos
 function validarDatos() {
   let nombre = document.getElementById("course-name").value.trim();
   let descripcion = document.getElementById("description").value.trim();
-  let imagen = localStorage.getItem("imagenURL");
+  let imagen = document.getElementById("imagen").src;
   
   if (!nombre || !descripcion || !imagen) {
     alert("Ingresa todos los datos necesarios");
@@ -30,16 +33,23 @@ function validarDatos() {
   sessionStorage.setItem('courseImage', imagen);
   
   // Si todos los campos están completos, redirige a la siguiente página
-  console.log('clicked');
-  window.location.href = "/crear_modulo_form";
+  if (idCurso) {
+    window.location.href = '/editar_modulo_form/'+ idCurso;
+  } else {
+    window.location.href = "/crear_modulo_form";
+  }
 }
 
-
-// Al cargar la página, se verifica si hay una imagen guardada y se muestra
 window.onload = function () {
-  let urlGuardada = localStorage.getItem("imagenURL");
-  if (urlGuardada) {
-    mostrarImagen(urlGuardada);
-    document.getElementById("btnImagen").textContent = "✎";
+  idCurso = document.getElementById("curso-id").value;
+  sessionStorage.setItem("IDCurso", idCurso);
+
+  if (idCurso) {
+    document.getElementById("form-title").innerText = "Editar Curso";
+    document.getElementById("course-name").value = document.getElementById("curso-nombre").value;
+    document.getElementById("description").value = document.getElementById("curso-descripcion").value;
+    mostrarImagen(document.getElementById("curso-imagen").value);
+  } else {
+    document.getElementById("form-title").innerText = "Nuevo Curso";
   }
 };

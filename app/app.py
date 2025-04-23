@@ -237,14 +237,38 @@ def crear_curso_form():
     session['section'] = 'creacion_curso'
     id_rol = session['id_rol']
     if session['id_rol'] == 2:
-        return render_template('CreacionCursos.html', id_rol=id_rol)
+        return render_template('CreacionCursos.html', id_rol=id_rol, curso=["", "", ""])
     else:
         return redirect(url_for('cursos', id_rol))
+    
+@app.route('/editar_curso_form/<id_curso>', methods=['GET'])
+def editar_curso_form(id_curso):
+    session['section'] = 'edicion_curso'
+    id_rol = session['id_rol']
+    if id_rol == 2:
+        curso = operaciones_sql.get_curso_info(id_curso)
+        return render_template('CreacionCursos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+    else:
+        return redirect(url_for('cursos'))
 
 @app.route('/crear_modulo_form', methods=['GET'])
 def crear_modulo_form():
     id_rol = session['id_rol']
     return render_template('CreacionModulos.html', id_rol=id_rol)
+
+@app.route('/editar_modulo_form/<id_curso>', methods=['GET'])
+def editar_modulo_form(id_curso):
+    session['section'] = 'edicion_modulo'
+    id_rol = session['id_rol']
+    if id_rol == 2:
+        curso = operaciones_sql.get_curso_info(id_curso)
+        return render_template('CreacionModulos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+    else:
+        return redirect(url_for('cursos'))
+
+@app.route('/crear_cuestionario_form', methods=['GET'])
+def crear_cuestionario_form():
+    return render_template('CreacionCuestionarios.html')
 
 
 @app.route('/crear_curso', methods=['POST'])
@@ -267,6 +291,27 @@ def crear_curso():
     except Exception as e:
         print(e)
         return jsonify({'message': 'Error al crear el curso'}), 500
+    
+@app.route('/editar_curso', methods=['POST'])
+def editar_curso():
+    # if 'username' not in session:
+    #     return jsonify({'message': 'No autorizado'}), 401
+
+    data = request.get_json()
+    print("JSON recibido:", data)
+    courseID = data.get('idCurso')
+    courseNombre = data.get('courseNombre')
+    courseDescripcion = data.get('courseDescripcion')
+    courseImagen_url = data.get('courseImagen_url')
+    modulos =data.get('modulos')
+
+
+    try:
+        operaciones_sql.editar_curso(courseID, courseNombre, courseDescripcion, courseImagen_url, modulos)
+        return jsonify({'message': 'Curso editado exitosamente'})
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Error al editar el curso'}), 500
 
 
 @app.route('/asignar_alumno/<id_curso>/<id_alumno>')
@@ -294,6 +339,12 @@ def alumnos_todos(id_curso, tipo):
 def eliminar_curso(id_curso):
     operaciones_sql.eliminar_curso(id_curso)
     return redirect(url_for('cursos'))
+
+@app.route('/api/obtener_curso/<int:id_curso>', methods=['GET'])
+def obtener_curso(id_curso):
+    data = operaciones_sql.get_curso_json(id_curso)
+    return jsonify(data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,118 @@
+body {
+    font-family: Arial, sans-serif;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 0;
+}
+
+#saveButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#saveButton:hover {
+    background-color: darkorange;
+}
+
+#Title {
+    margin-top: 50px;
+    text-align: center;
+    
+}
+
+#questionList {
+    width: 80%;
+    margin-right: auto;
+    margin-left: auto;
+    overflow: auto;
+}
+
+#questionList h2 {
+    text-align: center;
+}
+
+.question {
+    background-color: rgba(0, 255, 255, 0.327);
+    border: 2px solid black;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+
+.question input[type="text"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    height: 20px
+}
+
+.option-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.option-wrapper input[type="text"] {
+    flex: 1;
+    margin-right: 5px;
+    padding: 5px;
+    width: 300px;
+}
+
+.option-wrapper input[type="checkbox"] {
+    margin-left: 5px;
+    align-items:flex-start;
+}
+
+.option-wrapper label {
+    width: 70px;
+    margin-left: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.correct-option {
+    color: green;
+}
+
+.incorrect-option {
+    color: red;
+}
+
+#addQuestion {
+    background-color: green;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right;
+}
+
+#addQuestion:hover {
+    background-color: darkgreen;
+}
+
+.deletePreguntaButton {
+    background-color: rgb(255, 47, 0);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 100px;
+    float: right;
+    margin-bottom: 10px;
+}
+
+.deletePreguntaButton:hover {
+    background-color: rgb(139, 28, 3);
+}

@@ -205,9 +205,17 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
     curso_id = cursor.lastrowid
 
     query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+
     query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pagina = "INSERT INTO Pagina (Nom_Pagina, Texto_Pagina, ID_Lectura) VALUES (%s, %s, %s);"
+    query_imagen = "INSERT INTO Imagen (URL_Imagen, ID_Pagina) VALUES (%s, %s);"
+    # query_texto = "INSERT INTO Texto (Texto, ID_Pagina) VALUES (%s, %s);"
+
     query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+
     query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pregunta = "INSERT INTO Preguntas (Pregunta, ID_Cuestionario) VALUES (%s, %s);"
+    query_respuesta = "INSERT INTO Respuestas (Respuestas, ID_Pregunta, Correcta) VALUES (%s, %s, %s);"
 
     for modulo in Modulos:
         nom_modulo = modulo['nomModulo']
@@ -217,29 +225,134 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
         modulo_id = cursor.lastrowid
         fecha_creacion = datetime.datetime.now()
 
-        for tarjeta in modulo['tarjetas']:
-            tipo_archivo = tarjeta['tipoArchivo']
-            nom_tarjeta = tarjeta['nomTarjeta']
+        for contenido in modulo['contenidos']:
+            tipo_archivo = contenido['tipo']
+            nom_contenido = contenido['nomContenido']
 
             if tipo_archivo == 'lectura':
-                # lectura_text = tarjeta.get('lecturaText', '')
-                values_lectura = (nom_tarjeta, modulo_id, fecha_creacion)
+                values_lectura = (nom_contenido, modulo_id, fecha_creacion)
                 cursor.execute(query_lectura, values_lectura)
+                lectura_id = cursor.lastrowid
+
+                lecturas = contenido.get('lecturaTexto', [])
+                for lectura in lecturas:
+                    titulo = lectura.get('nomPagina')
+                    texto = lectura.get('texto')
+                    imagen = lectura.get('imgPagina')
+                    cursor.execute(query_pagina, (titulo, texto, lectura_id))
+                    
+                    pagina_id = cursor.lastrowid
+                    cursor.execute(query_imagen, (imagen, pagina_id))
+
+
 
             elif tipo_archivo == 'video':
-                video_url = tarjeta.get('videoUrl', '')
-                values_video = (nom_tarjeta, video_url, modulo_id, fecha_creacion)
+                video_url = contenido.get('videoUrl', '')
+                values_video = (nom_contenido, video_url, modulo_id, fecha_creacion)
                 cursor.execute(query_video, values_video)
 
             elif tipo_archivo == 'cuestionario':
-                # pregunta = tarjeta.get('pregunta', '')
-                values_cuestionario = (nom_tarjeta, modulo_id, fecha_creacion)
+                values_cuestionario = (nom_contenido, modulo_id, fecha_creacion)
                 cursor.execute(query_cuestionario, values_cuestionario)
+                cuestionario_id = cursor.lastrowid
+
+                preguntas = contenido.get('pregunta', [])
+                for pregunta in preguntas:
+                    texto_pregunta = pregunta.get('pregunta')
+                    cursor.execute(query_pregunta, (texto_pregunta, cuestionario_id))
+                    pregunta_id = cursor.lastrowid
+
+                    respuestas = pregunta.get('opciones', [])
+                    correctas = pregunta.get('correctas', [])
+
+                    for i, respuesta in enumerate(respuestas):
+                        
+                        correcta = correctas[i] if i < len(correctas) else 0  
+                        cursor.execute(query_respuesta, (respuesta, pregunta_id, correcta))
+
 
     connection.commit() #commit the change
 
     cursor.close()
-    connection.close()    
+    connection.close()
+
+
+def editar_curso(id_curso, nom_curso, desc_curso, img_curso, Modulos):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # 1. Update curso
+    query_update_curso = """
+    UPDATE Cursos
+    SET Nom_Curso = %s, Descripcion = %s, Link_Img_Curso = %s
+    WHERE ID_Curso = %s;
+    """
+    cursor.execute(query_update_curso, (nom_curso, desc_curso, img_curso, id_curso))
+
+    # 2. Delete old Modulos and associated data
+    cursor.execute("SELECT ID_Modulo FROM Modulos WHERE ID_Curso = %s;", (id_curso,))
+    modulos_existentes = cursor.fetchall()
+    for (id_modulo,) in modulos_existentes:
+        cursor.execute("DELETE FROM Imagen WHERE ID_Pagina IN (SELECT ID_Pagina FROM Pagina WHERE ID_Lectura IN (SELECT ID_Lectura FROM Lectura WHERE ID_Modulo = %s));", (id_modulo,))
+        cursor.execute("DELETE FROM Pagina WHERE ID_Lectura IN (SELECT ID_Lectura FROM Lectura WHERE ID_Modulo = %s);", (id_modulo,))
+        cursor.execute("DELETE FROM Lectura WHERE ID_Modulo = %s;", (id_modulo,))
+        cursor.execute("DELETE FROM Video WHERE ID_Modulo = %s;", (id_modulo,))
+        cursor.execute("DELETE FROM Respuestas WHERE ID_Pregunta IN (SELECT ID_Pregunta FROM Preguntas WHERE ID_Cuestionario IN (SELECT ID_Cuestionario FROM Cuestionario WHERE ID_Modulo = %s));", (id_modulo,))
+        cursor.execute("DELETE FROM Preguntas WHERE ID_Cuestionario IN (SELECT ID_Cuestionario FROM Cuestionario WHERE ID_Modulo = %s);", (id_modulo,))
+        cursor.execute("DELETE FROM Cuestionario WHERE ID_Modulo = %s;", (id_modulo,))
+        cursor.execute("DELETE FROM Modulos WHERE ID_Modulo = %s;", (id_modulo,))
+
+    # 3. Insert updated Modulos and contents
+    query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
+    query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pagina = "INSERT INTO Pagina (Nom_Pagina, Texto_Pagina, ID_Lectura) VALUES (%s, %s, %s);"
+    query_imagen = "INSERT INTO Imagen (URL_Imagen, ID_Pagina) VALUES (%s, %s);"
+    query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
+    query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
+    query_pregunta = "INSERT INTO Preguntas (Pregunta, ID_Cuestionario) VALUES (%s, %s);"
+    query_respuesta = "INSERT INTO Respuestas (Respuestas, ID_Pregunta, Correcta) VALUES (%s, %s, %s);"
+
+    for modulo in Modulos:
+        nom_modulo = modulo['nomModulo']
+        cursor.execute(query_modulo, (nom_modulo, id_curso))
+        modulo_id = cursor.lastrowid
+        fecha_creacion = datetime.datetime.now()
+
+        for contenido in modulo['contenidos']:
+            tipo_archivo = contenido['tipo']
+            nom_contenido = contenido['nomContenido']
+
+            if tipo_archivo == 'lectura':
+                cursor.execute(query_lectura, (nom_contenido, modulo_id, fecha_creacion))
+                lectura_id = cursor.lastrowid
+                for lectura in contenido.get('lecturaTexto', []):
+                    titulo = lectura.get('nomPagina')
+                    texto = lectura.get('texto')
+                    imagen = lectura.get('imgPagina')
+                    cursor.execute(query_pagina, (titulo, texto, lectura_id))
+                    pagina_id = cursor.lastrowid
+                    cursor.execute(query_imagen, (imagen, pagina_id))
+
+            elif tipo_archivo == 'video':
+                video_url = contenido.get('videoUrl', '')
+                cursor.execute(query_video, (nom_contenido, video_url, modulo_id, fecha_creacion))
+
+            elif tipo_archivo == 'cuestionario':
+                cursor.execute(query_cuestionario, (nom_contenido, modulo_id, fecha_creacion))
+                cuestionario_id = cursor.lastrowid
+                for pregunta in contenido.get('pregunta', []):
+                    texto_pregunta = pregunta.get('pregunta')
+                    cursor.execute(query_pregunta, (texto_pregunta, cuestionario_id))
+                    pregunta_id = cursor.lastrowid
+                    for i, respuesta in enumerate(pregunta.get('opciones', [])):
+                        correcta = pregunta.get('correctas', [])[i] if i < len(pregunta.get('correctas', [])) else 0
+                        cursor.execute(query_respuesta, (respuesta, pregunta_id, correcta))
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
 #
 def get_curso(id):
     connection = connect()
@@ -254,6 +367,18 @@ def get_curso(id):
     connection.close()
     return curso
 
+def get_curso_info(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT c.Nom_Curso, c.Descripcion, c.Link_Img_Curso FROM Cursos c WHERE c.ID_Curso = " + str(id)
+    cursor.execute(query)
+    curso = cursor.fetchall()
+    curso = curso[0]
+
+    cursor.close()
+    connection.close()
+    return curso
 
 ## Video ##
 def get_video(id):
@@ -469,3 +594,90 @@ def eliminar_curso(id):
     connection.commit()
     cursor.close()
     connection.close()
+
+def get_curso_json(id_curso):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Cursoの基本情報を取得
+    cursor.execute("SELECT Nom_Curso, Descripcion, Link_Img_Curso FROM Cursos WHERE ID_Curso = %s", (id_curso,))
+    curso_row = cursor.fetchone()
+    if not curso_row:
+        return None  # コースが存在しない場合
+
+    nom_curso, desc_curso, img_curso = curso_row
+
+    # モジュール一覧を取得
+    cursor.execute("SELECT ID_Modulo, Nom_Modulo FROM Modulos WHERE ID_Curso = %s", (id_curso,))
+    modulos_rows = cursor.fetchall()
+    modulos = []
+
+    for modulo in modulos_rows:
+        id_modulo, nom_modulo = modulo
+        contenidos = []
+
+        # --- Lecturas ---
+        cursor.execute("SELECT ID_Lectura, Nom_Lectura FROM Lectura WHERE ID_Modulo = %s", (id_modulo,))
+        for id_lectura, nom_lectura in cursor.fetchall():
+            cursor.execute("SELECT Nom_Pagina, Texto_Pagina, URL_Imagen FROM Pagina p JOIN Imagen i ON p.ID_Pagina = i.ID_Pagina WHERE ID_Lectura = %s", (id_lectura,))
+            paginas = [
+                {
+                    "nomPagina": nom_pagina,
+                    "texto": texto,
+                    "imgPagina": img
+                } for nom_pagina, texto, img in cursor.fetchall()
+            ]
+            contenidos.append({
+                "tipo": "lectura",
+                "nomContenido": nom_lectura,
+                "lecturaTexto": paginas
+            })
+
+        # --- Videos ---
+        cursor.execute("SELECT Nombre_Video, Link_Video FROM Video WHERE ID_Modulo = %s", (id_modulo,))
+        for nombre_video, link_video in cursor.fetchall():
+            contenidos.append({
+                "tipo": "video",
+                "nomContenido": nombre_video,
+                "videoUrl": link_video
+            })
+
+        # --- Cuestionarios ---
+        cursor.execute("SELECT ID_Cuestionario, Nom_Cuestionario FROM Cuestionario WHERE ID_Modulo = %s", (id_modulo,))
+        for id_cuestionario, nom_cuestionario in cursor.fetchall():
+            preguntas = []
+            cursor.execute("SELECT ID_Pregunta, Pregunta FROM Preguntas WHERE ID_Cuestionario = %s", (id_cuestionario,))
+            for id_pregunta, texto_pregunta in cursor.fetchall():
+                cursor.execute("SELECT Respuestas, Correcta FROM Respuestas WHERE ID_Pregunta = %s", (id_pregunta,))
+                opciones = []
+                correctas = []
+                for respuesta, correcta in cursor.fetchall():
+                    opciones.append(respuesta)
+                    correctas.append(1 if correcta else 0)
+                preguntas.append({
+                    "pregunta": texto_pregunta,
+                    "opciones": opciones,
+                    "correctas": correctas
+                })
+            contenidos.append({
+                "tipo": "cuestionario",
+                "nomContenido": nom_cuestionario,
+                "pregunta": preguntas
+            })
+
+        modulos.append({
+            "idModulo": id_modulo,
+            "nomModulo": nom_modulo,
+            "contenidos": contenidos
+        })
+
+    cursor.close()
+    connection.close()
+
+    return {
+        "idCurso": id_curso,
+        "nomCurso": nom_curso,
+        "descCurso": desc_curso,
+        "imgCurso": img_curso,
+        "modulos": modulos
+    }
