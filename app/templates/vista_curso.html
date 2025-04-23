@@ -80,12 +80,11 @@
 {% if session['id_rol'] == 1 %}
 
 <h5>Progreso: {{ progreso }}%</h5>
-<br>
 <div class="progress" style="height: 30px;">
-  <div class="progress-bar" role="progressbar" style="width: {{ progreso }}%;" aria-valuenow="{{ progreso }}" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="progress-bar progress-bar-striped progress-bar-animated {% if progreso == 100 %} bg-success {% endif %}" role="progressbar" style="width: {{ progreso }}%;" aria-valuenow="{{ progreso }}" aria-valuemin="0" aria-valuemax="100">
+  </div>
 </div>
-
-
+<br>
 
 {% endif %}
 
