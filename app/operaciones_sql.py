@@ -275,6 +275,7 @@ def get_video(id):
     connection.close()
     return video
 
+
 ## Cuestionario ##
 def get_cuestionario(id):
     connection = connect()
@@ -310,6 +311,7 @@ def get_cuestionario(id):
     connection.close()
     return cuestionario, preguntas_respuestas
 
+
 ## Lectura ##
 def get_lectura(id):
     connection = connect()
@@ -333,6 +335,8 @@ def get_lectura(id):
     cursor.close()
     connection.close()
     return lectura, paginas
+
+
 
 ## Subir calificacion ##
 def subir_calificacion(id_leccion, tipo, calificacion):
@@ -401,6 +405,8 @@ def remover_alumno(id_curso, id_usuario):
     cursor.close()
     connection.close()
 
+
+## Asignar/Remover todos los alumnos de un curso
 def alumnos_todos(id_curso, tipo):
     connection = connect()
     cursor = connection.cursor()
@@ -455,11 +461,11 @@ def entrada(id):
     connection.close()
 
 def eliminar_curso(id):
-     connection = connect()
-     cursor = connection.cursor()
- 
-     query = "DELETE FROM Cursos WHERE ID_Curso = " + str(id)
-     cursor.execute(query)
-     connection.commit()
-     cursor.close()
-     connection.close()
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "DELETE FROM Cursos WHERE ID_Curso = " + str(id)
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+    connection.close()
