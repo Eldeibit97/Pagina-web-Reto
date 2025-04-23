@@ -59,6 +59,14 @@
                                 <i class='bx bxs-user-detail'></i>
                                     Alumnos
                             </a>
+
+                            <a
+                            href="{{ url_for('desempeno') }}"
+                            class="btn {% if session['section'] == 'desempeno' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                            <i class='bx bxs-star'></i>
+                                    Desempeño
+                            </a>
                             
                             <a
                             href="{{ url_for('alta') }}"
