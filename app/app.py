@@ -286,6 +286,13 @@ def asignar_alumno(id_curso, id_alumno):
         return redirect(url_for('vista_curso', id_curso=id_curso))
     else:
         return redirect(url_for('login', fail='False'))
+    
+@app.route('/desempeno')
+def desempeno():
+    if 'username' in session:
+        return render_template('desempeno.html', id_rol = session['id_rol'])
+    else:
+        return redirect(url_for('login', fail='False'))
 
 @app.route('/remover_alumno/<id_curso>/<id_alumno>')
 def remover_alumno(id_curso, id_alumno):
