@@ -290,7 +290,10 @@ def alumnos_todos(id_curso, tipo):
     operaciones_sql.alumnos_todos(id_curso, tipo)
     return redirect(url_for('vista_curso', id_curso=id_curso))
 
-
+@app.route('/eliminar_curso/<id_curso>', methods=['POST'])
+def eliminar_curso(id_curso):
+    operaciones_sql.eliminar_curso(id_curso)
+    return redirect(url_for('cursos'))
 
 if __name__ == '__main__':
     app.run(debug=True)

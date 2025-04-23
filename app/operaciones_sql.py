@@ -459,3 +459,13 @@ def entrada(id):
 
     cursor.close()
     connection.close()
+
+def eliminar_curso(id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "DELETE FROM Cursos WHERE ID_Curso = " + str(id)
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+    connection.close()
