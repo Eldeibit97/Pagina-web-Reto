@@ -19,7 +19,7 @@
     <div class="d-flex flex-column min-vh-100">
         <div class="container-fluid flex-grow-1">
             <div class="row">
-                <div class="col-auto">
+                <div class="col-auto sideborder">
                     <div id="sidebar" class="collapse show collapse-horizontal collapse-sm-vertical  mt-2" aria-expanded="true" style="transition: none !important;">
                         
                         <div class="card p-3" style="width: 200px; height: 100%; border: none;">
@@ -52,6 +52,14 @@
 
                             <p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
 
+                            <a
+                            href="{{ url_for('visualizar_alumnos') }}"
+                            class="btn {% if session['section'] == 'Vista_alumnos' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                                <i class='bx bxs-user-detail'></i>
+                                    Alumnos
+                            </a>
+                            
                             <a
                             href="{{ url_for('alta') }}"
                             class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
@@ -88,8 +96,8 @@
                     </div>
                 </div>
             
-                <div class="col-sm-max col-md col-lg">
-                    <nav class="navbar justify-content-between">
+                <div class="col-sm-max col-md col-lg" style="padding: 0px;">
+                    <nav class="navbar justify-content-between navborder">
                         <button
                         class="btn p-2"
                         data-bs-toggle="collapse"
@@ -109,7 +117,7 @@
                                         <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#log_off_modal">
                                             <i class='bx bx-log-out'></i>
                                             Cerrar Sesión
-                                          </button>
+                                        </button>
                                     </li>
                                 </ul>
                             </a>
