@@ -162,13 +162,13 @@ def get_lecciones(id_curso):
 
         for leccion in lecciones:
             if leccion[1] == 'Lectura':
-                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Lectura ul WHERE ID_Lectura = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Lectura ul WHERE ID_Lectura = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  " AND Fecha_Fin IS NOT NULL) > 0, 100, -1)"
                 cursor.execute(query)
             elif leccion[1] == 'Video':
-                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Video uv  WHERE ID_Video  = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  ") > 0, 100, -1)"
+                query = "SELECT IF((SELECT COUNT(*) FROM Usuario_Video uv  WHERE ID_Video  = " + str(leccion[0]) + " AND ID_Usuario = " + str(session['id']) +  " AND Fecha_Fin IS NOT NULL) > 0, 100, -1)"
                 cursor.execute(query)
             elif leccion[1] == 'Cuestionario':
-                query = "SELECT IFNULL((SELECT Puntaje FROM Evaluaciones WHERE ID_Usuario = " + str(session['id']) +  " AND ID_Cuestionario = " + str(leccion[0]) + " ORDER BY Fecha DESC LIMIT 1), -1)"
+                query = "SELECT IFNULL((SELECT Puntaje FROM Evaluaciones WHERE ID_Usuario = " + str(session['id']) +  " AND ID_Cuestionario = " + str(leccion[0]) + " ORDER BY Fecha_Fin DESC LIMIT 1), -1)"
                 cursor.execute(query)
             
             calificacion = cursor.fetchone()
@@ -265,9 +265,16 @@ def get_video(id):
     video = cursor.fetchall()
     video = video[0]
 
+    # Registrar inicio
+    query = "INSERT INTO Usuario_Video (Fecha_Inicio, ID_Usuario, ID_Video) VALUES (NOW(), " + str(session['id']) + ", " + str(id) + ")"
+    cursor.execute(query)
+    connection.commit()
+
+
     cursor.close()
     connection.close()
     return video
+
 
 ## Cuestionario ##
 def get_cuestionario(id):
@@ -295,9 +302,15 @@ def get_cuestionario(id):
 
     #print(preguntas_respuestas)
 
+    # Registrar inicio
+    query = "INSERT INTO Evaluaciones (ID_Usuario, ID_Cuestionario, Fecha_Inicio ) VALUES (" + str(session['id']) + ", " + str(id) + ", NOW())"
+    cursor.execute(query)
+    connection.commit()
+
     cursor.close()
     connection.close()
     return cuestionario, preguntas_respuestas
+
 
 ## Lectura ##
 def get_lectura(id):
@@ -314,9 +327,16 @@ def get_lectura(id):
     cursor.execute(query)
     paginas = cursor.fetchall()
 
+    # Registrar inicio
+    query = "INSERT INTO Usuario_Lectura (Fecha_Inicio, ID_Usuario, ID_Lectura) VALUES (NOW(), " + str(session['id']) + ", " + str(id) + ")"
+    cursor.execute(query)
+    connection.commit()
+
     cursor.close()
     connection.close()
     return lectura, paginas
+
+
 
 ## Subir calificacion ##
 def subir_calificacion(id_leccion, tipo, calificacion):
@@ -324,15 +344,15 @@ def subir_calificacion(id_leccion, tipo, calificacion):
     cursor = connection.cursor()
 
     if tipo == 'Video':
-        query = "INSERT INTO Usuario_Video (Fecha_Video, ID_Usuario, ID_Video) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        query = "UPDATE Usuario_Video SET Fecha_Fin = NOW() WHERE ID_Usuario = " + str(session['id']) + " AND ID_Video = " + str(id_leccion) + " ORDER BY Fecha_Inicio DESC LIMIT 1"
         cursor.execute(query)
         connection.commit()
     elif tipo == "Lectura":
-        query = "INSERT INTO Usuario_Lectura (Fecha_Lectura, ID_Usuario, ID_Lectura) VALUES (NOW(), " + str(session['id']) + ", " + str(id_leccion) + ")"
+        query = "UPDATE Usuario_Lectura SET Fecha_Fin = NOW() WHERE ID_Usuario = " + str(session['id']) + " AND ID_Lectura = " + str(id_leccion) + " ORDER BY Fecha_Inicio DESC LIMIT 1"
         cursor.execute(query)
         connection.commit()
     elif tipo == "Cuestionario":
-        query = "INSERT INTO Evaluaciones (ID_Usuario, Puntaje, ID_Cuestionario, Fecha ) VALUES (" + str(session['id']) + ", " + str(calificacion) + ", " + str(id_leccion) + ", NOW())"
+        query = "UPDATE Evaluaciones SET Fecha_Fin = NOW(), Puntaje = " + str(calificacion) + " WHERE ID_Usuario = " + str(session['id']) + " AND ID_Cuestionario = " + str(id_leccion) + " ORDER BY Fecha_Inicio DESC LIMIT 1"
         cursor.execute(query)
         connection.commit()
 
@@ -385,6 +405,8 @@ def remover_alumno(id_curso, id_usuario):
     cursor.close()
     connection.close()
 
+
+## Asignar/Remover todos los alumnos de un curso
 def alumnos_todos(id_curso, tipo):
     connection = connect()
     cursor = connection.cursor()
