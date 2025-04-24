@@ -10,13 +10,66 @@
 
 
 {% block content %}
-<p class="text-secondary">Aquí puedes encontrar a todos los alumnos existentes.</p>
+<p class="text-secondary">Aquí puedes encontrar{% if id_rol == 2 %}, editar datos o eliminar {% endif %} a{% if id_rol == 3 %} todos {% endif %} los alumnos existentes.</p>
 <ul class="list-group">
   {% for alumno in alumnos %}
-  <li class="list-group-item">
+  <li class="list-group-item alumno-space">
+    <div class="alumno-list">
       <img src="{{ alumno[1] }}" alt="pfp.jpg" width="50pt" class="p-2">
-      {{ alumno[0] }}
+      <p class="alumno-name">{{ alumno[0] }}</p>
+    </div>
+    {% if id_rol == 2 %}
+    <div class="button-container">
+      <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#edit_modal">
+        <i class='bx bxs-edit'></i>
+      </button>
+      <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#delete_modal">
+        <i class='bx bxs-trash'></i>
+      </button>
+    </div>
+    {% endif %}
   </li>
   {% endfor %}
 </ul>
+<div class="modal fade" id="edit_modal" tabindex="-1" aria-labelledby="edit_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="edit_label">Editar Alumno</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="forms" action="{{ url_for('editar_alumno') }}" method="post">
+        <div class="modal-body">
+          <p>Nuevos Datos</p>
+          <input type="text" class="form-control mb-2" placeholder="Nuevo nombre">
+          <input type="text" class="form-control mb-2" placeholder="Nuevo numero">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">regresar</button>
+          <button type="submit" class="btn btn-primary">aceptar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="delete_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="delete_label">Eliminar Alumno</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Estas seguro que quieres eliminar al alumno? 
+        <br>
+        (una vez eliminado no hay vuelta atras)
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <a href="{{ url_for('eliminar_alumno') }}" role="button" class="btn btn-danger">Eliminar</a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

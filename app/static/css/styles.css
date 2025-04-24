@@ -58,6 +58,7 @@ height: 100%;
 }
 
 .forms-container{
+    margin: 20px;
     width: 35rem;
 }
 
@@ -68,3 +69,34 @@ height: 100%;
     border: solid;
 }
 
+.alumno-list{
+    display: flex;
+    width: auto;
+    height: auto;
+    gap: 20px;
+}
+
+.alumno-name{
+    width: 40rem;
+    padding: 5px;
+    margin: 2px;
+    white-space: nowrap;
+}
+
+.alumno-space{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.navborder{
+    border-bottom: solid;
+    border-color: rgb(232, 232, 232);
+    background-color: #ecf5ff;
+}
+
+.sideborder{
+    border-right: solid;
+    padding: 0px;
+    border-color: rgb(232, 232, 232);
+}

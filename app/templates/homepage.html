@@ -9,9 +9,9 @@ TecniCORE - Inicio
 
 {% block content %}
 
-<h1>¡Bienvenido/a a Whirlpool TecniCORE, {{ session['name'] }}!</h1>
-<br>
 {% if id_rol == 1 %}
+<h1>¡Bienvenido/a a Whirlpool TecniCORE, Tecnico {{ session['name'] }}!</h1>
+<br>
 <p>Como <b>estudiante</b>, estas son las acciones que puedes realizar:</p>
 <br>
 <ol>
@@ -39,6 +39,8 @@ TecniCORE - Inicio
 <p>Si tienes alguna duda, contacta a tu instructor o a un administrador.</p>
 {% endif %}
 {% if id_rol == 3 %}
+<h1>¡Bienvenido/a a Whirlpool TecniCORE, Profesor {{ session['name'] }}!</h1>
+<br>
 <p>Como <b>instructor</b>, estas son las acciones que puedes realizar:</p>
 <br>
 <ol>
@@ -79,6 +81,8 @@ TecniCORE - Inicio
 <br>
 {% endif %}
 {% if id_rol == 2 %}
+<h1>¡Bienvenido/a a Whirlpool TecniCORE, Administrador {{ session['name'] }}!</h1>
+<br>
 <p>Como <b>administrador</b>, estas son las acciones que puedes realizar en la plataforma:</p>
 <br>
 <ol>
