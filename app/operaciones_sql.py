@@ -113,9 +113,9 @@ def get_pfp(username):
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
-        with open("app/static/img/default_pfp.jpg", "rb") as default_image:
+        with open("/app/static/img/default_pfp.jpg", "rb") as default_image:
             image = default_image.read()
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(image)
         return "pfp.jpg"
     
