@@ -520,7 +520,7 @@ def get_lectura(id):
     lectura = lectura[0]
 
     # obtener las paginas
-    query = "SELECT p.ID_Pagina, p.Texto_Pagina, i.URL_Imagen, p.Nom_Pagina FROM Pagina p LEFT JOIN Imagen i ON p.ID_Pagina = i.ID_Pagina WHERE p.ID_Lectura = " + str(id) + " ORDER BY p.ID_Pagina ASC"
+    query = "SELECT p.ID_Pagina, p.Texto_Pagina, i.Direccion_IMG, p.Nom_Pagina FROM Pagina p LEFT JOIN Imagen i ON p.ID_Pagina = i.ID_Pagina WHERE p.ID_Lectura = " + str(id) + " ORDER BY p.ID_Pagina ASC"
     cursor.execute(query)
     paginas = cursor.fetchall()
 
