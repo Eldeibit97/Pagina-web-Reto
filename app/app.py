@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, url_for, request, render_template, session
+from flask import Flask, jsonify, redirect, url_for, request, render_template, session, Response
 import operaciones_sql
 #from openai import OpenAI
 import os
@@ -244,12 +244,15 @@ def home():
 
 @app.route('/crear_curso_form', methods=['GET'])
 def crear_curso_form():
-    session['section'] = 'creacion_curso'
-    id_rol = session['id_rol']
-    if session['id_rol'] == 2:
-        return render_template('CreacionCursos.html', id_rol=id_rol, curso=["", "", ""])
+    if 'username' in session:
+        session['section'] = 'creacion_curso'
+        id_rol = session['id_rol']
+        if id_rol == 2:
+            return render_template('CreacionCursos.html', id_rol=id_rol, curso=["", "", ""])
+        else:
+            return redirect(url_for('cursos', id_rol))
     else:
-        return redirect(url_for('cursos', id_rol))
+        return redirect(url_for('login', fail = "False"))
     
 @app.route('/editar_curso_form/<id_curso>', methods=['GET'])
 def editar_curso_form(id_curso):
@@ -334,6 +337,7 @@ def asignar_alumno(id_curso, id_alumno):
     
 @app.route('/desempeno')
 def desempeno():
+    session['section'] = 'desempeno'
     if 'username' in session:
         return render_template('desempeno.html', id_rol = session['id_rol'])
     else:
@@ -346,18 +350,49 @@ def remover_alumno(id_curso, id_alumno):
         return redirect(url_for('vista_curso', id_curso=id_curso))
     else:
         return redirect(url_for('login', fail='False'))
-    
-@app.route('/editar_alumno', methods=['GET','POST'])
-def editar_alumno():
+
+#edicion de alumnos
+@app.route('/editar_alumno/<id_alumno>', methods = ['GET', 'POST'])
+def editar_alumno(id_alumno):
     if 'username' in session:
-        return redirect(url_for('visualizar_alumnos'))
+        session['section'] = "editar_alumno"
+        datos_originales = operaciones_sql.info_alumno(id_alumno)
+        datos = operaciones_sql.info_alumno(id_alumno)
+        if session['id_rol'] == 2:
+            if request.method == "GET":
+                if id_alumno:
+                    datos = operaciones_sql.info_alumno(id_alumno)
+                    return render_template('dar_de_alta.html', id_rol = session['id_rol'], id_alumno = id_alumno, datos = datos)
+                else:
+                    return redirect(url_for('Alta'))
+            if request.method == "POST":
+                nuevo_nombre = request.form['new_user']
+                nuevo_correo = request.form['new_mail']
+                nuevo_cel = request.form['phone_num']
+                nuevo_rol = request.form['rol_type']
+                nueva_pswd = request.form['new_pswd']
+
+                operaciones_sql.modificar_alumno(id_alumno, nuevo_nombre, nuevo_correo, nuevo_cel, nuevo_rol, nueva_pswd)
+                datos = operaciones_sql.info_alumno(id_alumno)
+                
+                if datos != datos_originales:
+                    return render_template('dar_de_alta.html', updated = 'True', id_rol=session['id_rol'], id_alumno = id_alumno, datos = datos)
+                else:
+                    return render_template('dar_de_alta.html', updated = 'False', id_rol=session['id_rol'], id_alumno = id_alumno, datos = datos)
+        else:
+            return redirect(url_for('cursos', id_rol=session['id_rol']))
     else:
-        return redirect(url_for('login', fail='False'))
-    
-@app.route('/eliminar_alumno')
-def eliminar_alumno():
+       return redirect(url_for('login', fail='False')) 
+
+@app.route('/eliminar_alumnos/<id_alumno>')
+def eliminar_alumno(id_alumno):
+    session['section'] = 'eliminar_alumno'
     if 'username' in session:
-        return redirect(url_for('visualizar_alumnos'))
+        if session['id_rol'] == 2:
+            operaciones_sql.eliminar_alumno(id_alumno)
+            return redirect(url_for('visualizar_alumnos'))
+        else:
+            return redirect(url_for('cursos', id_rol=session['id_rol']))
     else:
         return redirect(url_for('login', fail='False'))
 
@@ -376,7 +411,16 @@ def obtener_curso(id_curso):
     data = operaciones_sql.get_curso_json(id_curso)
     return jsonify(data)
 
+@app.route('/user_pfp/<id_alumno>')
+def obtener_imagen(id_alumno):
+    pfp = operaciones_sql.get_pfp_VA(id_alumno)
+    if None not in pfp:
+        return Response(pfp, mimetype="image/jpeg")
+    else:
+        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+            default_pfp = image.read()
+        return Response(default_pfp, mimetype="image/jpeg")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

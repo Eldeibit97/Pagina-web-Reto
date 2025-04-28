@@ -70,7 +70,7 @@
                             
                             <a
                             href="{{ url_for('alta') }}"
-                            class="btn {% if session['section'] == 'Dar de Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            class="btn {% if session['section'] == 'Alta' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
                             >
                                 <i class='bx bx-user-plus'></i>
                                     Dar de alta
@@ -117,9 +117,9 @@
                         </button>
                         <h1 class="navbar-brand mb-0 p-2">{% block header %}{% endblock %}</h1>
                         <p class="nav-item ms-auto p-2 mt-3">{{ session['name'] }}</p>
-                        <div class="dropdown">
+                        <div class="dropdown ps-2 pe-2">
                             <a role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
-                                <img src="{{ url_for('static', filename='/img/pfp.jpg') }}" width="50pt" class="p-2"/>
+                                <img src="{{ url_for('static', filename='/img/pfp.jpg') }}" width="50pt" class="pfp2"/>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#log_off_modal">
@@ -141,7 +141,7 @@
                             <div class="modal-body">
                               Terminaste tus lecciones y quieres cerrar sesión?
                             </div>
-                            <div class="modal-footer" style="gap: 55%">
+                            <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                               <a href="{{ url_for('log_out') }}" role="button" class="btn btn-primary">Si, he terminado</a>
                             </div>
