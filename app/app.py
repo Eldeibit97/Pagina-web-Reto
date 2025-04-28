@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session
+from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session, Response, send_file
 from flask_cors import cross_origin
 import operaciones_sql
 #from openai import OpenAI
@@ -6,6 +6,7 @@ import os
 import re
 import ast
 import base64
+import mimetypes
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
@@ -18,13 +19,44 @@ app.secret_key = 'super secret key'
 # Endpoints
 
 #Videojuego
-@app.route('/videojuego')
-def videojuego_index():
-    return send_from_directory('static/VideoJuego_Build', 'index.html')
 
-@app.route('/VideoJuego_Build/<path:path>')
-def serve_file(path):
-    return send_from_directory('static/VideoJuego_Build', path)
+# Fix MIME types for Unity files
+mimetypes.add_type('application/wasm', '.wasm')
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('application/octet-stream', '.data')
+
+@app.route('/game')
+def game():
+    session['section'] = 'game'
+    return render_template('game.html', id_rol = session['id_rol'])  # game.html is your Unity WebGL page
+
+@app.route('/static/webgl/Build/<path:filename>')
+def serve_build(filename):
+    # Full logical file path
+    logical_path = os.path.join('static', 'webgl', 'Build', filename)
+    
+    # Check if there's a compressed version (.br) available
+    compressed_path = logical_path + '.br'
+
+    if os.path.exists(compressed_path):
+        response = send_file(compressed_path)
+        response.headers['Content-Encoding'] = 'br'
+
+        # Set correct Content-Type manually
+        if filename.endswith('.wasm'):
+            response.headers['Content-Type'] = 'application/wasm'
+        elif filename.endswith('.js'):
+            response.headers['Content-Type'] = 'application/javascript'
+        elif filename.endswith('.data'):
+            response.headers['Content-Type'] = 'application/octet-stream'
+        else:
+            response.headers['Content-Type'] = 'application/octet-stream'
+        
+        return response
+    else:
+        # Fallback if uncompressed file exists
+        return send_file(logical_path)
+
 
 @app.route('/get_questions', methods=['GET'])
 @cross_origin()
@@ -114,53 +146,7 @@ def leccion(id_curso, tipo, id):
 
 
 
-@app.route('/whirlChat', methods=['GET', 'POST'])
-def whirlChat():
-    # Initialize history only if it doesn't exist yet
-    if 'history' not in session:
-        session['history'] = [
-            {"role": "system", "content": "¡Hola! Soy WhirlChat, tu asistente personal de aprendizaje en Whirlpool. ¿En qué puedo ayudarte hoy?"}
-        ]
-        session.modified = True  # Mark session as modified
-    
-    if request.method == 'GET':
-        if 'username' in session:
-            session['section'] = 'whirlChat'
-            return render_template('whirlChat.html', history=session['history'])
-        else:
-            return redirect(url_for('login', fail='False'))
-    else:
-        # Make a copy of the current history
-        history = session.get('history', []).copy()
-        user_msg = request.form["message"]
-        
-        # Add the user message
-        history.append({"role": "user", "content": user_msg})
 
-        try:
-            response = OpenAI(
-                base_url="http://127.0.0.1:1234/v1",
-                api_key="lm-studio"
-            )
-            MODEL = "qwen2.5-7b-instruct-1m"
-
-            completion = response.chat.completions.create(
-                model=MODEL,
-                messages=history,
-            )
-
-            ai_response = completion.choices[0].message.content
-            ai_response = re.sub(r'<think>.*?</think>', '', ai_response, flags=re.DOTALL)
-            history.append({"role": "assistant", "content": ai_response})
-        except Exception as e:
-            ai_response = f"Ocurrió un error: {str(e)}"
-            history.append({"role": "assistant", "content": ai_response})
-        
-        # Update the session with the new history
-        session['history'] = history
-        session.modified = True  # Mark session as modified
-        
-        return render_template("whirlChat.html", history=history)
 
 @app.route('/subir_calificacion', methods=['POST'])
 def subir_calificacion():
@@ -275,12 +261,15 @@ def home():
 
 @app.route('/crear_curso_form', methods=['GET'])
 def crear_curso_form():
-    session['section'] = 'creacion_curso'
-    id_rol = session['id_rol']
-    if session['id_rol'] == 2:
-        return render_template('CreacionCursos.html', id_rol=id_rol, curso=["", "", ""])
+    if 'username' in session:
+        session['section'] = 'creacion_curso'
+        id_rol = session['id_rol']
+        if id_rol == 2:
+            return render_template('CreacionCursos.html', id_rol=id_rol, curso=["", "", ""])
+        else:
+            return redirect(url_for('cursos', id_rol))
     else:
-        return redirect(url_for('cursos', id_rol))
+        return redirect(url_for('login', fail = "False"))
     
 @app.route('/editar_curso_form/<id_curso>', methods=['GET'])
 def editar_curso_form(id_curso):
@@ -425,6 +414,7 @@ def asignar_alumno(id_curso, id_alumno):
     
 @app.route('/desempeno')
 def desempeno():
+    session['section'] = 'desempeno'
     if 'username' in session:
         return render_template('desempeno.html', id_rol = session['id_rol'])
     else:
@@ -437,18 +427,49 @@ def remover_alumno(id_curso, id_alumno):
         return redirect(url_for('vista_curso', id_curso=id_curso))
     else:
         return redirect(url_for('login', fail='False'))
-    
-@app.route('/editar_alumno', methods=['GET','POST'])
-def editar_alumno():
+
+#edicion de alumnos
+@app.route('/editar_alumno/<id_alumno>', methods = ['GET', 'POST'])
+def editar_alumno(id_alumno):
     if 'username' in session:
-        return redirect(url_for('visualizar_alumnos'))
+        session['section'] = "editar_alumno"
+        datos_originales = operaciones_sql.info_alumno(id_alumno)
+        datos = operaciones_sql.info_alumno(id_alumno)
+        if session['id_rol'] == 2:
+            if request.method == "GET":
+                if id_alumno:
+                    datos = operaciones_sql.info_alumno(id_alumno)
+                    return render_template('dar_de_alta.html', id_rol = session['id_rol'], id_alumno = id_alumno, datos = datos)
+                else:
+                    return redirect(url_for('Alta'))
+            if request.method == "POST":
+                nuevo_nombre = request.form['new_user']
+                nuevo_correo = request.form['new_mail']
+                nuevo_cel = request.form['phone_num']
+                nuevo_rol = request.form['rol_type']
+                nueva_pswd = request.form['new_pswd']
+
+                operaciones_sql.modificar_alumno(id_alumno, nuevo_nombre, nuevo_correo, nuevo_cel, nuevo_rol, nueva_pswd)
+                datos = operaciones_sql.info_alumno(id_alumno)
+                
+                if datos != datos_originales:
+                    return render_template('dar_de_alta.html', updated = 'True', id_rol=session['id_rol'], id_alumno = id_alumno, datos = datos)
+                else:
+                    return render_template('dar_de_alta.html', updated = 'False', id_rol=session['id_rol'], id_alumno = id_alumno, datos = datos)
+        else:
+            return redirect(url_for('cursos', id_rol=session['id_rol']))
     else:
-        return redirect(url_for('login', fail='False'))
-    
-@app.route('/eliminar_alumno')
-def eliminar_alumno():
+       return redirect(url_for('login', fail='False')) 
+
+@app.route('/eliminar_alumnos/<id_alumno>')
+def eliminar_alumno(id_alumno):
+    session['section'] = 'eliminar_alumno'
     if 'username' in session:
-        return redirect(url_for('visualizar_alumnos'))
+        if session['id_rol'] == 2:
+            operaciones_sql.eliminar_alumno(id_alumno)
+            return redirect(url_for('visualizar_alumnos'))
+        else:
+            return redirect(url_for('cursos', id_rol=session['id_rol']))
     else:
         return redirect(url_for('login', fail='False'))
 
@@ -467,7 +488,16 @@ def obtener_curso(id_curso):
     data = operaciones_sql.get_curso_json(id_curso)
     return jsonify(data)
 
+@app.route('/user_pfp/<id_alumno>')
+def obtener_imagen(id_alumno):
+    pfp = operaciones_sql.get_pfp_VA(id_alumno)
+    if None not in pfp:
+        return Response(pfp, mimetype="image/jpeg")
+    else:
+        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+            default_pfp = image.read()
+        return Response(default_pfp, mimetype="image/jpeg")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

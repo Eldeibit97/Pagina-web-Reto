@@ -109,12 +109,15 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-        os.makedirs("static/images", exist_ok=True)
-        with open("static/images/pfp.jpg", "wb") as file:
+        with open("app/static/img/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
-        return None
+        with open("app/static/img/default_pfp.jpg", "rb") as default_image:
+            image = default_image.read()
+        with open("app/static/img/pfp.jpg", "wb") as file:
+            file.write(image)
+        return "pfp.jpg"
     
 #Dar de alta a nuevos tecnicos estudiantes/profesores
 def agregar_estudiantes(nombre, correo, telefono, rol_id, pswd):
@@ -180,7 +183,7 @@ def get_alumnos():
     connection = connect()
     cursor = connection.cursor()
 
-    query = "SELECT u.Nom_Usuario, u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 1"
+    query = "SELECT u.ID_Usuario, u.Nom_Usuario, u.Correo_Cliente, u.ID_Rol ,u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 1"
     cursor.execute(query)
     alumnos = cursor.fetchall()
 
@@ -736,3 +739,67 @@ def get_curso_json(id_curso):
         "imgCurso": img_curso,
         "modulos": modulos
     }
+
+def info_alumno(id_alumno):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT u.Nom_Usuario, u.Correo_Cliente, u.Tel_Cliente, u.Password, u.ID_Rol FROM Usuarios u WHERE u.ID_Usuario = " + str(id_alumno)
+    cursor.execute(query)
+    info_alumno = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return info_alumno
+
+def modificar_alumno(id_usuario, nombre, correo, telefono, rol_id, pswd):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = f"UPDATE Usuarios u SET Nom_Usuario = '{nombre}', Correo_Cliente = '{correo}', Tel_Cliente = {telefono}, Password = '{pswd}', ID_Rol = {rol_id} WHERE ID_Usuario = {id_usuario}"
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def eliminar_alumno(id_alumno):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = f"DELETE FROM Usuarios WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+def get_pfp_VA(id_alumno):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = f"SELECT u.Img_Usuario FROM Usuarios u WHERE u.ID_Usuario = {id_alumno}"
+    cursor.execute(query)
+    pfp = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return pfp
+
+def verificar_eliminado(id_usuario):
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = f"SELECT CASE WHEN COUNT(*) = 1 THEN FALSE ELSE TRUE END AS 'was eliminated' FROM Usuarios u WHERE ID_Usuario = {id_usuario}"
+    cursor.execute(query)
+    eliminado = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    if eliminado[0][0] == 1:
+        return False
+    else:
+        return True

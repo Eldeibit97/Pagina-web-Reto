@@ -3,6 +3,12 @@ footer {
     padding: 5pt;
 }
 
+.background{
+    background-image: url('/app/static/img/LoginBG.jpg');
+    background-repeat: no-repeat;
+    background-position: fixed;
+    background-size: cover;
+}
 
 .no-transition {
     transition: none !important;
@@ -77,7 +83,9 @@ height: 100%;
 }
 
 .alumno-name{
-    width: 40rem;
+    display: flex;
+    align-items: center;
+    width: 15rem;
     padding: 5px;
     margin: 2px;
     white-space: nowrap;
@@ -99,4 +107,29 @@ height: 100%;
     border-right: solid;
     padding: 0px;
     border-color: rgb(232, 232, 232);
+}
+
+.button-container{
+    display: flex;
+    width: auto;
+    flex-wrap: nowrap;
+}
+
+.anchor{
+    display: flex;
+    align-items: center;
+}
+
+.pfp{
+    border: transparent;
+    border-radius: 100%;
+    padding: 5px;
+}
+
+.pfp2{
+    height: 50px;
+    width: 50px;
+    border: transparent;
+    border-radius: 100%;
+    padding: 5px;
 }

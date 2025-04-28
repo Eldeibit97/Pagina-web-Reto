@@ -51,12 +51,12 @@
             <!-- La imagen se mostrará en este elemento al guardar la URL -->
             <img id="imagen" src="" alt="Imagen cargada">
             <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
-            <input id="btnImagen" role="button" type="file" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal">+</button>
+            <input id="btnImagen" role="button" type="file" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal"></button>
           </div>
         </div>
-        <div class="modal-footer" style="gap: 55%">
+        <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">regresar</button>
-          <a role="button" class="btn btn-primary">aceptar</a>
+          <button type="button" data-bs-dismiss="modal" class="btn btn-primary">aceptar</button>
         </div>
       </div>
     </div>
@@ -65,8 +65,6 @@
   <!-- El botón "Siguiente" validará datos antes de redirigir -->
   <button class="next-button" onclick="validarDatos()">Siguiente</button>
 </div>
-
-
 
 <script src="/static/js/creacion_cursos.js"></script>
 {% endblock %}

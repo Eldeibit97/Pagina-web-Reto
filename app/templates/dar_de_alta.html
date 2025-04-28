@@ -1,49 +1,79 @@
 {% extends "cursos.html" %}
 
 {% block title %}
+{% if id_alumno %}
+  Editar alumno
+{% else %}
   Dar de Alta
+{% endif %}
 {% endblock %}
 
 {% block header %}
+{% if id_alumno %}
+  Editar alumno
+{% else %}
   Dar de Alta
+{% endif %}
 {% endblock %}
 
 
 {% block content %}
+<input type="hidden" id="user_name" value="{{ datos[0] if datos else '' }}">
+<input type="hidden" id="user_mail" value="{{ datos[1] if datos else '' }}">
+<input type="hidden" id="user_cel" value="{{ datos[2] if datos else '' }}">
+<input type="hidden" id="user_rol" value="{{ datos[4] if datos else '' }}">
+<input type="hidden" id="user_pswd" value="{{ datos[3] if datos else '' }}">
+<input type="hidden" id="seccion" value="{{session['section']}}">
+
   <div class="forms-container">
-    <form class="forms" action="{{ url_for('alta') }}" method="post">
+    <form class="forms" action="{% if session['section'] == 'Alta' %} {{ url_for('alta') }} {% else %} {{ url_for('editar_alumno', id_alumno = id_alumno) }} {% endif %}" method="post">
       <div class="col-sm-12 col-md-7 col-lg-6">
-        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Nombre del estudiante que se agregara</p>
+        <p id="text_name" style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Nombre del estudiante que se agregara</p>
         <input type="text" id="new_user" name="new_user" class="form-control mb-2 ms-2" placeholder="Nombre de estudiante" required>
-        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Telefono del estudiante</p>
+        <p id="text_cel" style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Telefono del estudiante</p>
         <input type="text" id="phone_num" name="phone_num" class="form-control mb-2 ms-2" placeholder="Numero celular" required>
-        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Correo que se le asignara</p>
+        <p id="text_mail" style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Correo que se le asignara</p>
         <input type="text" id="new_mail" name="new_mail" class="form-control mb-2 ms-2" placeholder="Correo" required>
-        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Rol del empleado</p>
+        <p id="text_rol" style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Rol del empleado</p>
         <div class="dropdown">
-          <select class="btn btn-warning dropdown-toggle mb-2 ms-2" name="rol_type" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" required>
+          <select class="btn btn-warning dropdown-toggle mb-2 ms-2" id="new_rol" name="rol_type" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" required>
             <option value="">Seleccione un rol</option>
             <option value="3" aria-current="false"> Profesor </option>
             <option value="1" aria-current="false"> Estudiante </option>
           </select>
         </div>
-        <p style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Contraseña para su correo de estudiante</p>
-        <input type="password" id="new_pswd" name="new_pswd" class="form-control mb-2 ms-2" placeholder="Contraseña" required>
+        <p id="text_pswd" style="margin: 10px 10px 10px 10px; padding: auto; width: 25rem;">Contraseña para su correo de estudiante</p>
+        <input type="text" id="new_pswd" name="new_pswd" class="form-control mb-2 ms-2" placeholder="Contraseña" required>
       </div>
       <br>
+      {% if session['section'] == 'Alta' %}
       <button class="btn btn-primary  mb-2 ms-2" type="submit">Agregar Alumno</button>
+      {% else %}
+      <button class="btn btn-primary  mb-2 ms-2" type="submit">Modificar Alumno</button>
+      {% endif %}
     </form>
   </div>
   {% if saved == 'True' %}
   <div class="alert alert-success" role="alert">
-        El alumno se guardo correctamente
+    El usuario se guardo correctamente
   </div>
+  {% elif saved == 'False' %}
+  <div class="alert alert-danger" role="alert">
+    El correo que intentaste asignar ya le pertenece a otro usuario, porfavor asigna un correo distinto
+  </div>
+  {% else %}
   {% endif %}
 
-  {% if saved == 'False' %}
-  <div class="alert alert-danger" role="alert">
-    Este correo ya esta asignado a otro alumno
+  {% if updated == 'True' %}
+  <div class="alert alert-success" role="alert">
+    El usuario se modifico correctamente
   </div>
+  {% elif updated == 'False' %}
+  <div class="alert alert-danger" role="alert">
+    Error, el usuario no se pudo modificar apropiadamente
+  </div>
+  {% else %}
   {% endif %}
 </div>
+<script src="/static/js/editar_alumno.js"></script>
 {% endblock %}
