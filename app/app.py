@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session
+from flask_cors import cross_origin
 import operaciones_sql
 #from openai import OpenAI
 import os
@@ -24,6 +25,26 @@ def videojuego_index():
 @app.route('/VideoJuego_Build/<path:path>')
 def serve_file(path):
     return send_from_directory('static/VideoJuego_Build', path)
+
+@app.route('/get_questions', methods=['GET'])
+@cross_origin()
+def get_questions():
+    try:
+        questions = operaciones_sql.get_questions()
+        return jsonify({"questions": questions})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/get_choicequestions', methods=['GET'])
+@cross_origin()
+def get_choicequestions():
+    try:
+        questions = operaciones_sql.get_choice_questions()
+        return jsonify({"questions": questions})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 #vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])

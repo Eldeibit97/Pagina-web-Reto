@@ -17,6 +17,60 @@ def connect():
 
     return connection
 
+
+#Video Juego
+def get_questions():
+    conn = connect()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT p.ID_Pregunta, p.Pregunta, r.Correcta
+        FROM Preguntas p
+        JOIN Respuestas r ON p.ID_Pregunta = r.ID_Pregunta
+    """
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return results
+
+def get_choice_questions():
+    conn = connect()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT p.ID_Pregunta, p.Pregunta, r.Respuestas, r.Correcta
+        FROM Preguntas p
+        JOIN Respuestas r ON p.ID_Pregunta = r.ID_Pregunta
+        WHERE p.ID_Pregunta >= 101
+        ORDER BY p.ID_Pregunta, r.ID_Respuesta
+    """
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    questions = {}
+    for row in rows:
+        id_pregunta = row['ID_Pregunta']
+
+        if id_pregunta not in questions:
+            questions[id_pregunta] = {
+                'ID_Pregunta': id_pregunta,
+                'Pregunta': row['Pregunta'],
+                'options': []
+            }
+        questions[id_pregunta]['options'].append({
+            'respuesta': row['Respuestas'],
+            'correcta': bool(row['Correcta'])
+        })
+
+    cursor.close()
+    conn.close()
+
+    return list(questions.values())
+
+
 # Validar credenciales
 def validate_credentials(username, password):
     connection = connect()
