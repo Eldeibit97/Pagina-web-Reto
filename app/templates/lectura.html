@@ -35,7 +35,7 @@ Lectura - {{ lectura[0] }}
 <p id="texto">{{ paginas[0][1] }}</p>
 
 <img
-  src="{{ paginas[0][2] }}"
+  src="{{ url_for('static', filename='uploads/nature.jpg') }}"
   id="imagen"
   style="display: block; margin-left: auto; margin-right: auto; width: 50%"
 />
@@ -45,6 +45,7 @@ Lectura - {{ lectura[0] }}
   var page = 1;
   var paginas = {{ paginas|tojson }};
   var length = {{ length }};
+
 
   var botonSiguiente = document.getElementById("siguiente");
   if(length == 1) {
@@ -75,7 +76,7 @@ Lectura - {{ lectura[0] }}
         document.getElementById("imagen").style.display = "none";
       }
       else {
-        document.getElementById("imagen").src = paginas[page - 1][2];
+        document.getElementById("imagen").src = "/" + paginas[page - 1][2];
         document.getElementById("imagen").style.display = "block";
       }
       
@@ -106,7 +107,8 @@ Lectura - {{ lectura[0] }}
       document.getElementById("imagen").style.display = "none";
     }
     else {
-      document.getElementById("imagen").src = paginas[page - 1][2];
+      document.getElementById("imagen").src = "/" + paginas[page - 1][2];
+      //document.getElementById("imagen").src = "static/uploads/nature.jpg";
       document.getElementById("imagen").style.display = "block";
     }
     
