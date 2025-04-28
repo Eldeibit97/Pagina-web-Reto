@@ -35,7 +35,7 @@ Lectura - {{ lectura[0] }}
 <p id="texto">{{ paginas[0][1] }}</p>
 
 <img
-  src="{{ url_for('static', filename='uploads/nature.jpg') }}"
+  src='{{ "/" + paginas[0][2] }}'
   id="imagen"
   style="display: block; margin-left: auto; margin-right: auto; width: 50%"
 />
