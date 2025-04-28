@@ -192,6 +192,20 @@ def get_alumnos():
 
     return alumnos
 
+# Obtener a los diferentes alumnos ya registrados en la DB
+def get_profesores():
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT u.ID_Usuario, u.Nom_Usuario, u.Correo_Cliente, u.ID_Rol ,u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 3"
+    cursor.execute(query)
+    profesores = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return profesores
+
 # Obtener las lecciones de un curso
 def get_lecciones(id_curso):
     connection = connect()

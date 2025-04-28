@@ -62,7 +62,7 @@
                                     Crear Curso
                             </a>
 
-                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Usuarios</p>
 
                             <a
                             href="{{ url_for('visualizar_alumnos') }}"
@@ -70,6 +70,14 @@
                             >
                                 <i class='bx bxs-user-detail'></i>
                                     Alumnos
+                            </a>
+
+                            <a
+                            href="{{ url_for('visualizar_profesores') }}"
+                            class="btn {% if session['section'] == 'Vista_profesores' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                            <i class='bx bx-chalkboard'></i>
+                                    Profesores
                             </a>
 
                             <a

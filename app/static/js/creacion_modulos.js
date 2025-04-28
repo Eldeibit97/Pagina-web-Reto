@@ -28,7 +28,7 @@ function agregarModulo(nombreModulo = '' ) {
     //✎button
     const btnEditar = document.createElement('button');
     btnEditar.classList.add('editarButton');
-    btnEditar.innerHTML = 'Contenido✎';
+    btnEditar.innerHTML = "<i class='bx bxs-edit'></i> Editar Contenido";
     btnEditar.title = 'Editar los contenidos de este modulo.'
     btnEditar.addEventListener('click', () => {
         if (input.value === ''){
@@ -54,7 +54,7 @@ function agregarModulo(nombreModulo = '' ) {
     //🗑️button
     const btnBorrar = document.createElement('button');
     btnBorrar.classList.add('borrarButton');
-    btnBorrar.innerHTML = '🗑️';
+    btnBorrar.innerHTML = "<i class='bx bxs-trash' undefined ></i>";
     btnBorrar.title = 'Borrar este moduloEnEdicion.'
     btnBorrar.addEventListener('click', () => {
         if (modulos.some(modulo => modulo.nomModulo === input.value.trim())){ // if this module had been edited last time
@@ -135,8 +135,8 @@ function agregarTarjeta(nombreTarjeta = ''){
     // ✖button
     const btnCerrar = document.createElement('button');
     btnCerrar.classList.add('btn-cerrar');
-    btnCerrar.innerHTML = '✖';
-    btnCerrar.title = 'Borrar este Tarjeta';
+    btnCerrar.innerHTML = "<i class='bx bx-x'></i>";
+    btnCerrar.title = 'Borrar esta Tarjeta';
     btnCerrar.addEventListener('click', () => {
         if (modulos[Indice_ModuloEnEdicion].contenidos.some(contenido => contenido.nomContenido === inputTarjeta.value.trim())){ // if this contents had been edited last time
             
@@ -156,7 +156,7 @@ function agregarTarjeta(nombreTarjeta = ''){
     const inputTarjeta = document.createElement('input');
     inputTarjeta.classList.add('inputTarjeta');
     inputTarjeta.type = 'text';
-    inputTarjeta.placeholder = 'Type the Name of this tarjeta...';
+    inputTarjeta.placeholder = 'Escribe un nombre para el modulo';
     inputTarjeta.value = nombreTarjeta;
     divTarjeta.appendChild(inputTarjeta);
     
@@ -325,7 +325,7 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
 
   const tituloInput = document.createElement('input');
   tituloInput.type = 'text';
-  tituloInput.placeholder = 'Titulo de este pagina';
+  tituloInput.placeholder = 'Titulo de esta pagina';
   tituloInput.value = nombrePagina;
 
   tituloContainer.appendChild(tituloInput);
