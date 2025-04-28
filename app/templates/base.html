@@ -40,6 +40,18 @@
                                 <i class='bx bx-home-alt'></i>
                                     Cursos
                             </a>
+
+                            {% if id_rol == 1 %}
+                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Practicar</p>
+                            <a
+                                href="{{ url_for('game') }}"
+                                class="btn {% if session['section'] == 'game' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                            <i class='bx bx-play'></i>
+                                    WhirlPlay
+                            </a>
+
+                            {% endif %}
                         
                             {% if id_rol == 2 %}
                             <a
@@ -89,16 +101,6 @@
                             {% endif %}
 
                             
-                            <!--
-                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Para todos</p>
-                            <a
-                                href="{{ url_for('whirlChat') }}"
-                                class="btn {% if session['section'] == 'whirlChat' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
-                            >
-                                <i class='bx bxs-chat'></i>
-                                    WhirlChat
-                            </a>
-                            -->
                         </div>
                         
                     </div>

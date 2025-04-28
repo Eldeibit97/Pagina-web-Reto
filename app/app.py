@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session, Response
+from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session, Response, send_file
 import operaciones_sql
 #from openai import OpenAI
 import os
 import re
 import ast
 import base64
+import mimetypes
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
@@ -17,13 +18,44 @@ app.secret_key = 'super secret key'
 # Endpoints
 
 #Videojuego
-@app.route('/videojuego')
-def videojuego_index():
-    return send_from_directory('static/VideoJuego_Build', 'index.html')
 
-@app.route('/VideoJuego_Build/<path:path>')
-def serve_file(path):
-    return send_from_directory('static/VideoJuego_Build', path)
+# Fix MIME types for Unity files
+mimetypes.add_type('application/wasm', '.wasm')
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('application/octet-stream', '.data')
+
+@app.route('/game')
+def game():
+    session['section'] = 'game'
+    return render_template('game.html', id_rol = session['id_rol'])  # game.html is your Unity WebGL page
+
+@app.route('/static/webgl/Build/<path:filename>')
+def serve_build(filename):
+    # Full logical file path
+    logical_path = os.path.join('static', 'webgl', 'Build', filename)
+    
+    # Check if there's a compressed version (.br) available
+    compressed_path = logical_path + '.br'
+
+    if os.path.exists(compressed_path):
+        response = send_file(compressed_path)
+        response.headers['Content-Encoding'] = 'br'
+
+        # Set correct Content-Type manually
+        if filename.endswith('.wasm'):
+            response.headers['Content-Type'] = 'application/wasm'
+        elif filename.endswith('.js'):
+            response.headers['Content-Type'] = 'application/javascript'
+        elif filename.endswith('.data'):
+            response.headers['Content-Type'] = 'application/octet-stream'
+        else:
+            response.headers['Content-Type'] = 'application/octet-stream'
+        
+        return response
+    else:
+        # Fallback if uncompressed file exists
+        return send_file(logical_path)
+
 
 #vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])
@@ -93,53 +125,7 @@ def leccion(id_curso, tipo, id):
 
 
 
-@app.route('/whirlChat', methods=['GET', 'POST'])
-def whirlChat():
-    # Initialize history only if it doesn't exist yet
-    if 'history' not in session:
-        session['history'] = [
-            {"role": "system", "content": "¡Hola! Soy WhirlChat, tu asistente personal de aprendizaje en Whirlpool. ¿En qué puedo ayudarte hoy?"}
-        ]
-        session.modified = True  # Mark session as modified
-    
-    if request.method == 'GET':
-        if 'username' in session:
-            session['section'] = 'whirlChat'
-            return render_template('whirlChat.html', history=session['history'])
-        else:
-            return redirect(url_for('login', fail='False'))
-    else:
-        # Make a copy of the current history
-        history = session.get('history', []).copy()
-        user_msg = request.form["message"]
-        
-        # Add the user message
-        history.append({"role": "user", "content": user_msg})
 
-        try:
-            response = OpenAI(
-                base_url="http://127.0.0.1:1234/v1",
-                api_key="lm-studio"
-            )
-            MODEL = "qwen2.5-7b-instruct-1m"
-
-            completion = response.chat.completions.create(
-                model=MODEL,
-                messages=history,
-            )
-
-            ai_response = completion.choices[0].message.content
-            ai_response = re.sub(r'<think>.*?</think>', '', ai_response, flags=re.DOTALL)
-            history.append({"role": "assistant", "content": ai_response})
-        except Exception as e:
-            ai_response = f"Ocurrió un error: {str(e)}"
-            history.append({"role": "assistant", "content": ai_response})
-        
-        # Update the session with the new history
-        session['history'] = history
-        session.modified = True  # Mark session as modified
-        
-        return render_template("whirlChat.html", history=history)
 
 @app.route('/subir_calificacion', methods=['POST'])
 def subir_calificacion():
