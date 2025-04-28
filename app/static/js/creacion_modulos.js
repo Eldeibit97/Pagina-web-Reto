@@ -223,7 +223,7 @@ function agregarTarjeta(nombreTarjeta = ''){
                 else if (tipoArchivo == 'video'){
                     videoUrl = prompt('Introduce la URL del video:')
                     if (videoUrl && Indice_TarjetaEnEdicion !== -1) {
-                        modulos[Indice_TarjetaEnEdicion].contenidos[Indice_TarjetaEnEdicion][campo] = videoUrl;
+                        modulos[Indice_ModuloEnEdicion].contenidos[Indice_TarjetaEnEdicion].videoUrl = videoUrl;
                     }
                 }
                 else if (tipoArchivo == 'cuestionario'){
@@ -314,6 +314,8 @@ const btnAnadirPag = document.getElementById('btnAnadirPag');
 const btnGuardarPag = document.getElementById('btnGuardarPag');
 const contenedorPaginas = document.getElementById('contenedorPaginas');
 
+let base64Image;
+
 function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
   const nuevaPagina = document.createElement('div');
   nuevaPagina.classList.add('pagina');
@@ -335,31 +337,34 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
   texto.classList.add('contenido-texto');
   nuevaPagina.appendChild(texto);
 
-  const botonImagen = document.createElement('button');
-  botonImagen.classList.add('imagen-btn');
-  botonImagen.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-    <path d="M21 19V5H3v14h18zM3 3h18c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H3
-      c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm10 14l-2.03-2.71-2.97 3.71H21l-4-5z"/>
-  </svg>`;
-  
-  let img = document.createElement('img');
-  nuevaPagina.appendChild(img);
-  if (imgPagina){
-    img.src = imgPagina
-  };
-  
 
-  botonImagen.addEventListener('click', () => {
-    const urlImagen = prompt("Introduce la URL de una imagen en internet:");
-    if (urlImagen && urlImagen.trim() !== "") {
-      img.src = urlImagen;
-      img.style.maxWidth = "100%";
-      img.style.marginTop = "10px";
-      img.style.borderRadius = "4px";
+  const imageDisplay = document.createElement("img");
+
+  const input = document.createElement("input");
+  input.type = "file";
+  input.id = "fileInput";
+
+  input.addEventListener("change", () => {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        imageDisplay.src = e.target.result;
+        base64Image = reader.result;
+      };
+      
+      reader.readAsDataURL(file);
     }
   });
-  
-    nuevaPagina.appendChild(botonImagen);
+
+  nuevaPagina.appendChild(input);
+  nuevaPagina.appendChild(imageDisplay);
+
+  if (imgPagina){
+    imageDisplay.src = imgPagina
+  };
+
   
     contenedorPaginas.appendChild(nuevaPagina);
 }
@@ -391,12 +396,11 @@ btnGuardarPag.addEventListener('click', () => {
     }
 
     const texto = pagina.querySelector('textarea')?.value || '';
-    const img = pagina.querySelector('img')?.src || '';
 
     lecturaTexto.push({
       nomPagina: titulo.trim(),
       texto: texto.trim(),
-      imgPagina: img
+      imgPagina: base64Image
     });
   });
 
@@ -454,9 +458,11 @@ function editarCurso(){
 btnListo.addEventListener('click', () => {
   if (idCurso) {
     editarCurso();
+    window.location.href = "/cursos";
   }
   else{
     crearNuevaCurso();
+    window.location.href = "/cursos";
   }
 });
 

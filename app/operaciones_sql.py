@@ -211,7 +211,7 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
 
     query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
     query_pagina = "INSERT INTO Pagina (Nom_Pagina, Texto_Pagina, ID_Lectura) VALUES (%s, %s, %s);"
-    query_imagen = "INSERT INTO Imagen (URL_Imagen, ID_Pagina) VALUES (%s, %s);"
+    query_imagen = "INSERT INTO Imagen (Direccion_IMG, ID_Pagina) VALUES (%s, %s);"
     # query_texto = "INSERT INTO Texto (Texto, ID_Pagina) VALUES (%s, %s);"
 
     query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
@@ -271,6 +271,7 @@ def crear_curso(nom_curso, desc_curso, img_curso, Modulos):
                     for i, respuesta in enumerate(respuestas):
                         
                         correcta = correctas[i] if i < len(correctas) else 0  
+                        print("respuesta:", respuesta, "type:", type(respuesta))
                         cursor.execute(query_respuesta, (respuesta, pregunta_id, correcta))
 
 
@@ -309,7 +310,7 @@ def editar_curso(id_curso, nom_curso, desc_curso, img_curso, Modulos):
     query_modulo = "INSERT INTO Modulos (Nom_Modulo, ID_Curso) VALUES (%s, %s);"
     query_lectura = "INSERT INTO Lectura (Nom_Lectura, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
     query_pagina = "INSERT INTO Pagina (Nom_Pagina, Texto_Pagina, ID_Lectura) VALUES (%s, %s, %s);"
-    query_imagen = "INSERT INTO Imagen (URL_Imagen, ID_Pagina) VALUES (%s, %s);"
+    query_imagen = "INSERT INTO Imagen (Direccion_IMG, ID_Pagina) VALUES (%s, %s);"
     query_video = "INSERT INTO Video (Nombre_Video, Link_Video, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s, %s);"
     query_cuestionario = "INSERT INTO Cuestionario (Nom_Cuestionario, ID_Modulo, Fecha_Creacion) VALUES (%s, %s, %s);"
     query_pregunta = "INSERT INTO Preguntas (Pregunta, ID_Cuestionario) VALUES (%s, %s);"

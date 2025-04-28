@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, redirect, url_for, request, render_template, session, Response
+from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session, Response
 import operaciones_sql
 #from openai import OpenAI
 import os
 import re
 import ast
+import base64
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
@@ -14,6 +15,15 @@ app.secret_key = 'super secret key'
 
 
 # Endpoints
+
+#Videojuego
+@app.route('/videojuego')
+def videojuego_index():
+    return send_from_directory('static/VideoJuego_Build', 'index.html')
+
+@app.route('/VideoJuego_Build/<path:path>')
+def serve_file(path):
+    return send_from_directory('static/VideoJuego_Build', path)
 
 #vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])
@@ -283,6 +293,8 @@ def editar_modulo_form(id_curso):
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')
 
+UPLOAD_FOLDER = 'static/    uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
 def crear_curso():
@@ -296,6 +308,36 @@ def crear_curso():
     courseDescripcion = data.get('courseDescripcion')
     courseImagen_url = data.get('courseImagen_url')
     modulos =data.get('modulos')
+
+    # To decode the Base64 image file
+    for i, modulo in enumerate(modulos):
+        contenidos = modulo.get('contenidos', [])
+        for j, contenido in enumerate(contenidos):
+            lectura_list = contenido.get('lecturaTexto', [])
+
+            for k, lectura in enumerate(lectura_list):
+                base64_str = lectura.get('imgPagina')
+
+                if base64_str:
+                  
+                    match = re.match(r'data:image/(?P<ext>[^;]+);base64,(?P<data>.+)', base64_str)
+                    if match:
+                        ext = match.group('ext')
+                        img_data = base64.b64decode(match.group('data'))
+                        filename = f'modulo{i+1}_contenido{j+1}_pagina{k+1}.{ext}'
+                        filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+                        with open(filepath, 'wb') as f:
+                            f.write(img_data)
+
+                        lectura['imgPagina'] = filepath
+
+                        print(f'✅ Imagen guardada: {filepath}')
+                    else:
+                        print(f'⚠️ Base64 inválido en modulo {i+1}, contenido {j+1}, página {k+1}')
+                else:
+                    print(f'⚠️ No se encontró imgPagina en página {k+1}')
+
 
 
     try:
@@ -318,6 +360,34 @@ def editar_curso():
     courseImagen_url = data.get('courseImagen_url')
     modulos =data.get('modulos')
 
+    # To decode the Base64 image file
+    for i, modulo in enumerate(modulos):
+        contenidos = modulo.get('contenidos', [])
+        for j, contenido in enumerate(contenidos):
+            lectura_list = contenido.get('lecturaTexto', [])
+
+            for k, lectura in enumerate(lectura_list):
+                base64_str = lectura.get('imgPagina')
+
+                if base64_str:
+                  
+                    match = re.match(r'data:image/(?P<ext>[^;]+);base64,(?P<data>.+)', base64_str)
+                    if match:
+                        ext = match.group('ext')
+                        img_data = base64.b64decode(match.group('data'))
+                        filename = f'modulo{i+1}_contenido{j+1}_pagina{k+1}.{ext}'
+                        filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+                        with open(filepath, 'wb') as f:
+                            f.write(img_data)
+
+                        lectura['imgPagina'] = filepath
+
+                        print(f'✅ Imagen guardada: {filepath}')
+                    else:
+                        print(f'⚠️ Base64 inválido en modulo {i+1}, contenido {j+1}, página {k+1}')
+                else:
+                    print(f'⚠️ No se encontró imgPagina en página {k+1}')
 
     try:
         operaciones_sql.editar_curso(courseID, courseNombre, courseDescripcion, courseImagen_url, modulos)
