@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect, url_for, request, render_template, session
+from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session
 import operaciones_sql
 #from openai import OpenAI
 import os
@@ -15,6 +15,15 @@ app.secret_key = 'super secret key'
 
 
 # Endpoints
+
+#Videojuego
+@app.route('/videojuego')
+def videojuego_index():
+    return send_from_directory('static/VideoJuego_Build', 'index.html')
+
+@app.route('/VideoJuego_Build/<path:path>')
+def serve_file(path):
+    return send_from_directory('static/VideoJuego_Build', path)
 
 #vista de los cursos
 @app.route('/cursos', methods=['GET', 'POST'])

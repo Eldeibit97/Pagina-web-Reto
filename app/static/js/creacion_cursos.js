@@ -5,8 +5,6 @@ function pedirImagen() {
   url = prompt("Introduce la URL de la imagen:");
   if (url) {
     mostrarImagen(url);
-    // Cambiar el icono del botón a lápiz
-    
   }
 }
 
