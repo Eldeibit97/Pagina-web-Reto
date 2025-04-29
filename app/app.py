@@ -30,7 +30,7 @@ def game():
 @app.route('/app/static/webgl/Build/<path:filename>')
 def serve_build(filename):
     # Full logical file path
-    logical_path = os.path.join('app','static', 'webgl', 'Build', filename)
+    logical_path = os.path.join('static', 'webgl', 'Build', filename)
     
     # Check if there's a compressed version (.br) available
     compressed_path = logical_path + '.br'
@@ -502,7 +502,7 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 
