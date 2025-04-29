@@ -30,7 +30,7 @@ def game():
     session['section'] = 'game'
     return render_template('game.html', id_rol = session['id_rol'])  # game.html is your Unity WebGL page
 
-@app.route('/static/webgl/Build/<path:filename>')
+@app.route('/app/static/webgl/Build/<path:filename>')
 def serve_build(filename):
     # Full logical file path
     logical_path = os.path.join('static', 'webgl', 'Build', filename)
