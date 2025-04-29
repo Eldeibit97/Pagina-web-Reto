@@ -109,7 +109,7 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
