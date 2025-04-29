@@ -57,13 +57,13 @@
     }
 
     var buildUrl = "{{ url_for('static', filename='webgl/Build') }}";
-    var loaderUrl = buildUrl + "/VideoJuego_ParaWeb.loader.js";
+    var loaderUrl = buildUrl + "/webgl.loader.js";
 
     var config = {
       arguments: [],
-      dataUrl: buildUrl + "/VideoJuego_ParaWeb.data.br",
-      frameworkUrl: buildUrl + "/VideoJuego_ParaWeb.framework.js.br",
-      codeUrl: buildUrl + "/VideoJuego_ParaWeb.wasm.br",
+      dataUrl: buildUrl + "/webgl.data.br",
+      frameworkUrl: buildUrl + "/webgl.framework.js.br",
+      codeUrl: buildUrl + "/webgl.wasm.br",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "DefaultCompany",
       productName: "Whirlpoolandia_SoluTec",

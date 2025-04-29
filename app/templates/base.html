@@ -126,7 +126,7 @@
                             <i class="bx bx-menu"></i>
                         </button>
                         <h1 class="navbar-brand mb-0 p-2">{% block header %}{% endblock %}</h1>
-                        <p class="nav-item ms-auto p-2 mt-3">{% if session[id_rol] == '1' %} Alumno {% elif session['id_rol'] == '2' %} Administrador {% else %} Profesor {% endif %}{{ session['name'] }}</p>
+                        <p class="nav-item ms-auto p-2 mt-3">{% if session['id_rol'] == 1 %} <b>Alumno</b> {% elif session['id_rol'] == 2 %} <b> Administrador </b> {% elif session['id_rol'] == 3 %}<b> Profesor </b>{% else %} {% endif %}{{ session['name'] }}</p>
                         <div class="dropdown ps-2 pe-2">
                             <a role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
                                 <img src="{{ url_for('static', filename='/img/pfp.jpg') }}" width="50pt" class="pfp2"/>
@@ -151,8 +151,9 @@
                             <div class="modal-body">
                                 {% if session['id_rol'] == 1 %}
                                 Terminaste tus lecciones y quieres cerrar sesión?
-                                {% else %}
+                                {% elif session['id_rol'] == 2 or session['id_rol'] == 3 %}
                                 Quieres cerrar sesión
+                                {% else %}
                                 {% endif %}
                             </div>
                             <div class="modal-footer">

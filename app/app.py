@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, redirect, url_for, request, send_from_directory, render_template, session, Response, send_file
 from flask_cors import cross_origin
 import operaciones_sql
-#from openai import OpenAI
 import os
 import re
 import ast
@@ -10,8 +9,6 @@ import mimetypes
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
-
-
 
 ## Funciones ##
 
@@ -56,7 +53,6 @@ def serve_build(filename):
     else:
         # Fallback if uncompressed file exists
         return send_file(logical_path)
-
 
 @app.route('/get_questions', methods=['GET'])
 @cross_origin()
