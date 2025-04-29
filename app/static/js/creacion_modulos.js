@@ -316,19 +316,25 @@ const contenedorPaginas = document.getElementById('contenedorPaginas');
 
 let base64Image;
 
-function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
+function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
   const nuevaPagina = document.createElement('div');
-  nuevaPagina.classList.add('pagina');
+  nuevaPagina.classList.add('pagina', 'expandida'); // 初期状態は expandida
 
   const tituloContainer = document.createElement('div');
   tituloContainer.classList.add('titulo-container');
 
   const tituloInput = document.createElement('input');
   tituloInput.type = 'text';
-  tituloInput.placeholder = 'Titulo de esta pagina';
+  tituloInput.placeholder = 'Título de esta página';
   tituloInput.value = nombrePagina;
 
+  const tituloTexto = document.createElement('h2');
+  tituloTexto.textContent = nombrePagina;
+  tituloTexto.classList.add('titulo-mostrado');
+  tituloTexto.style.display = 'none';
+
   tituloContainer.appendChild(tituloInput);
+  tituloContainer.appendChild(tituloTexto);
   nuevaPagina.appendChild(tituloContainer);
 
   const texto = document.createElement('textarea');
@@ -337,37 +343,80 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
   texto.classList.add('contenido-texto');
   nuevaPagina.appendChild(texto);
 
+  const imageDisplay = document.createElement('img');
+  const input = document.createElement('input');
+  input.type = 'file';
 
-  const imageDisplay = document.createElement("img");
-
-  const input = document.createElement("input");
-  input.type = "file";
-  input.id = "fileInput";
-
-  input.addEventListener("change", () => {
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  input.addEventListener('change', () => {
+    if (input.files[0]) {
       const reader = new FileReader();
-      
-      reader.onload = function(e) {
+      reader.onload = e => {
         imageDisplay.src = e.target.result;
-        base64Image = reader.result;
+        base64Image = e.target.result;
       };
-      
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(input.files[0]);
     }
   });
 
   nuevaPagina.appendChild(input);
   nuevaPagina.appendChild(imageDisplay);
 
-  if (imgPagina){
-    imageDisplay.src = imgPagina
-  };
+  if (imgPagina) {
+    imageDisplay.src = imgPagina;
+  }
 
-  
-    contenedorPaginas.appendChild(nuevaPagina);
+  const botonConfirmar = document.createElement('button');
+  botonConfirmar.textContent = '✔';
+  botonConfirmar.classList.add('confirmar-edicion');
+  nuevaPagina.appendChild(botonConfirmar);
+
+  contenedorPaginas.appendChild(nuevaPagina);
+  minimizarOtrasPaginas(nuevaPagina); // 他を縮小
+
+  // ✅ チェックマークが押されたら、最小化状態にする
+  botonConfirmar.addEventListener('click', (e) => {
+    e.stopPropagation(); // このイベントが親の click に伝播しないようにする
+    const tituloFinal = tituloInput.value.trim();
+    if (tituloFinal !== '') {
+      tituloTexto.textContent = tituloFinal;
+      tituloTexto.style.display = 'block';
+      tituloInput.style.display = 'none';
+    }
+    nuevaPagina.classList.remove('expandida');
+    nuevaPagina.classList.add('minimizada');
+  });
+
+  // ✅ 最小化されたページをクリックしたら展開
+  nuevaPagina.addEventListener('click', () => {
+    if (nuevaPagina.classList.contains('minimizada')) {
+      nuevaPagina.classList.remove('minimizada');
+      nuevaPagina.classList.add('expandida');
+
+      tituloInput.style.display = 'block';
+      tituloTexto.style.display = 'none';
+
+      minimizarOtrasPaginas(nuevaPagina);
+    }
+  });
 }
+
+function minimizarOtrasPaginas(paginaActual) {
+  document.querySelectorAll('.pagina').forEach(pagina => {
+    if (pagina !== paginaActual) {
+      pagina.classList.remove('expandida');
+      pagina.classList.add('minimizada');
+
+      const input = pagina.querySelector('input[type="text"]');
+      const titulo = pagina.querySelector('h2');
+      if (input && titulo) {
+        titulo.textContent = input.value;
+        titulo.style.display = 'block';
+        input.style.display = 'none';
+      }
+    }
+  });
+}
+
 
 btnAnadirPag.addEventListener('click', () => agregarPagina());
 
@@ -396,11 +445,12 @@ btnGuardarPag.addEventListener('click', () => {
     }
 
     const texto = pagina.querySelector('textarea')?.value || '';
+    const img = pagina.querySelector("img")?.src || "";
 
     lecturaTexto.push({
       nomPagina: titulo.trim(),
       texto: texto.trim(),
-      imgPagina: base64Image
+      imgPagina: img
     });
   });
 
