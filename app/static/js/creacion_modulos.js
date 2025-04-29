@@ -396,11 +396,12 @@ btnGuardarPag.addEventListener('click', () => {
     }
 
     const texto = pagina.querySelector('textarea')?.value || '';
+    const img = pagina.querySelector("img")?.src || "";
 
     lecturaTexto.push({
       nomPagina: titulo.trim(),
       texto: texto.trim(),
-      imgPagina: base64Image
+      imgPagina: img
     });
   });
 

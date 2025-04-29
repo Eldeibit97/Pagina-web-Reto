@@ -267,6 +267,10 @@ button:disabled:hover {
   margin-bottom: 10px;
   font-family: Arial, sans-serif;
 }
+.pagina img {
+  width: 100px;
+  height: 100px;
+}
 .imagen-btn {
   background: none;
   border: none;
