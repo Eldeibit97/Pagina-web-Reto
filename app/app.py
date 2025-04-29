@@ -30,7 +30,7 @@ def game():
     session['section'] = 'game'
     return render_template('game.html', id_rol = session['id_rol'])  # game.html is your Unity WebGL page
 
-@app.route('/static/webgl/Build/<path:filename>')
+@app.route('/app/static/webgl/Build/<path:filename>')
 def serve_build(filename):
     # Full logical file path
     logical_path = os.path.join('static', 'webgl', 'Build', filename)
@@ -144,10 +144,6 @@ def leccion(id_curso, tipo, id):
     else:
         return redirect(url_for('login', fail='False'))
 
-
-
-
-
 @app.route('/subir_calificacion', methods=['POST'])
 def subir_calificacion():
     # Recibir datos del formulario
@@ -247,7 +243,20 @@ def visualizar_alumnos():
         id_rol = session['id_rol']
         if session['id_rol'] == 3 or session['id_rol'] == 2:
             alumnos = operaciones_sql.get_alumnos()
-            return render_template('vista_alumnos.html', alumnos = alumnos, id_rol=id_rol)
+            return render_template('vista_usuarios.html', alumnos = alumnos, id_rol=id_rol)
+        else:
+            return redirect(url_for('cursos', id_rol=id_rol))
+    else:
+        return redirect(url_for('login', fail='False'))
+    
+@app.route('/Profesores')
+def visualizar_profesores():
+    if 'username' in session:
+        session['section'] = 'Vista_profesores'
+        id_rol = session['id_rol']
+        if session['id_rol'] == 3 or session['id_rol'] == 2:
+            profesores = operaciones_sql.get_profesores()
+            return render_template('vista_usuarios.html', profesores = profesores, id_rol=id_rol)
         else:
             return redirect(url_for('cursos', id_rol=id_rol))
     else:
@@ -300,7 +309,7 @@ def editar_modulo_form(id_curso):
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')
 
-UPLOAD_FOLDER = 'static/    uploads'
+UPLOAD_FOLDER = 'app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
@@ -461,13 +470,16 @@ def editar_alumno(id_alumno):
     else:
        return redirect(url_for('login', fail='False')) 
 
-@app.route('/eliminar_alumnos/<id_alumno>')
-def eliminar_alumno(id_alumno):
+@app.route('/eliminar_alumnos/<id_alumno>/<id_rol>')
+def eliminar_alumno(id_alumno,id_rol):
     session['section'] = 'eliminar_alumno'
     if 'username' in session:
         if session['id_rol'] == 2:
             operaciones_sql.eliminar_alumno(id_alumno)
-            return redirect(url_for('visualizar_alumnos'))
+            if id_rol == '1':
+                return redirect(url_for('visualizar_alumnos'))
+            else:
+                return redirect(url_for('visualizar_profesores'))
         else:
             return redirect(url_for('cursos', id_rol=session['id_rol']))
     else:
@@ -494,7 +506,7 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 

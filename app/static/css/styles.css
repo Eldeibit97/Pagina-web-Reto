@@ -3,13 +3,6 @@ footer {
     padding: 5pt;
 }
 
-.background{
-    background-image: url('/app/static/img/LoginBG.jpg');
-    background-repeat: no-repeat;
-    background-position: fixed;
-    background-size: cover;
-}
-
 .no-transition {
     transition: none !important;
 }

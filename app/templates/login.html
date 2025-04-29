@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/app/static/css/styles.css">
 </head>
 <body class="d-flex flex-column align-items-center justify-content-center vh-100" 
-        style="background-image: url({{ url_for('static', filename='/img/LoginBG.jpg')}});
+style="background-image: url({{ url_for('static', filename='/img/LoginBG.jpg')}});
         background-repeat: no-repeat;
         background-position: fixed;
         background-size: cover;"
@@ -16,7 +16,6 @@
     <div class="container text-center">
         <img src="{{ url_for('static', filename='/img/whirlpool-logo.png') }}" width="200pt" />
         <h1 class="tituloGrande">TecniCORE</h1>
-
         <p>Inicia sesión con tus credenciales Whirlpool.</p>
 
         <form class="forms" action="{{ url_for('check') }}" method="post">

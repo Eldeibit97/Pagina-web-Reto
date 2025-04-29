@@ -20,7 +20,7 @@
         <div class="container-fluid flex-grow-1">
             <div class="row">
                 <div class="col-auto sideborder">
-                    <div id="sidebar" class="collapse show collapse-horizontal collapse-sm-vertical  mt-2" aria-expanded="true" style="transition: none !important;">
+                    <div id="sidebar" class="collapse show collapse-horizontal collapse-sm-vertical  mt-2" aria-expanded="false" style="transition: none !important;">
                         
                         <div class="card p-3" style="width: 200px; height: 100%; border: none;">
                             <p>Whirlpool <b>TecniCORE</b></p>
@@ -62,7 +62,7 @@
                                     Crear Curso
                             </a>
 
-                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Estudiantes</p>
+                            <p style="margin: 10px 10px 5px 0px; padding: auto;">Usuarios</p>
 
                             <a
                             href="{{ url_for('visualizar_alumnos') }}"
@@ -70,6 +70,14 @@
                             >
                                 <i class='bx bxs-user-detail'></i>
                                     Alumnos
+                            </a>
+
+                            <a
+                            href="{{ url_for('visualizar_profesores') }}"
+                            class="btn {% if session['section'] == 'Vista_profesores' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                            <i class='bx bx-chalkboard'></i>
+                                    Profesores
                             </a>
 
                             <a
@@ -112,13 +120,13 @@
                         class="btn p-2"
                         data-bs-toggle="collapse"
                         href="#sidebar"
-                        aria-expanded="true"
+                        aria-expanded="false"
                         aria-controls="sidebar"
                         >
                             <i class="bx bx-menu"></i>
                         </button>
                         <h1 class="navbar-brand mb-0 p-2">{% block header %}{% endblock %}</h1>
-                        <p class="nav-item ms-auto p-2 mt-3">{{ session['name'] }}</p>
+                        <p class="nav-item ms-auto p-2 mt-3">{% if session[id_rol] == '1' %} Alumno {% elif session['id_rol'] == '2' %} Administrador {% else %} Profesor {% endif %}{{ session['name'] }}</p>
                         <div class="dropdown ps-2 pe-2">
                             <a role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
                                 <img src="{{ url_for('static', filename='/img/pfp.jpg') }}" width="50pt" class="pfp2"/>
@@ -141,7 +149,11 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                              Terminaste tus lecciones y quieres cerrar sesión?
+                                {% if session['id_rol'] == 1 %}
+                                Terminaste tus lecciones y quieres cerrar sesión?
+                                {% else %}
+                                Quieres cerrar sesión
+                                {% endif %}
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>

@@ -1,0 +1,88 @@
+{% extends "cursos.html" %}
+
+{% block title %}
+{% if session['section'] == 'Vista_alumnos'%}
+Alumnos
+{% else %}
+Profesores
+{% endif %}
+{% endblock %}
+
+{% block header %}
+  Alumnos
+{% endblock %}
+
+
+{% block content %}
+<p class="text-secondary">Aquí puedes encontrar{% if id_rol == 2 %}, editar datos o eliminar {% endif %} a{% if id_rol == 3 %} todos {% endif %} los {% if session['section'] == 'Vista_alumnos' %}<b> alumnos </b>{% else %}<b> profesores </b>{% endif %} existentes.</p>
+{% if session['section'] == 'Vista_alumnos' %}
+<ul class="list-group">
+  {% for alumno in alumnos %}
+  <li class="list-group-item alumno-space">
+    <div class="alumno-list">
+      <img class="pfp" src="{{ url_for('obtener_imagen', id_alumno = alumno[0]) }}" alt="pfp.jpg" width="50pt">
+      <p class="alumno-name">{{ alumno[1] }}</p>
+      {% if id_rol == 2 %}
+      <p class="alumno-name">{{ alumno[2] }}</p>
+      {% endif %}
+      <p class="alumno-name">{% if alumno[3] == 1 %} Alumno {% endif %}</p>
+    </div>
+    {% if id_rol == 2 %}
+    <div class="button-container">
+      <a role="button"  class="btn anchor" href="{{url_for('editar_alumno', id_alumno=alumno[0])}}">
+        <i class='bx bxs-edit'></i>
+      </a>
+      <button type="button" class="btn" data-id="{{alumno[1]}} - {{alumno[2]}}" data-url="{{url_for('eliminar_alumno', id_alumno = alumno[0], id_rol = alumno[3])}}"data-bs-toggle="modal" data-bs-target="#delete_modal">
+        <i class='bx bxs-trash'></i>
+      </button>
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if session['section'] == 'Vista_profesores' %}
+<ul class="list-group">
+  {% for profesor in profesores %}
+  <li class="list-group-item alumno-space">
+    <div class="alumno-list">
+      <img class="pfp" src="{{ url_for('obtener_imagen', id_alumno = profesor[0]) }}" alt="pfp.jpg" width="50pt">
+      <p class="alumno-name">{{ profesor[1] }}</p>
+      {% if id_rol == 2 %}
+      <p class="alumno-name">{{ profesor[2] }}</p>
+      {% endif %}
+      <p class="alumno-name">{% if profesor[3] == 3 %} Profesor {% endif %}</p>
+    </div>
+    {% if id_rol == 2 %}
+    <div class="button-container">
+      <a role="button"  class="btn anchor" href="{{url_for('editar_alumno', id_alumno=profesor[0])}}">
+        <i class='bx bxs-edit'></i>
+      </a>
+      <button type="button" class="btn" data-id="{{profesor[1]}} - {{profesor[2]}}" data-url="{{url_for('eliminar_alumno', id_alumno = profesor[0], id_rol = profesor[3])}}"data-bs-toggle="modal" data-bs-target="#delete_modal">
+        <i class='bx bxs-trash'></i>
+      </button>
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="delete_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="delete_label">Eliminar Alumno</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal_body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">No</button>
+        <a id="eliminar" role="button" class="btn btn-danger">Eliminar</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/static/js/eliminar_alumno.js"></script>
+{% endblock %}

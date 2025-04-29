@@ -35,7 +35,11 @@ Lectura - {{ lectura[0] }}
 <p id="texto">{{ paginas[0][1] }}</p>
 
 <img
+  {% if paginas[0][2] is not none %}
   src='{{ "/" + paginas[0][2] }}'
+  {% else %}
+  src=""
+  {% endif %}
   id="imagen"
   style="display: block; margin-left: auto; margin-right: auto; width: 50%"
 />

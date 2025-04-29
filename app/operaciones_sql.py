@@ -109,13 +109,13 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
-        with open("app/static/img/default_pfp.jpg", "rb") as default_image:
+        with open("/app/static/img/default_pfp.jpg", "rb") as default_image:
             image = default_image.read()
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(image)
         return "pfp.jpg"
     
@@ -191,6 +191,20 @@ def get_alumnos():
     connection.close()
 
     return alumnos
+
+# Obtener a los diferentes alumnos ya registrados en la DB
+def get_profesores():
+    connection = connect()
+    cursor = connection.cursor()
+
+    query = "SELECT u.ID_Usuario, u.Nom_Usuario, u.Correo_Cliente, u.ID_Rol ,u.Img_Usuario FROM Usuarios u WHERE u.ID_Rol = 3"
+    cursor.execute(query)
+    profesores = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return profesores
 
 # Obtener las lecciones de un curso
 def get_lecciones(id_curso):
