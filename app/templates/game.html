@@ -7,39 +7,17 @@
 {% block header %}
   WhirlPlay
 {% endblock %}
-
-
-
-
-<!DOCTYPE html>
-<html lang="en-us">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Unity Web Player | Whirlpoolandia_SoluTec</title>
-
-  <!-- 🛠 Fix for Safari WebGL2 issue -->
+{% block content %}
+<body>
   <script>
     HTMLCanvasElement.prototype.getContextSafariWebGL2Fixed = function(ctx, attrs) {
       return this.getContext(ctx, attrs);
     };
   </script>
 
-  <!-- 🛠 Correct static paths -->
-  
-
-  <style>
-    body { margin: 0; padding: 0; }
-  </style>
-</head>
-
-{% block content %}
-
-<body>
-
-
   <link rel="shortcut icon" href="{{ url_for('static', filename='webgl/TemplateData/favicon.ico') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='webgl/TemplateData/style.css') }}">
+  
   <div id="unity-container" class="unity-desktop">
     <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
     <div id="unity-loading-bar">
