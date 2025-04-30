@@ -84,6 +84,10 @@ button:disabled:hover {
 
 .inputModule {
   width: 55%; 
+  border: solid;
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: #a3a3a3;
   margin-right: 10px;
 }
 
@@ -94,8 +98,8 @@ button:disabled:hover {
 .editarButton, .borrarButton {
   background: none;
   border: solid;
-  border-color: #626262;
-  border-radius: 2px;
+  border-color: #a3a3a3;
+  border-radius: 3px;
   border-width: 1px;
   cursor: pointer; 
   font-size: 18px;
@@ -278,8 +282,6 @@ button:disabled:hover {
   justify-content: center;
   top: 10px;
   right: 10px;
-  background: green;
-  color: white;
   border: none;
   border-radius: 50%;
   font-size: 20px;
@@ -288,11 +290,11 @@ button:disabled:hover {
   cursor: pointer;
   line-height: 1; 
   padding: 0;  
+  transition: transform 0.2s;
 }
 
 .confirmar-edicion:hover {
-  background-color: #45a049;
-
+  transform: scale(1.2);
 }
 .titulo-container {
   display: flex;

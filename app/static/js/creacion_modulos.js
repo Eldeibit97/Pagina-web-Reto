@@ -375,7 +375,7 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
   }
 
   const botonConfirmar = document.createElement('button');
-  botonConfirmar.textContent = '✔';
+  botonConfirmar.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
   botonConfirmar.classList.add('confirmar-edicion');
   nuevaPagina.appendChild(botonConfirmar);
 
