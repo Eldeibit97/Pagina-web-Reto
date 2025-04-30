@@ -225,6 +225,7 @@ function agregarTarjeta(nombreTarjeta = ''){
                   sessionStorage.setItem('modulos', JSON.stringify(modulos));
                   sessionStorage.setItem('Indice_ModuloEnEdicion', Indice_ModuloEnEdicion);
                   sessionStorage.setItem('Indice_TarjetaEnEdicion', Indice_TarjetaEnEdicion);
+                  sessionStorage.setItem('cuestionarioTitle', inputTarjeta.value.trim())
                   window.location.href = "/crear_cuestionario_form";
                 }
 
