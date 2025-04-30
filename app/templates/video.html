@@ -92,7 +92,7 @@
     .then(data => {
       if (data.success) {
         // Checar si siguienteId es valido
-        if (siguienteId == "None") {
+        if (siguienteId == "0") {
           // Redirect to vista_curso with id_curso as a query parameter
           window.location.href = '{{ url_for("vista_curso", id_curso=id_curso) }}';
         }

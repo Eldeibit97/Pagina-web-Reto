@@ -156,7 +156,7 @@ function agregarTarjeta(nombreTarjeta = ''){
     const inputTarjeta = document.createElement('input');
     inputTarjeta.classList.add('inputTarjeta');
     inputTarjeta.type = 'text';
-    inputTarjeta.placeholder = 'Escribe un nombre para el modulo';
+    inputTarjeta.placeholder = 'Escribe un nombre para la lección';
     inputTarjeta.value = nombreTarjeta;
     divTarjeta.appendChild(inputTarjeta);
     
@@ -190,7 +190,7 @@ function agregarTarjeta(nombreTarjeta = ''){
         );
 
         if (contenidoGuardado) {
-          boton.innerHTML = '✅';
+          boton.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
           contenidoGuardado = null;
           
         }
@@ -233,7 +233,7 @@ function agregarTarjeta(nombreTarjeta = ''){
                   window.location.href = "/crear_cuestionario_form";
                 }
 
-                boton.innerHTML = '✅';
+                boton.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
                 mediaContainer.querySelectorAll('button').forEach(btn => {
                     if (btn !== boton) btn.style.display = 'none';
                 });
@@ -242,7 +242,7 @@ function agregarTarjeta(nombreTarjeta = ''){
     })
     const botonesEnContenedor = mediaContainer.querySelectorAll('button');
 
-    const botonCheckeado = Array.from(botonesEnContenedor).find(btn => btn.innerHTML === '✅');
+    const botonCheckeado = Array.from(botonesEnContenedor).find(btn => btn.innerHTML === "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>");
 
     if (botonCheckeado) {
       botonesEnContenedor.forEach(btn => {
@@ -308,7 +308,6 @@ btnGuardarTarjeta.addEventListener('click', () => {
     renderizarListaModulos();
 })
 
-
 /*↓ ------------codigo para la pantalla de Lectura-----------------↓*/
 const btnAnadirPag = document.getElementById('btnAnadirPag');
 const btnGuardarPag = document.getElementById('btnGuardarPag');
@@ -316,19 +315,25 @@ const contenedorPaginas = document.getElementById('contenedorPaginas');
 
 let base64Image;
 
-function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
+function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
   const nuevaPagina = document.createElement('div');
-  nuevaPagina.classList.add('pagina');
+  nuevaPagina.classList.add('pagina', 'expandida'); // 初期状態は expandida
 
   const tituloContainer = document.createElement('div');
   tituloContainer.classList.add('titulo-container');
 
   const tituloInput = document.createElement('input');
   tituloInput.type = 'text';
-  tituloInput.placeholder = 'Titulo de esta pagina';
+  tituloInput.placeholder = 'Título de esta página';
   tituloInput.value = nombrePagina;
 
+  const tituloTexto = document.createElement('h2');
+  tituloTexto.textContent = nombrePagina;
+  tituloTexto.classList.add('titulo-mostrado');
+  tituloTexto.style.display = 'none';
+
   tituloContainer.appendChild(tituloInput);
+  tituloContainer.appendChild(tituloTexto);
   nuevaPagina.appendChild(tituloContainer);
 
   const texto = document.createElement('textarea');
@@ -337,37 +342,80 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = ''){
   texto.classList.add('contenido-texto');
   nuevaPagina.appendChild(texto);
 
+  const imageDisplay = document.createElement('img');
+  const input = document.createElement('input');
+  input.type = 'file';
 
-  const imageDisplay = document.createElement("img");
-
-  const input = document.createElement("input");
-  input.type = "file";
-  input.id = "fileInput";
-
-  input.addEventListener("change", () => {
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+  input.addEventListener('change', () => {
+    if (input.files[0]) {
       const reader = new FileReader();
-      
-      reader.onload = function(e) {
+      reader.onload = e => {
         imageDisplay.src = e.target.result;
-        base64Image = reader.result;
+        base64Image = e.target.result;
       };
-      
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(input.files[0]);
     }
   });
 
   nuevaPagina.appendChild(input);
   nuevaPagina.appendChild(imageDisplay);
 
-  if (imgPagina){
-    imageDisplay.src = imgPagina
-  };
+  if (imgPagina) {
+    imageDisplay.src = imgPagina;
+  }
 
-  
-    contenedorPaginas.appendChild(nuevaPagina);
+  const botonConfirmar = document.createElement('button');
+  botonConfirmar.textContent = '✔';
+  botonConfirmar.classList.add('confirmar-edicion');
+  nuevaPagina.appendChild(botonConfirmar);
+
+  contenedorPaginas.appendChild(nuevaPagina);
+  minimizarOtrasPaginas(nuevaPagina); // 他を縮小
+
+  // ✅ チェックマークが押されたら、最小化状態にする
+  botonConfirmar.addEventListener('click', (e) => {
+    e.stopPropagation(); // このイベントが親の click に伝播しないようにする
+    const tituloFinal = tituloInput.value.trim();
+    if (tituloFinal !== '') {
+      tituloTexto.textContent = tituloFinal;
+      tituloTexto.style.display = 'block';
+      tituloInput.style.display = 'none';
+    }
+    nuevaPagina.classList.remove('expandida');
+    nuevaPagina.classList.add('minimizada');
+  });
+
+  // ✅ 最小化されたページをクリックしたら展開
+  nuevaPagina.addEventListener('click', () => {
+    if (nuevaPagina.classList.contains('minimizada')) {
+      nuevaPagina.classList.remove('minimizada');
+      nuevaPagina.classList.add('expandida');
+
+      tituloInput.style.display = 'block';
+      tituloTexto.style.display = 'none';
+
+      minimizarOtrasPaginas(nuevaPagina);
+    }
+  });
 }
+
+function minimizarOtrasPaginas(paginaActual) {
+  document.querySelectorAll('.pagina').forEach(pagina => {
+    if (pagina !== paginaActual) {
+      pagina.classList.remove('expandida');
+      pagina.classList.add('minimizada');
+
+      const input = pagina.querySelector('input[type="text"]');
+      const titulo = pagina.querySelector('h2');
+      if (input && titulo) {
+        titulo.textContent = input.value;
+        titulo.style.display = 'block';
+        input.style.display = 'none';
+      }
+    }
+  });
+}
+
 
 btnAnadirPag.addEventListener('click', () => agregarPagina());
 
@@ -435,7 +483,7 @@ function crearNuevaCurso() {
     body: JSON.stringify({ courseNombre, courseDescripcion, courseImagen_url, modulos })
   })
   .then(response => response.json())
-  .then(data => alert(data.message))
+  .then(data => {alert(data.message)})
   .catch(error => console.error('Error:', error));
 }
 
@@ -511,3 +559,13 @@ window.onload = () => {
   }
   
 };
+
+//Regresar
+const btnRegresardevista = document.getElementById('btnRegresar');
+btnRegresardevista.addEventListener('click', () => {
+    if(listaModulosView.classList.contains('oculto')){
+      edicionModuloView.classList.add('oculto');
+      listaModulosView.classList.remove('oculto');
+    }
+    renderizarListaModulos();
+})
