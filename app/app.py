@@ -323,7 +323,7 @@ def crear_cuestionario_form():
     else:
         redirect(url_for('login', fail = "False"))
 
-UPLOAD_FOLDER = 'app/static/uploads'
+UPLOAD_FOLDER = '/app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
@@ -520,10 +520,10 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
