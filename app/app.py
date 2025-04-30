@@ -296,30 +296,43 @@ def crear_curso_form():
 def editar_curso_form(id_curso):
     session['section'] = 'edicion_curso'
     id_rol = session['id_rol']
-    if id_rol == 2:
-        curso = operaciones_sql.get_curso_info(id_curso)
-        return render_template('CreacionCursos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+    if 'username' in session:
+        if id_rol == 2:
+            curso = operaciones_sql.get_curso_info(id_curso)
+            return render_template('CreacionCursos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+        else:
+            return redirect(url_for('cursos'))
     else:
-        return redirect(url_for('cursos'))
+        redirect(url_for('login', fail = "False"))
 
 @app.route('/crear_modulo_form', methods=['GET'])
 def crear_modulo_form():
     id_rol = session['id_rol']
-    return render_template('CreacionModulos.html', id_rol=id_rol)
+    if 'username' in session:
+        return render_template('CreacionModulos.html', id_rol=id_rol)
+    else:
+        redirect(url_for('login', fail = "False"))
 
 @app.route('/editar_modulo_form/<id_curso>', methods=['GET'])
 def editar_modulo_form(id_curso):
     session['section'] = 'edicion_modulo'
     id_rol = session['id_rol']
-    if id_rol == 2:
-        curso = operaciones_sql.get_curso_info(id_curso)
-        return render_template('CreacionModulos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+    if 'username' in session:
+        if id_rol == 2:
+            curso = operaciones_sql.get_curso_info(id_curso)
+            return render_template('CreacionModulos.html', id_rol=id_rol, id_curso=id_curso, curso=curso)
+        else:
+            return redirect(url_for('cursos'))
     else:
-        return redirect(url_for('cursos'))
+        redirect(url_for('login', fail = "False"))
 
 @app.route('/crear_cuestionario_form', methods=['GET'])
 def crear_cuestionario_form():
-    return render_template('CreacionCuestionarios.html')
+    session['section'] = "crear_cuestionario"
+    if 'username' in session:
+        return render_template('CreacionCuestionarios.html', id_rol = session['id_rol'])
+    else:
+        redirect(url_for('login', fail = "False"))
 
 UPLOAD_FOLDER = '/app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
