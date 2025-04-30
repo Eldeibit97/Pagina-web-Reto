@@ -24,7 +24,7 @@
 <input type="hidden" id="curso-imagen" value="{{ curso[2] if curso else '' }}">
 <input type="hidden" id="curso-id" value="{{ id_curso if id_curso else '' }}">
 
-<div class="container">
+<div class="container" id="container">
   <link rel="stylesheet" href="/static/css/creacion_cursos_styles.css">
   <h1 class="headers" id = "form-title">Crear Curso</h1>
   <label for="course-name" class="etiqueta">Nombre del curso</label>
@@ -34,34 +34,12 @@
   <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
   
   <label class="etiqueta">Imagen</label>
-  <div class="icon-upload">
-    <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
-    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal">+</button>
+  
+  <div class="image-upload">
+    <input type="file" class="imageInput" accept="image/*">
+    <img class="imagePreview" src="">
   </div>
 
-  <div class="modal fade" id="imagen_modal" tabindex="-1" aria-labelledby="imagen_label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="imagen_label">Ingresa la imagen para el curso</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="icon-upload">
-            <!-- La imagen se mostrará en este elemento al guardar la URL -->
-            <img id="imagen" src="" alt="Imagen cargada">
-            <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
-            <input id="btnImagen" role="button" type="file" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal"></button>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">regresar</button>
-          <button type="button" data-bs-dismiss="modal" class="btn btn-primary">aceptar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
   <!-- El botón "Siguiente" validará datos antes de redirigir -->
   <button class="next-button" onclick="validarDatos()">Siguiente</button>
 </div>
