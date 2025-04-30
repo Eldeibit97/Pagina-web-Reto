@@ -62,7 +62,7 @@
     var config = {
       arguments: [],
       dataUrl: buildUrl + "/webgl.data.br",
-      frameworkUrl: buildUrl + "/webgl.framework.js.br",
+      frameworkUrl: "{{ url_for('static', filename='webgl/Build/webgl.framework.js.br') }}",
       codeUrl: buildUrl + "/webgl.wasm.br",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "DefaultCompany",
