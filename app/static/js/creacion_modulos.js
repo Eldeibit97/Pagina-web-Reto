@@ -137,21 +137,12 @@ function agregarTarjeta(nombreTarjeta = ''){
     btnCerrar.classList.add('btn-cerrar');
     btnCerrar.innerHTML = "<i class='bx bx-x'></i>";
     btnCerrar.title = 'Borrar esta Tarjeta';
-    btnCerrar.addEventListener('click', () => {
-        if (modulos[Indice_ModuloEnEdicion].contenidos.some(contenido => contenido.nomContenido === inputTarjeta.value.trim())){ // if this contents had been edited last time
-            
-            const borrarConfirmacion = confirm('¿Estás seguro de que quieres borrar este contenido?\nLos contenidos que editaste se eliminarán.')
-            if (!borrarConfirmacion) return;
-            
-            const index = modulos[Indice_ModuloEnEdicion].contenido.findIndex(contenido => contenido.nomContenido === inputTarjeta.value.trim());
-            if (index !== -1) {
-                modulos[Indice_ModuloEnEdicion].contenido.splice(index, 1);
-            }
-        }
-        divTarjeta.remove();
-    });
-
     divTarjeta.appendChild(btnCerrar);
+
+    btnCerrar.addEventListener('click', () => {
+        manejarCierreTarjeta(inputTarjeta, divTarjeta);
+    });
+  
 
     const inputTarjeta = document.createElement('input');
     inputTarjeta.classList.add('inputTarjeta');
@@ -289,6 +280,25 @@ function agregarTarjeta(nombreTarjeta = ''){
 }
 btnAgregarTarjeta.addEventListener('click', () => agregarTarjeta());
 
+function manejarCierreTarjeta(inputTarjeta, divTarjeta) {
+  const nombre = inputTarjeta.value.trim();
+
+  const contenidos = modulos[Indice_ModuloEnEdicion].contenidos;
+  const index = contenidos.findIndex(contenido => contenido.nomContenido === nombre);
+
+  if (index !== -1) {
+      const borrarConfirmacion = confirm(
+          '¿Estás seguro de que quieres borrar este contenido?\nLos contenidos que editaste se eliminarán.'
+      );
+      if (!borrarConfirmacion) return;
+
+      contenidos.splice(index, 1);
+  }
+
+  divTarjeta.remove();
+}
+
+
 // función para actualizar y volver a mostrar la información del tarjetas.
 function renderizarTarjetas(){
     contenedorTarjetas.innerHTML = '';
@@ -317,7 +327,7 @@ let base64Image;
 
 function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
   const nuevaPagina = document.createElement('div');
-  nuevaPagina.classList.add('pagina', 'expandida'); // 初期状態は expandida
+  nuevaPagina.classList.add('pagina', 'expandida');
 
   const tituloContainer = document.createElement('div');
   tituloContainer.classList.add('titulo-container');
