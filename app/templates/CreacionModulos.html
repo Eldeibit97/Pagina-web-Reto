@@ -22,28 +22,38 @@
 <div class="cuerpo">
   <link rel="stylesheet" href="/static/css/creacion_modulos_styles.css">
   <div class="monitor">
-
     <div id="listaModulosView">
       <h1 class="headers" id="modulo-header">Módulos</h1>
-      <ul id="lista-modulos"></ul>
-      <button id="btnAgregarModulo" class="AddButton"><i class='bx bx-plus'></i></button>
-      <button id="btnListo">Listo</button>
+      <div class="listaModulosContainer">
+        <ul id="lista-modulos"></ul>
+      </div>
+      <div class="btn-container">
+        <button id="btnAgregarModulo" class="AddButton"><i class='bx bx-plus'></i></button>
+        <button id="btnListo">Listo</button>
+      </div>
     </div>
 
     <div id="edicionModuloView" class="oculto">
+      <button id="btnRegresar"class="btn btn-warning"><b>Regresar</b></button>
       <h1 class="headers" id="tituloEdicion">Editar: (Módulo)</h1>
-      <div id="contenedorTarjetas"></div>
-      <div class="buttonContainer">
+      <div class="edicionModulosContainer">
+        <div id="contenedorTarjetas"></div>
+      </div>
+      <div class="btn-container">
         <button id="btnAgregarTarjeta" class="AddButton"><i class='bx bx-plus'></i></button>
-        <button id="btnGuardarTarjeta" class = 'SaveButton'>Guardar</button>
+        <button id="btnGuardarTarjeta" class='SaveButton'>Guardar</button>
       </div>
     </div>
 
     <div id="edicionLecturaView" class="oculto">
       <h1 class="headers" id="tituloEdicion">Editar Lectura</h1>
-      <div class="contenedor-paginas" id="contenedorPaginas"></div>
-      <button id="btnAnadirPag" class="AddButton"><i class='bx bx-plus'></i></button>
-      <button id="btnGuardarPag" class = 'SaveButton'>Listo</button>
+      <div class="edicionLecturasContainer">
+        <div class="contenedor-paginas" id="contenedorPaginas"></div>
+      </div>
+      <div class="btn-container">
+        <button id="btnAnadirPag" class="AddButton"><i class='bx bx-plus'></i></button>
+        <button id="btnGuardarPag" class = 'SaveButton'>Listo</button>
+      </div>
     </div>
 
   </div>

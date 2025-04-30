@@ -156,7 +156,7 @@ function agregarTarjeta(nombreTarjeta = ''){
     const inputTarjeta = document.createElement('input');
     inputTarjeta.classList.add('inputTarjeta');
     inputTarjeta.type = 'text';
-    inputTarjeta.placeholder = 'Escribe un nombre para el modulo';
+    inputTarjeta.placeholder = 'Escribe un nombre para la lección';
     inputTarjeta.value = nombreTarjeta;
     divTarjeta.appendChild(inputTarjeta);
     
@@ -190,7 +190,7 @@ function agregarTarjeta(nombreTarjeta = ''){
         );
 
         if (contenidoGuardado) {
-          boton.innerHTML = '✅';
+          boton.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
           contenidoGuardado = null;
           
         }
@@ -233,7 +233,7 @@ function agregarTarjeta(nombreTarjeta = ''){
                   window.location.href = "/crear_cuestionario_form";
                 }
 
-                boton.innerHTML = '✅';
+                boton.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
                 mediaContainer.querySelectorAll('button').forEach(btn => {
                     if (btn !== boton) btn.style.display = 'none';
                 });
@@ -242,7 +242,7 @@ function agregarTarjeta(nombreTarjeta = ''){
     })
     const botonesEnContenedor = mediaContainer.querySelectorAll('button');
 
-    const botonCheckeado = Array.from(botonesEnContenedor).find(btn => btn.innerHTML === '✅');
+    const botonCheckeado = Array.from(botonesEnContenedor).find(btn => btn.innerHTML === "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>");
 
     if (botonCheckeado) {
       botonesEnContenedor.forEach(btn => {
@@ -307,7 +307,6 @@ btnGuardarTarjeta.addEventListener('click', () => {
     listaModulosView.classList.remove('oculto');
     renderizarListaModulos();
 })
-
 
 /*↓ ------------codigo para la pantalla de Lectura-----------------↓*/
 const btnAnadirPag = document.getElementById('btnAnadirPag');
@@ -511,3 +510,13 @@ window.onload = () => {
   }
   
 };
+
+//Regresar
+const btnRegresardevista = document.getElementById('btnRegresar');
+btnRegresardevista.addEventListener('click', () => {
+    if(listaModulosView.classList.contains('oculto')){
+      edicionModuloView.classList.add('oculto');
+      listaModulosView.classList.remove('oculto');
+    }
+    renderizarListaModulos();
+})

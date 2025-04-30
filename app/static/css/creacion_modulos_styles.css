@@ -5,14 +5,22 @@
 }
 .monitor{
   background-color: #fff;
-  width: 900px; 
-  min-height: 600px;
+  width: 90%; 
+  height: 625px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   padding: 30px;
   position: relative;
   display: flex;
+  overflow-y: scroll;
   flex-direction: column;
+}
+.btn-container{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  padding: 3px;
+  width: 100%;
 }
 .headers{
   margin: 0;
@@ -36,6 +44,8 @@ button:disabled:hover {
 }
 #listaModulosView {
   flex: 1;
+  overflow-y: scroll;
+  gap: 10px;
 }
 #lista-modulos {
   list-style-type: none;
@@ -54,6 +64,21 @@ button:disabled:hover {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   font-size: 18px; 
   color: #555;
+}
+
+.listaModulosContainer{
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.edicionModulosContainer{
+  height: 72%;
+  overflow-y: scroll;
+}
+
+.edicionLecturasContainer{
+  height: 79%;
+  overflow-y: scroll;
 }
 
 .inputModule {
@@ -76,13 +101,10 @@ button:disabled:hover {
   transition: transform 0.2s;
 }
 .editarButton:hover, .borrarButton:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .AddButton {
-  position: absolute; 
-  bottom: 20px; 
-  left: 20px;
   width: 50px; 
   height: 50px; 
   padding: 2px 6px 10px 6px;
@@ -100,9 +122,6 @@ button:disabled:hover {
 }
 
 #btnListo {
-  position: absolute; 
-  bottom: 20px; 
-  right: 20px;
   background-color: #ffd700; 
   border: none; 
   padding: 10px 20px; 
@@ -118,10 +137,13 @@ button:disabled:hover {
 }
 #edicionModuloView {
   flex: 1;
+  overflow-y: scroll;
 }
 
 #edicionLecturaView {
-  height: 400px;
+  flex: 1;
+  overflow-y: scroll;
+  height: 90%;
 }
 
 #tituloEdicion {
@@ -134,7 +156,6 @@ button:disabled:hover {
   flex-wrap: wrap;
   margin-bottom: 20px;
   overflow-y: scroll;
-  height: 100%;
 }
 .tarjeta {
   position: relative;
@@ -183,9 +204,6 @@ button:disabled:hover {
 }
 
 .SaveButton {
-  position: absolute; 
-  bottom: 20px; 
-  right: 20px;
   background-color: #ffd700;
   border: none; 
   padding: 10px 20px;
@@ -216,7 +234,6 @@ button:disabled:hover {
   justify-content: center;
   margin-top: 20px;
   height: 100%;
-  overflow-y: scroll;
 }
 .pagina {
   background: #f9f9f9;
