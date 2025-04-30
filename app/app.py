@@ -6,15 +6,15 @@ import re
 import ast
 import base64
 import mimetypes
-# import cloudinary
-# import cloudinary.uploader
-# import cloudinary.api
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
-# cloudinary.config(
-#     cloud_name = "dbsfmc1k9",
-#     api_key = "964126165563941",
-#     api_secret = "q1pG0SwWhpBLpUxcddqv5xzLY8Y"
-# )
+cloudinary.config(
+    cloud_name = "dbsfmc1k9",
+    api_key = "964126165563941",
+    api_secret = "q1pG0SwWhpBLpUxcddqv5xzLY8Y"
+)
 
 
 
@@ -334,7 +334,7 @@ def crear_cuestionario_form():
     else:
         redirect(url_for('login', fail = "False"))
 
-UPLOAD_FOLDER = 'app/static/uploads'
+UPLOAD_FOLDER = '/app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
@@ -362,12 +362,12 @@ def crear_curso():
             with open(filepath_course, 'wb') as f:
                 f.write(img_data_course)
 
-            # resultado_course = cloudinary.uploader.upload(filepath_course)
-            # url_course = resultado_course.get("secure_url")
-            # print("Imagen subida correctamente.")
-            # print("URL:", url_course)
+            resultado_course = cloudinary.uploader.upload(filepath_course)
+            url_course = resultado_course.get("secure_url")
+            print("Imagen subida correctamente.")
+            print("URL:", url_course)
             
-            # courseImagen_url = url_course
+            courseImagen_url = url_course
 
             print(f'✅ Imagen guardada: {filepath_course}')
         else:
@@ -397,12 +397,12 @@ def crear_curso():
                             f.write(img_data)
 
                         
-                        # resultado = cloudinary.uploader.upload(filepath)
-                        # url = resultado.get("secure_url")
-                        # print("Imagen subida correctamente.")
-                        # print("URL:", url)
+                        resultado = cloudinary.uploader.upload(filepath)
+                        url = resultado.get("secure_url")
+                        print("Imagen subida correctamente.")
+                        print("URL:", url)
                         
-                        # lectura['imgPagina'] = url
+                        lectura['imgPagina'] = url
 
                         print(f'✅ Imagen guardada: {filepath}')
                     else:
@@ -562,10 +562,10 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0', port=5000)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
