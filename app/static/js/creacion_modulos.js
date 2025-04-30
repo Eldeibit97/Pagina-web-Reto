@@ -380,7 +380,7 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
   }
 
   const botonConfirmar = document.createElement('button');
-  botonConfirmar.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126'  ></i>";
+  botonConfirmar.innerHTML = "<i class='bx bxs-check-circle' style='color:#54d126; font-size: 30px'  ></i>";
   botonConfirmar.classList.add('confirmar-edicion');
   nuevaPagina.appendChild(botonConfirmar);
 
@@ -392,7 +392,7 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
     e.stopPropagation(); // このイベントが親の click に伝播しないようにする
     const tituloFinal = tituloInput.value.trim();
     if (tituloFinal !== '') {
-      tituloTexto.textContent = tituloFinal + ", haz click para editar";
+      tituloTexto.textContent = tituloFinal;
       tituloTexto.style.display = 'block';
       tituloInput.style.display = 'none';
     }
