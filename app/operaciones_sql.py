@@ -836,6 +836,26 @@ def eliminar_alumno(id_alumno):
     connection = connect()
     cursor = connection.cursor()
 
+    query = f"DELETE FROM Usuario_Curso WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Usuario_Lectura WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Usuario_Video WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Evaluaciones WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Entrada WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
     query = f"DELETE FROM Usuarios WHERE ID_Usuario  = {id_alumno}"
     cursor.execute(query)
     connection.commit()
