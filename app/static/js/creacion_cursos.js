@@ -35,9 +35,9 @@ function validarDatos() {
     return; // No avanza si falta alguno
   }
 
-  // sessionStorage.setItem('courseName', nombre);
-  // sessionStorage.setItem('courseDesc', descripcion);
-  // sessionStorage.setItem('courseImage', img);
+  sessionStorage.setItem('courseName', nombre);
+  sessionStorage.setItem('courseDesc', descripcion);
+  sessionStorage.setItem('courseImage', img);
   
   
   // Si todos los campos están completos, redirige a la siguiente página
