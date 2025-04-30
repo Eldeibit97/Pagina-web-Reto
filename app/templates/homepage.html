@@ -123,9 +123,11 @@ TecniCORE - Inicio
 </ol>
 </div>
 {% endif %}
-
-<a class="btn btn-warning" href="{{ url_for('cursos', id_rol=id_rol) }}">
-    Ir a Cursos
-</a>
+<div id="cursosBtnHolder">
+    <a class="btn btn-warning cursosBtn" href="{{ url_for('cursos', id_rol=id_rol) }}">
+        Ir a Cursos 
+        <div class="icon"><i class='bx bx-arrow-from-left'></i></div>
+    </a>
+</div>
 <br>
 {% endblock %}
