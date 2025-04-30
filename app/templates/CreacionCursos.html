@@ -26,17 +26,20 @@
 
 <div class="container">
   <link rel="stylesheet" href="/static/css/creacion_cursos_styles.css">
-  <h1 class="headers" id = "form-title">Crear Curso</h1>
-  <label for="course-name" class="etiqueta">Nombre del curso</label>
-  <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
-  
-  <label for="description">Descripción</label>
-  <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
-  
-  <label class="etiqueta">Imagen</label>
-  <div class="icon-upload">
-    <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
-    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal">+</button>
+    <h1 class="headers" id = "form-title">Crear un nuevo Curso</h1>
+  <div>
+    <label for="course-name" class="etiqueta">Nombre del curso</label>
+    <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
+    
+    <label for="description">Descripción</label>
+    <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
+  </div>
+  <div>
+    <label class="etiqueta">Imagen</label>
+    <div class="icon-upload">
+      <!-- Botón que solicita la URL de la imagen. Inicialmente muestra un + -->
+      <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#imagen_modal">+</button>
+    </div>
   </div>
 
   <div class="modal fade" id="imagen_modal" tabindex="-1" aria-labelledby="imagen_label" aria-hidden="true">

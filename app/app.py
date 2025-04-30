@@ -310,7 +310,7 @@ def editar_modulo_form(id_curso):
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')
 
-UPLOAD_FOLDER = '/app/static/uploads'
+UPLOAD_FOLDER = 'app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
@@ -507,7 +507,7 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 
