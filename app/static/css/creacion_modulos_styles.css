@@ -155,7 +155,7 @@ button:disabled:hover {
   flex-direction: column;
   gap: 20px;
   margin-bottom: 20px;
-  height: 50vh;
+  height: 47vh;
   overflow-y: scroll;
 }
 .tarjeta {
