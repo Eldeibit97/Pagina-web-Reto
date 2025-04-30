@@ -56,7 +56,7 @@
       updateBannerVisibility();
     }
 
-    var buildUrl = "app" + "{{ url_for('static', filename='webgl/Build') }}";
+    var buildUrl = "{{ url_for('static', filename='webgl/Build') }}";
     var loaderUrl = buildUrl + "/webgl.loader.js";
 
     var config = {
