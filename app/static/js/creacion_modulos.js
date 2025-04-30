@@ -131,25 +131,29 @@ let Indice_TarjetaEnEdicion;
 function agregarTarjeta(nombreTarjeta = ''){
     const divTarjeta = document.createElement('div');//tarjeta box
     divTarjeta.classList.add('tarjeta');
+    const tarHeader = document.createElement('div');
     
-    // ✖button
-    const btnCerrar = document.createElement('button');
-    btnCerrar.classList.add('btn-cerrar');
-    btnCerrar.innerHTML = "<i class='bx bx-x'></i>";
-    btnCerrar.title = 'Borrar esta Tarjeta';
-    divTarjeta.appendChild(btnCerrar);
-
-    btnCerrar.addEventListener('click', () => {
-        manejarCierreTarjeta(inputTarjeta, divTarjeta);
-    });
-  
 
     const inputTarjeta = document.createElement('input');
     inputTarjeta.classList.add('inputTarjeta');
     inputTarjeta.type = 'text';
     inputTarjeta.placeholder = 'Escribe un nombre para la lección';
     inputTarjeta.value = nombreTarjeta;
-    divTarjeta.appendChild(inputTarjeta);
+    tarHeader.appendChild(inputTarjeta)
+    
+
+    // ✖button
+    const btnCerrar = document.createElement('button');
+    btnCerrar.classList.add('btn-cerrar');
+    btnCerrar.innerHTML = "<i class='bx bx-x'></i>";
+    btnCerrar.title = 'Borrar esta Tarjeta';
+    tarHeader.appendChild(btnCerrar);
+
+    btnCerrar.addEventListener('click', () => {
+        manejarCierreTarjeta(inputTarjeta, divTarjeta);
+    });
+
+    divTarjeta.appendChild(tarHeader);
     
     const mediaContainer = document.createElement('div'); // three icons container(📘, ▶️, 📝)
     mediaContainer.classList.add('media-container');

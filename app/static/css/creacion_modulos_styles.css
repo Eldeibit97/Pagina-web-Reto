@@ -6,14 +6,13 @@
 }
 .monitor{
   background-color: #fff;
-  width: 90%; 
+  width: 90vh; 
   height: 625px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   padding: 30px;
   position: relative;
   display: flex;
-  overflow-y: scroll;
   flex-direction: column;
 }
 .btn-container{
@@ -44,8 +43,6 @@ button:disabled:hover {
   box-shadow: none;
 }
 #listaModulosView {
-  flex: 1;
-  overflow-y: scroll;
   gap: 10px;
 }
 #lista-modulos {
@@ -68,13 +65,12 @@ button:disabled:hover {
 }
 
 .listaModulosContainer{
-  height: 80%;
+  height: 58vh;
   overflow-y: scroll;
 }
 
 .edicionModulosContainer{
   height: 72%;
-  overflow-y: scroll;
 }
 
 .edicionLecturasContainer{
@@ -142,7 +138,6 @@ button:disabled:hover {
 }
 #edicionModuloView {
   flex: 1;
-  overflow-y: scroll;
 }
 
 #edicionLecturaView {
@@ -157,9 +152,10 @@ button:disabled:hover {
 }
 #contenedorTarjetas {
   display: flex; 
+  flex-direction: column;
   gap: 20px;
-  flex-wrap: wrap;
   margin-bottom: 20px;
+  height: 50vh;
   overflow-y: scroll;
 }
 .tarjeta {
@@ -173,20 +169,33 @@ button:disabled:hover {
   display: flex; 
   flex-direction: column; 
   justify-content: space-between;
-  overflow-x: hidden;
+  overflow: visible;
+  flex-shrink: 0;
 }
 .tarjeta p {
   margin: 0;
   color: #333;
 }
+
+.tarjeta > div {
+  display: flex;
+  align-items: left;
+  gap: 10px;
+}
+.inputTarjeta {
+  flex: 1;
+  border-radius: 4px;
+}
 .btn-cerrar {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  border: none;
+  width: 20px;
+  height: 20px;
+  line-height: 1; 
+  padding: 0; 
+  border-color: black;
   font-size: 16px;
-  background-color: transparent ;
+  border-radius: 5px;
   cursor: pointer;
+  background-color: red;
 }
 .btn-cerrar:hover{
   background-color: darkred;
