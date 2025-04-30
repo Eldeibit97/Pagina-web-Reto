@@ -6,14 +6,13 @@
 }
 .monitor{
   background-color: #fff;
-  width: 90%; 
+  width: 90vh; 
   height: 625px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   padding: 30px;
   position: relative;
   display: flex;
-  overflow-y: scroll;
   flex-direction: column;
 }
 .btn-container{
@@ -44,8 +43,6 @@ button:disabled:hover {
   box-shadow: none;
 }
 #listaModulosView {
-  flex: 1;
-  overflow-y: scroll;
   gap: 10px;
 }
 #lista-modulos {
@@ -68,13 +65,12 @@ button:disabled:hover {
 }
 
 .listaModulosContainer{
-  height: 80%;
+  height: 58vh;
   overflow-y: scroll;
 }
 
 .edicionModulosContainer{
   height: 72%;
-  overflow-y: scroll;
 }
 
 .edicionLecturasContainer{
@@ -138,7 +134,6 @@ button:disabled:hover {
 }
 #edicionModuloView {
   flex: 1;
-  overflow-y: scroll;
 }
 
 #edicionLecturaView {
@@ -153,9 +148,10 @@ button:disabled:hover {
 }
 #contenedorTarjetas {
   display: flex; 
+  flex-direction: column;
   gap: 20px;
-  flex-wrap: wrap;
   margin-bottom: 20px;
+  height: 50vh;
   overflow-y: scroll;
 }
 .tarjeta {
@@ -169,7 +165,8 @@ button:disabled:hover {
   display: flex; 
   flex-direction: column; 
   justify-content: space-between;
-  overflow-x: hidden;
+  overflow: visible;
+  flex-shrink: 0;
 }
 .tarjeta p {
   margin: 0;
@@ -181,8 +178,10 @@ button:disabled:hover {
   right: -10px;
   border: none;
   font-size: 16px;
+  border-radius: 5px; 
   background-color: transparent ;
   cursor: pointer;
+  z-index: 10;
 }
 .btn-cerrar:hover{
   background-color: darkred;
