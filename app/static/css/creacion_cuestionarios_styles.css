@@ -1,5 +1,24 @@
+.cuerpo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.monitor{
+    background-color: #fff;
+    width: 95%; 
+    height: 625px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    padding: 30px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 #saveButton {
-    position: absolute;
     background-color: orange;
     color: white;
     border: none;
@@ -13,16 +32,28 @@
 }
 
 #Title {
-    margin-top: 50px;
     text-align: center;
     
 }
 
 #questionList {
-    width: 80%;
+    width: 90%;
     margin-right: auto;
     margin-left: auto;
-    overflow: auto;
+    overflow-y: scroll;
+}
+
+.questionsContainer{
+    display: flex;
+    justify-content: center;
+    width: 95%;
+    height: 90%;
+    overflow-y: scroll;
+}
+
+.headerContainer{
+    display: flex;
+    width: 90%;
 }
 
 #questionList h2 {
@@ -80,6 +111,8 @@
 }
 
 #addQuestion {
+    display: flex;
+    align-items: center;
     background-color: green;
     color: white;
     padding: 10px 15px;
@@ -91,6 +124,15 @@
 
 #addQuestion:hover {
     background-color: darkgreen;
+}
+
+.plus{
+    padding-top: 2px;
+    margin-right: 3px;
+}
+
+.save{
+    margin-left: 3px;
 }
 
 .deletePreguntaButton {
