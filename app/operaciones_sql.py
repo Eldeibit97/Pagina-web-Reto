@@ -109,13 +109,13 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-        with open("/app/static/img/pfp.jpg", "wb") as file:
+        with open("app/static/img/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
-        with open("/app/static/img/default_pfp.jpg", "rb") as default_image:
+        with open("app/static/img/default_pfp.jpg", "rb") as default_image:
             image = default_image.read()
-        with open("/app/static/img/pfp.jpg", "wb") as file:
+        with open("app/static/img/pfp.jpg", "wb") as file:
             file.write(image)
         return "pfp.jpg"
     
@@ -835,6 +835,26 @@ def modificar_alumno(id_usuario, nombre, correo, telefono, rol_id, pswd):
 def eliminar_alumno(id_alumno):
     connection = connect()
     cursor = connection.cursor()
+
+    query = f"DELETE FROM Usuario_Curso WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Usuario_Lectura WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Usuario_Video WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Evaluaciones WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
+
+    query = f"DELETE FROM Entrada WHERE ID_Usuario  = {id_alumno}"
+    cursor.execute(query)
+    connection.commit()
 
     query = f"DELETE FROM Usuarios WHERE ID_Usuario  = {id_alumno}"
     cursor.execute(query)
