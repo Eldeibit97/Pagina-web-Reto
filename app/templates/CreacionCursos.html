@@ -27,19 +27,24 @@
 <div class="container" id="container">
   <link rel="stylesheet" href="/static/css/creacion_cursos_styles.css">
   <h1 class="headers" id = "form-title">Crear Curso</h1>
-  <label for="course-name" class="etiqueta">Nombre del curso</label>
-  <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
-  
-  <label for="description">Descripción</label>
-  <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
-  
-  <label class="etiqueta">Imagen</label>
-  
-  <div class="image-upload">
-    <input type="file" class="imageInput" accept="image/*">
-    <img class="imagePreview" src="">
+  <div class="thingContainer">
+    <div class="courseInfoContainer">
+      <label for="course-name" class="etiquetaInfo">Nombre del curso</label>
+      <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
+      
+      <label for="description" class="etiquetaInfo">Descripción</label>
+      <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
+    </div>
+    <div class="dividingLine"></div>
+    <div class="imageAreaContainer">
+      <label class="etiqueta">Imagen</label>
+      
+      <div class="image-upload">
+        <input type="file" class="imageInput" accept="image/*">
+        <img class="imagePreview" src="">
+      </div>
+    </div>
   </div>
-
   <!-- El botón "Siguiente" validará datos antes de redirigir -->
   <button class="next-button" onclick="validarDatos()">Siguiente</button>
 </div>
