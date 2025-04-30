@@ -20,10 +20,9 @@ input.addEventListener('change', () => {
 });
 
 function mostrarImagen(url) {
-  let img = document.getElementById("imagen");
+  let img = document.getElementById("imagePreview");
   img.src = url;
   img.style.display = "block";
-  document.getElementById("btnImagen").textContent = "<i class='bx bxs-pencil'></i>";
 }
 
 // Validar que se hayan ingresado todos los datos
@@ -36,13 +35,24 @@ function validarDatos() {
     return; // No avanza si falta alguno
   }
 
-  sessionStorage.setItem('courseName', nombre);
-  sessionStorage.setItem('courseDesc', descripcion);
-  sessionStorage.setItem('courseImage', img);
+  // sessionStorage.setItem('courseName', nombre);
+  // sessionStorage.setItem('courseDesc', descripcion);
+  // sessionStorage.setItem('courseImage', img);
+  
   
   // Si todos los campos están completos, redirige a la siguiente página
   if (idCurso) {
-    window.location.href = '/editar_modulo_form/'+ idCurso;
+    fetch('/editar_curso', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({idCurso, nombre, descripcion, img })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message);;
+    })
+    .catch(error => console.error('Error:', error));
+    window.location.href = '/cursos';
   } else {
     window.location.href = "/crear_modulo_form";
   }
@@ -56,7 +66,10 @@ idCurso = document.getElementById("curso-id").value;
     document.getElementById("form-title").innerText = "Editar Curso";
     document.getElementById("course-name").value = document.getElementById("curso-nombre").value;
     document.getElementById("description").value = document.getElementById("curso-descripcion").value;
+    
+    console.log(document.getElementById("curso-imagen").value);
     mostrarImagen(document.getElementById("curso-imagen").value);
+  
   } else {
     document.getElementById("form-title").innerText = "Crear un nuevo Curso";
   }

@@ -427,42 +427,39 @@ def editar_curso():
     data = request.get_json()
     print("JSON recibido:", data)
     courseID = data.get('idCurso')
-    courseNombre = data.get('courseNombre')
-    courseDescripcion = data.get('courseDescripcion')
-    courseImagen_url = data.get('courseImagen_url')
-    modulos =data.get('modulos')
+    courseNombre = data.get('nombre')
+    courseDescripcion = data.get('descripcion')
+    courseImagen_url = data.get('img')
+    # modulos =data.get('modulos')
 
     # To decode the Base64 image file
-    for i, modulo in enumerate(modulos):
-        contenidos = modulo.get('contenidos', [])
-        for j, contenido in enumerate(contenidos):
-            lectura_list = contenido.get('lecturaTexto', [])
+    base64_str_course = courseImagen_url
+    if base64_str_course:
+        match_course = re.match(r'data:image/(?P<ext>[^;]+);base64,(?P<data>.+)', base64_str_course)
+        if match_course:
+            ext_course = match_course.group('ext')
+            img_data_course = base64.b64decode(match_course.group('data'))
+            filename_course = f'course.{ext_course}'
+            filepath_course = os.path.join(UPLOAD_FOLDER, filename_course)
 
-            for k, lectura in enumerate(lectura_list):
-                base64_str = lectura.get('imgPagina')
+            with open(filepath_course, 'wb') as f:
+                f.write(img_data_course)
 
-                if base64_str:
-                  
-                    match = re.match(r'data:image/(?P<ext>[^;]+);base64,(?P<data>.+)', base64_str)
-                    if match:
-                        ext = match.group('ext')
-                        img_data = base64.b64decode(match.group('data'))
-                        filename = f'modulo{i+1}_contenido{j+1}_pagina{k+1}.{ext}'
-                        filepath = os.path.join(UPLOAD_FOLDER, filename)
+            resultado_course = cloudinary.uploader.upload(filepath_course)
+            url_course = resultado_course.get("secure_url")
+            print("Imagen subida correctamente.")
+            print("URL:", url_course)
+            
+            courseImagen_url = url_course
 
-                        with open(filepath, 'wb') as f:
-                            f.write(img_data)
-
-                        lectura['imgPagina'] = filepath
-
-                        print(f'✅ Imagen guardada: {filepath}')
-                    else:
-                        print(f'⚠️ Base64 inválido en modulo {i+1}, contenido {j+1}, página {k+1}')
-                else:
-                    print(f'⚠️ No se encontró imgPagina en página {k+1}')
+            print(f'✅ Imagen guardada: {filepath_course}')
+        else:
+            print(f'⚠️ Base64 inválido en course')
+    else:
+        print('error in base64_str')
 
     try:
-        operaciones_sql.editar_curso(courseID, courseNombre, courseDescripcion, courseImagen_url, modulos)
+        operaciones_sql.editar_curso(courseID, courseNombre, courseDescripcion, courseImagen_url)
         return jsonify({'message': 'Curso editado exitosamente'})
     except Exception as e:
         print(e)
