@@ -115,7 +115,7 @@ Lectura - {{ lectura[0] }}
       document.getElementById("imagen").style.display = "none";
     }
     else {
-      document.getElementById("imagen").src = "/" + paginas[page - 1][2];
+      document.getElementById("imagen").src = paginas[page - 1][2];
       //document.getElementById("imagen").src = "static/uploads/nature.jpg";
       document.getElementById("imagen").style.display = "block";
     }
@@ -144,7 +144,7 @@ Lectura - {{ lectura[0] }}
     .then(data => {
       if (data.success) {
         // Checar si siguienteId es valido
-        if (siguienteId == "None") {
+        if (siguienteId == "0") {
           // Redirect to vista_curso with id_curso as a query parameter
           window.location.href = '{{ url_for("vista_curso", id_curso=id_curso) }}';
         }

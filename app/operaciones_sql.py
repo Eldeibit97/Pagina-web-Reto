@@ -290,7 +290,7 @@ def encontrar_siguiente(id_curso, id_leccion, tipo):
         
         
         # agregar None
-        lecciones_lista = [[leccion, [None, None]] for leccion in lecciones]
+        lecciones_lista = [[leccion, [0, 0]] for leccion in lecciones]
 
         
         # Agregar leccion siguiente
@@ -316,6 +316,7 @@ def encontrar_siguiente(id_curso, id_leccion, tipo):
 
     cursor.close()
     connection.close()
+    return [None, None]
 
 # Crear y agregar cursos 
 def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 

@@ -46,7 +46,7 @@
         
         <a
         id="botonFinalizar"
-        href="{% if siguiente[0] == None %}{{ url_for('vista_curso', id_curso=id_curso) }}{% else %}{{ url_for('leccion', id_curso=id_curso, tipo=siguiente[1], id=siguiente[0]) }}{% endif %}"
+        href="{% if siguiente[0] == 0 %}{{ url_for('vista_curso', id_curso=id_curso) }}{% else %}{{ url_for('leccion', id_curso=id_curso, tipo=siguiente[1], id=siguiente[0]) }}{% endif %}"
         class="btn btn-warning"
         style="display: none; width: 300px;"
         >
