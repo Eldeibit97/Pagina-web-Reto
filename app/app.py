@@ -6,6 +6,17 @@ import re
 import ast
 import base64
 import mimetypes
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+cloudinary.config(
+    cloud_name = "dbsfmc1k9",
+    api_key = "964126165563941",
+    api_secret = "q1pG0SwWhpBLpUxcddqv5xzLY8Y"
+)
+
+
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
@@ -339,6 +350,31 @@ def crear_curso():
     courseImagen_url = data.get('courseImagen_url')
     modulos =data.get('modulos')
 
+    base64_str_course = courseImagen_url
+    if base64_str_course:
+        match_course = re.match(r'data:image/(?P<ext>[^;]+);base64,(?P<data>.+)', base64_str_course)
+        if match_course:
+            ext_course = match_course.group('ext')
+            img_data_course = base64.b64decode(match_course.group('data'))
+            filename_course = f'course.{ext_course}'
+            filepath_course = os.path.join(UPLOAD_FOLDER, filename_course)
+
+            with open(filepath_course, 'wb') as f:
+                f.write(img_data_course)
+
+            resultado_course = cloudinary.uploader.upload(filepath_course)
+            url_course = resultado_course.get("secure_url")
+            print("Imagen subida correctamente.")
+            print("URL:", url_course)
+            
+            courseImagen_url = url_course
+
+            print(f'✅ Imagen guardada: {filepath_course}')
+        else:
+            print(f'⚠️ Base64 inválido en course')
+    else:
+        print('error in base64_str')
+
     # To decode the Base64 image file
     for i, modulo in enumerate(modulos):
         contenidos = modulo.get('contenidos', [])
@@ -360,7 +396,13 @@ def crear_curso():
                         with open(filepath, 'wb') as f:
                             f.write(img_data)
 
-                        lectura['imgPagina'] = filepath
+                        
+                        resultado = cloudinary.uploader.upload(filepath)
+                        url = resultado.get("secure_url")
+                        print("Imagen subida correctamente.")
+                        print("URL:", url)
+                        
+                        lectura['imgPagina'] = url
 
                         print(f'✅ Imagen guardada: {filepath}')
                     else:

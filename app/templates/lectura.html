@@ -37,7 +37,7 @@ Lectura - {{ lectura[0] }}
 
 <img
   {% if paginas[0][2] is not none %}
-  src='{{ "/" + paginas[0][2] }}'
+  src='{{ paginas[0][2] }}'
   {% else %}
   src=""
   {% endif %}
@@ -84,7 +84,7 @@ Lectura - {{ lectura[0] }}
         document.getElementById("imagen").style.display = "none";
       }
       else {
-        document.getElementById("imagen").src = "/" + paginas[page - 1][2];
+        document.getElementById("imagen").src = paginas[page - 1][2];
         document.getElementById("imagen").style.display = "block";
       }
       

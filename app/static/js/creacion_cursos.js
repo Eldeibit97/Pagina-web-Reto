@@ -1,12 +1,23 @@
 let url;
 let idCurso;
+const container = document.getElementById("container");
+const input = document.querySelector('.imageInput');
+const imageDisplay = document.querySelector('.imagePreview');
+imageDisplay.classList.add('img');
 
-function pedirImagen() {
-  url = prompt("Introduce la URL de la imagen:");
-  if (url) {
-    mostrarImagen(url);
+let base64Image = '';
+
+input.addEventListener('change', () => {
+  if (input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      imageDisplay.src = e.target.result;
+      imageDisplay.style.display = 'block';
+      base64Image = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
   }
-}
+});
 
 function mostrarImagen(url) {
   let img = document.getElementById("imagen");
@@ -19,16 +30,15 @@ function mostrarImagen(url) {
 function validarDatos() {
   let nombre = document.getElementById("course-name").value.trim();
   let descripcion = document.getElementById("description").value.trim();
-  let imagen = document.getElementById("imagen").src;
-  
-  if (!nombre || !descripcion || !imagen) {
+  let img = container.querySelector("img")?.src || "";
+  if (!nombre || !descripcion) {
     alert("Ingresa todos los datos necesarios");
     return; // No avanza si falta alguno
   }
 
   sessionStorage.setItem('courseName', nombre);
   sessionStorage.setItem('courseDesc', descripcion);
-  sessionStorage.setItem('courseImage', imagen);
+  sessionStorage.setItem('courseImage', img);
   
   // Si todos los campos están completos, redirige a la siguiente página
   if (idCurso) {
@@ -39,7 +49,7 @@ function validarDatos() {
 }
 
 window.onload = function () {
-  idCurso = document.getElementById("curso-id").value;
+idCurso = document.getElementById("curso-id").value;
   sessionStorage.setItem("IDCurso", idCurso);
 
   if (idCurso) {
