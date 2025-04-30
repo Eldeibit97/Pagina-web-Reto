@@ -10,6 +10,7 @@
 
 
 {% block content %}
+<link rel="stylesheet" href="/static/css/cuestionarios.css">
 <form action="{{ url_for('cursos') }}" method="post">
 <input type="hidden" name="id_curso" value="{{ id_curso }}" />
 <button type="submit" class="btn btn-warning">
@@ -21,16 +22,17 @@
 <br />
 
 {% for pregunta in preguntas_respuestas %}
-    <div id="{{ pregunta[0][1] }}">
-        <h5>{{ pregunta[0][0] }}</h5>
-
+<div class="preguntasSpace">
+    <div id="{{ pregunta[0][1] }}" class="preguntasContainer">
+        <h5 id="preguntaTitle">{{ pregunta[0][0] }}</h5>
         {% for respuesta in pregunta[1] %}
+        <div id="opcionesSpace">
             <input type="radio" id="{{ respuesta[1] }}" name="{{ respuesta[2] }}" value="{{ respuesta[3] }}">
-            <label for="{{ respuesta[1] }}">{{ respuesta[0] }}</label><br>
+            <label for="{{ respuesta[1] }}" id="opcionInput">{{ respuesta[0] }}</label><br>
+        </div>
         {% endfor %}
-
-        
     </div>
+</div>
     <br>
 
 {% endfor %}

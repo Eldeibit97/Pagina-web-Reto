@@ -392,7 +392,7 @@ function agregarPagina(nombrePagina = '', textoPagina = '', imgPagina = '') {
     e.stopPropagation(); // このイベントが親の click に伝播しないようにする
     const tituloFinal = tituloInput.value.trim();
     if (tituloFinal !== '') {
-      tituloTexto.textContent = tituloFinal + ", haz click para editar";
+      tituloTexto.textContent = tituloFinal;
       tituloTexto.style.display = 'block';
       tituloInput.style.display = 'none';
     }

@@ -1,0 +1,38 @@
+.preguntasContainer{
+  width: 60%;
+  border: solid;
+  border-color: rgb(230, 230, 230);
+  border-radius: 8px;
+}
+
+.preguntasSpace{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+#preguntaTitle{
+  border-bottom: solid;
+  border-color: rgb(230, 230, 230);
+  border-radius: 8px;
+  padding: 10px 20px 10px 20px;
+
+}
+
+#opcionesSpace{
+  margin: 15px;
+}
+
+#opcionInput{
+  border: solid;
+  border-color: transparent;
+  border-radius: 8px;
+  transition: transform 0.2s;
+  margin-left: 4px;
+}
+
+#opcionInput:hover{
+  background-color: rgb(251, 255, 139);
+  transform: scale(1.1);
+}
