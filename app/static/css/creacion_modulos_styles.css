@@ -176,16 +176,26 @@ button:disabled:hover {
   margin: 0;
   color: #333;
 }
+
+.tarjeta > div {
+  display: flex;
+  align-items: left;
+  gap: 10px;
+}
+.inputTarjeta {
+  flex: 1;
+  border-radius: 4px;
+}
 .btn-cerrar {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  border: none;
+  width: 20px;
+  height: 20px;
+  line-height: 1; 
+  padding: 0; 
+  border-color: black;
   font-size: 16px;
-  border-radius: 5px; 
-  background-color: transparent ;
+  border-radius: 5px;
   cursor: pointer;
-  z-index: 10;
+  background-color: red;
 }
 .btn-cerrar:hover{
   background-color: darkred;
