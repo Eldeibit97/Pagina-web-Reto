@@ -123,18 +123,23 @@ def leccion(id_curso, tipo, id):
     if 'username' in session:
         session['section'] = 'leccion'
         id_rol = session['id_rol']
+
+        # Determinar siguiente leccion
+        siguiente = operaciones_sql.encontrar_siguiente(id_curso, id, tipo)
+        print(siguiente)
+
         # Video
         if tipo == 'Video':
             video = operaciones_sql.get_video(id)
             print(video[1])
-            return render_template('video.html', video=video, id_curso=id_curso, id_rol=id_rol)
+            return render_template('video.html', video=video, id_curso=id_curso, id_rol=id_rol, siguiente=siguiente)
         elif tipo == 'Cuestionario':
             cuestionario, preguntas_respuestas = operaciones_sql.get_cuestionario(id)
-            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas, id_rol=id_rol)
+            return render_template('cuestionario.html', cuestionario=cuestionario, id_curso=id_curso, preguntas_respuestas=preguntas_respuestas, id_rol=id_rol, siguiente=siguiente)
         elif tipo == 'Lectura':
             lectura, paginas = operaciones_sql.get_lectura(id)
             print(paginas)
-            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas), id_rol=id_rol)
+            return render_template('lectura.html', lectura=lectura, paginas=paginas, id_curso=id_curso, length=len(paginas), id_rol=id_rol, siguiente=siguiente)
         else:
             return redirect(url_for('cursos', id_rol=id_rol))
     else:
@@ -305,7 +310,7 @@ def editar_modulo_form(id_curso):
 def crear_cuestionario_form():
     return render_template('CreacionCuestionarios.html')
 
-UPLOAD_FOLDER = 'app/static/uploads'
+UPLOAD_FOLDER = '/app/static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/crear_curso', methods=['POST'])
@@ -502,7 +507,7 @@ def obtener_imagen(id_alumno):
     if None not in pfp:
         return Response(pfp, mimetype="image/jpeg")
     else:
-        with open('app/static/img/default_pfp.jpg', 'rb') as image:
+        with open('/app/static/img/default_pfp.jpg', 'rb') as image:
             default_pfp = image.read()
         return Response(default_pfp, mimetype="image/jpeg")
 

@@ -17,6 +17,8 @@
 </button>
 </form>
 <br />
+
+<p>{{ siguiente }}</p>
 <h2 id="nombre_pagina" style="text-align: center">{{ cuestionario[0] }}</h2>
 <br />
 
@@ -41,12 +43,16 @@
             Entregar Cuestionario
         </button>
 
-        <form action="{{ url_for('cursos') }}" method="post">
-            <input type="hidden" name="id_curso" value="{{ id_curso }}" />
-            <button id="botonFinalizar" type="submit" class="btn btn-warning" style="display: none; width: 300px;">
-                Finalizar
-            </button>
-        </form>
+        
+        <a
+        id="botonFinalizar"
+        href="{% if siguiente[0] == 0 %}{{ url_for('vista_curso', id_curso=id_curso) }}{% else %}{{ url_for('leccion', id_curso=id_curso, tipo=siguiente[1], id=siguiente[0]) }}{% endif %}"
+        class="btn btn-warning"
+        style="display: none; width: 300px;"
+        >
+            Finalizar
+    </a>
+
     </div>
 </div>
 

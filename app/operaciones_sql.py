@@ -109,13 +109,13 @@ def get_pfp(username):
     connection.close()
 
     if pfp and pfp[0][0]:
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(pfp[0][0])
         return "pfp.jpg"
     else:
-        with open("app/static/img/default_pfp.jpg", "rb") as default_image:
+        with open("/app/static/img/default_pfp.jpg", "rb") as default_image:
             image = default_image.read()
-        with open("app/static/img/pfp.jpg", "wb") as file:
+        with open("/app/static/img/pfp.jpg", "wb") as file:
             file.write(image)
         return "pfp.jpg"
     
@@ -243,11 +243,16 @@ def get_lecciones(id_curso):
                 cursor.execute(query)
             
             calificacion = cursor.fetchone()
+            
+
             lecciones_lista.append([leccion, calificacion[0]])
 
             if calificacion[0] != -1 :
                 completadas = completadas + calificacion[0]/100
             total = total + 1
+        
+
+            
 
 
         list.append([modulo, lecciones_lista])
@@ -263,6 +268,55 @@ def get_lecciones(id_curso):
     progreso = round(progreso, 2)
 
     return list, progreso
+
+# Encontrar la siguiente leccion
+def encontrar_siguiente(id_curso, id_leccion, tipo):
+    connection = connect()
+    cursor = connection.cursor()
+
+    # Obtener modulos
+    query = "SELECT * FROM Modulos m WHERE m.ID_Curso = " + str(id_curso)
+    cursor.execute(query)
+    modulos = cursor.fetchall()
+
+    list = []
+    for modulo in modulos:
+        # obtener lecciones
+        id_str = str(modulo[1])
+        query = "SELECT l.ID_Lectura AS ID, 'Lectura' AS tipo, l.Fecha_Creacion AS fechaCreacion, l.Nom_Lectura AS nombre FROM Lectura l WHERE l.ID_Modulo = " + id_str + " UNION ALL SELECT v.ID_Video AS ID, 'Video' AS tipo, v.Fecha_Creacion AS fechaCreacion, v.Nombre_Video AS nombre FROM Video v WHERE v.ID_Modulo = " + id_str + " UNION ALL SELECT c.ID_Cuestionario AS ID, 'Cuestionario' AS tipo, c.Fecha_Creacion AS fechaCreacion, c.Nom_Cuestionario AS nombre FROM Cuestionario c WHERE c.ID_Modulo = " + id_str + " ORDER BY fechaCreacion;"
+        cursor.execute(query)
+        lecciones = cursor.fetchall()
+
+        
+        
+        # agregar None
+        lecciones_lista = [[leccion, [0, 0]] for leccion in lecciones]
+
+        
+        # Agregar leccion siguiente
+        for i in range(len(lecciones_lista)):
+            if i != len(lecciones_lista) - 1:
+                lecciones_lista[i][1] = [lecciones_lista[i+1][0][0], lecciones_lista[i+1][0][1]]
+
+        
+
+            
+
+
+        list.append([modulo, lecciones_lista])
+        print(list)
+
+    # Encontrar la lección actual y determinar si tiene una siguiente
+    for modulo, lecciones_lista in list:
+        for leccion, siguiente in lecciones_lista:
+            if leccion[0] == int(id_leccion) and leccion[1] == str(tipo):
+                cursor.close()
+                connection.close()
+                return siguiente
+
+    cursor.close()
+    connection.close()
+    return [None, None]
 
 # Crear y agregar cursos 
 def crear_curso(nom_curso, desc_curso, img_curso, Modulos): 

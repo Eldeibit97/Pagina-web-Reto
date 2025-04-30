@@ -26,6 +26,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/get-video-id/dist/get-video-id.umd.min.js"></script>
 <script>
+  // Siguiente leccion
+  var siguienteId = "{{ siguiente[0] }}";
+
   // timer
   var timerStarted = false;
   var timerInterval = null;
@@ -88,19 +91,18 @@
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        // hacer un post para regresar a vista curso
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '{{ url_for('cursos') }}';
-  
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'id_curso';
-  input.value = {{ id_curso }};
-  form.appendChild(input);
-  
-  document.body.appendChild(form);
-  form.submit();
+        // Checar si siguienteId es valido
+        if (siguienteId == "0") {
+          // Redirect to vista_curso with id_curso as a query parameter
+          window.location.href = '{{ url_for("vista_curso", id_curso=id_curso) }}';
+        }
+        else {
+          // redirect a siguiente leccion
+          window.location.href = "{{ url_for('leccion', id_curso=id_curso, tipo=siguiente[1], id=siguiente[0]) }}";
+
+        }
+
+        
       } else {
         alert('Error al subir la calificación.');
       }
