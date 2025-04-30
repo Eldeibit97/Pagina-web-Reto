@@ -23,7 +23,7 @@
   border: solid;
   border-color: rgb(244, 244, 244);
   border-width: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .headers {
@@ -35,7 +35,7 @@
   display: block;
   margin: 10px 0 5px;
   width: 100%;
-  height: 50px;
+  height: 35px;
 }
 
 .etiquetaInfo {
@@ -99,24 +99,53 @@
 
 .imageInput{
   width: 100%;
+  display: none;
+}
+
+#fileInput{
+  border: solid;
+  display: flex;
+  background-color: rgb(44, 129, 255);
+  border-radius: 10px;
+  width: 60%;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.2s;
+  width: 100%;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin: 5% 10%;
+  font-size: 18px;
+}
+
+#fileInput:hover{
+  transform: scale(1.05);
+  border: solid;
+  border-color: rgb(24, 115, 253);
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .imagePreview{
-  width: 50%;
+  width: 100%;
+  height: 80%;
 }
 
 .imageAreaContainer{
   display: flex;
   flex-wrap: wrap;
-  width: 70%;
+  width: 60%;
   margin: 5px;
 }
 
 .courseInfoContainer{
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 40%;
   margin: 5px;
+  gap: 20px;
 }
 
 .dividingLine{

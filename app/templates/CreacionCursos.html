@@ -29,20 +29,24 @@
   <h1 class="headers" id = "form-title">Crear Curso</h1>
   <div class="thingContainer">
     <div class="courseInfoContainer">
-      <label for="course-name" class="etiquetaInfo">Nombre del curso</label>
-      <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
-      
-      <label for="description" class="etiquetaInfo">Descripción</label>
-      <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
+      <div class="name">
+        <label for="course-name" class="etiquetaInfo">Nombre del curso</label>
+        <input class="inputs" type="text" id="course-name" name="course-name" placeholder="Título del curso">
+      </div>
+      <div class="description">
+        <label for="description" class="etiquetaInfo">Descripción</label>
+        <input class="inputs" type="text" id="description" name="description" placeholder="Breve descripción">
+      </div>
+      <div class="image-upload">
+        <label class="etiquetaInfo">Selecciona una imagen...</label>
+        <label for="image" id="fileInput"> <i class='bx bx-upload' style='color:#ffffff; margin-bottom: 2px;'></i>&ensp;Seleccionar archivo</label>
+        <input id="image" type="file" class="imageInput" accept="image/*">
+      </div>
     </div>
     <div class="dividingLine"></div>
     <div class="imageAreaContainer">
       <label class="etiqueta">Imagen</label>
-      
-      <div class="image-upload">
-        <input type="file" class="imageInput" accept="image/*">
-        <img class="imagePreview" src="">
-      </div>
+      <img class="imagePreview" src="">
     </div>
   </div>
   <!-- El botón "Siguiente" validará datos antes de redirigir -->
