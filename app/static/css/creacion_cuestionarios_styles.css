@@ -8,7 +8,7 @@
 .monitor{
     background-color: #fff;
     width: 95%; 
-    height: 625px;
+    height: 650px;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     padding: 30px;
@@ -16,14 +16,19 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 10px;
 }
 
 #saveButton {
+    display: flex;
+    flex-wrap: nowrap;
     background-color: orange;
+    justify-content: center;
     color: white;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
+    height: 50px;
     border-radius: 5px;
 }
 
@@ -38,6 +43,7 @@
 
 #questionList {
     width: 90%;
+    height: 80%;
     margin-right: auto;
     margin-left: auto;
     overflow-y: scroll;
@@ -53,7 +59,9 @@
 
 .headerContainer{
     display: flex;
+    flex-wrap: wrap;
     width: 90%;
+    gap: 50px;
 }
 
 #questionList h2 {
@@ -61,7 +69,7 @@
 }
 
 .question {
-    background-color: rgba(0, 255, 255, 0.327);
+    background-color: rgba(13, 36, 50, 0.589);
     border: 2px solid black;
     padding: 15px;
     margin-bottom: 15px;
@@ -70,11 +78,17 @@
 
 
 .question input[type="text"] {
-    display: block;
     width: 100%;
-    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     padding: 5px;
-    height: 20px
+    height: 25px;
+    background-color: white;
+}
+
+.inputstyle{
+    border-radius: 8px;
+    border-color: rgb(73, 73, 73);
 }
 
 .option-wrapper {
@@ -103,7 +117,7 @@
 }
 
 .correct-option {
-    color: green;
+    color: rgb(8, 176, 8);
 }
 
 .incorrect-option {
@@ -111,6 +125,9 @@
 }
 
 #addQuestion {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
     display: flex;
     align-items: center;
     background-color: green;
@@ -132,20 +149,31 @@
 }
 
 .save{
+    margin-top: 5px;
     margin-left: 3px;
 }
 
 .deletePreguntaButton {
-    background-color: rgb(255, 47, 0);
+    border: solid;
+    border-color: rgb(155, 20, 20);
     color: white;
-    border: none;
-    padding: 10px 15px;
+    background-color: rgb(234, 25, 25);
+    padding: 1px 9px 3px;
     cursor: pointer;
-    border-radius: 100px;
+    border-radius: 100%;
     float: right;
     margin-bottom: 10px;
 }
 
 .deletePreguntaButton:hover {
     background-color: rgb(139, 28, 3);
+}
+
+.legend{
+    background-color: rgb(230, 230, 230);
+    border-radius: 8px;
+    width: 40%;
+    padding-left: 7px;
+    color: rgb(33, 33, 33);
+    margin: 0px;
 }

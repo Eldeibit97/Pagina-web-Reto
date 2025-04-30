@@ -19,15 +19,17 @@ addQuestionButton.addEventListener("click", function () {
     newQuestion.classList.add("question");
 
     const legend = document.createElement("legend");
+    legend.classList.add('legend')
     newQuestion.appendChild(legend);
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "×";
+    deleteBtn.innerHTML = "x";
     deleteBtn.classList.add("deletePreguntaButton");
     newQuestion.appendChild(deleteBtn);
 
     const questionInput = document.createElement("input");
     questionInput.type = "text";
+    questionInput.classList.add("inputstyle")
     questionInput.placeholder = "Ingresar Pregunta";
     newQuestion.appendChild(questionInput);
 
@@ -40,6 +42,7 @@ addQuestionButton.addEventListener("click", function () {
 
         const optionInput = document.createElement("input");
         optionInput.type = "text";
+        optionInput.classList.add('inputstyle')
         optionInput.placeholder = `Opcion ${i}`;
         optionWrapper.appendChild(optionInput);
 
