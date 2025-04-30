@@ -79,14 +79,7 @@
                             <i class='bx bx-chalkboard'></i>
                                     Profesores
                             </a>
-
-                            <a
-                            href="{{ url_for('desempeno') }}"
-                            class="btn {% if session['section'] == 'desempeno' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
-                            >
-                            <i class='bx bxs-star'></i>
-                                    Desempeño
-                            </a>
+                            
                             
                             <a
                             href="{{ url_for('alta') }}"
@@ -105,6 +98,16 @@
                             >
                                 <i class='bx bx-question-mark'></i>
                                     Manual y Doc.
+                            </a>
+                            {% endif %}
+
+                            {% if id_rol == 3 or id_rol == 2 %}
+                            <a
+                            href="{{ url_for('desempeno') }}"
+                            class="btn {% if session['section'] == 'desempeno' %}btn-warning{% else %}btn-light{% endif %} text-start m-1"
+                            >
+                            <i class='bx bxs-star'></i>
+                                    Desempeño
                             </a>
                             {% endif %}
 
