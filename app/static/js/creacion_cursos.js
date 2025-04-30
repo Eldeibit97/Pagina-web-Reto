@@ -23,7 +23,7 @@ function mostrarImagen(url) {
   let img = document.getElementById("imagen");
   img.src = url;
   img.style.display = "block";
-  document.getElementById("btnImagen").textContent = "✎";
+  document.getElementById("btnImagen").textContent = "<i class='bx bxs-pencil'></i>";
 }
 
 // Validar que se hayan ingresado todos los datos
@@ -58,6 +58,6 @@ idCurso = document.getElementById("curso-id").value;
     document.getElementById("description").value = document.getElementById("curso-descripcion").value;
     mostrarImagen(document.getElementById("curso-imagen").value);
   } else {
-    document.getElementById("form-title").innerText = "Nuevo Curso";
+    document.getElementById("form-title").innerText = "Crear un nuevo Curso";
   }
 };
